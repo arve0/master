@@ -3,4 +3,4 @@ I'm using a Leica SP8 microscope, which has a feature called Computer Assisted M
 
 
 ## IPython notebooks
-[scanning template](//nbviewer.ipython.org/github/arve0/master/CAM/scanning template.ipynb)
+[scanning template](//nbviewer.ipython.org/github/arve0/master/blob/master/CAM/scanning template.ipynb)
