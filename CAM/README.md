@@ -3,6 +3,6 @@ I'm using a Leica SP8 microscope, which has a feature called Computer Assisted M
 
 
 ## IPython notebooks
-[scanning template](//nbviewer.ipython.org/github/arve0/master/blob/master/CAM/scanning template.ipynb)
-[offset diff](//nbviewer.ipython.org/github/arve0/master/blob/master/CAM/offset diff.ipynb)
-[communicator](//nbviewer.ipython.org/github/arve0/master/blob/master/CAM/communicator.ipynb)
+- [scanning template](//nbviewer.ipython.org/github/arve0/master/blob/master/CAM/scanning template.ipynb)
+- [offset diff](//nbviewer.ipython.org/github/arve0/master/blob/master/CAM/offset diff.ipynb)
+- [communicator](//nbviewer.ipython.org/github/arve0/master/blob/master/CAM/communicator.ipynb)
