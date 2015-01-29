@@ -1,0 +1,123 @@
+Open MatrixScreener, load experiment "movement" and enable CAM in Start Screen -> Attributes manually
+
+ 6:12:35 PM	 : << send to CAM server : /cli:embl /app:matrix /sys:1 /cmd:load /fil:{ScanningTemplate}rotation
+
+ 6:12:36 PM	 : >> received from CAM server : /exception: Please check the <sys> token! Your System ID send do not match! The SystemID you have send = 1. SystemID of this system = 0
+ 6:12:36 PM	 : >> received from CAM server : /cli:embl /app:matrix /sys:1 /cmd:load /fil:{ScanningTemplate}rotation
+ 6:12:53 PM	 : << send to CAM server : /cli:embl /app:matrix /sys:0 /cmd:load /fil:{ScanningTemplate}rotation
+
+ 6:12:54 PM	 : >> received from CAM server : /cli:embl /app:matrix /sys:0 /cmd:load /fil:{ScanningTemplate}rotation
+
+No effect, interface not updated with new experiment.
+
+
+ 6:13:26 PM	 : << send to CAM server : /cli:embl /app:matrix /cmd:startscan
+
+ 6:13:28 PM	 : >> received from CAM server : /app:matrix /sys:0 /inf:scanstart
+
+Original loaded experiment runs ("movement", NOT "rotation").
+
+ 6:13:28 PM	 : >> received from CAM server : /cli:embl /app:matrix /cmd:startscan
+ 6:13:30 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U00--V00\field--X00--Y00\image--L00--S00--U00--V00--J08--E00--O00--X00--Y00--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:32 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U00--V00\field--X01--Y00\image--L00--S00--U00--V00--J08--E00--O00--X01--Y00--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:35 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U00--V00\field--X01--Y01\image--L00--S00--U00--V00--J08--E00--O00--X01--Y01--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:37 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U00--V00\field--X00--Y01\image--L00--S00--U00--V00--J08--E00--O00--X00--Y01--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:40 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U00--V01\field--X00--Y00\image--L00--S00--U00--V01--J08--E00--O00--X00--Y00--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:42 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U00--V01\field--X01--Y00\image--L00--S00--U00--V01--J08--E00--O00--X01--Y00--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:45 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U00--V01\field--X01--Y01\image--L00--S00--U00--V01--J08--E00--O00--X01--Y01--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:48 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U00--V01\field--X00--Y01\image--L00--S00--U00--V01--J08--E00--O00--X00--Y01--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:50 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U01--V00\field--X00--Y00\image--L00--S00--U01--V00--J08--E00--O00--X00--Y00--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:53 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U01--V00\field--X01--Y00\image--L00--S00--U01--V00--J08--E00--O00--X01--Y00--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:55 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U01--V00\field--X01--Y01\image--L00--S00--U01--V00--J08--E00--O00--X01--Y01--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:13:58 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U01--V00\field--X00--Y01\image--L00--S00--U01--V00--J08--E00--O00--X00--Y01--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:14:01 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U01--V01\field--X00--Y00\image--L00--S00--U01--V01--J08--E00--O00--X00--Y00--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:14:03 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U01--V01\field--X01--Y00\image--L00--S00--U01--V01--J08--E00--O00--X01--Y00--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:14:06 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U01--V01\field--X01--Y01\image--L00--S00--U01--V01--J08--E00--O00--X01--Y01--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:14:08 PM	 : >> received from CAM server : /relpath:3.3.0_10134\experiment--2015_01_26_17_13_27\slide--S00\chamber--U01--V01\field--X00--Y01\image--L00--S00--U01--V01--J08--E00--O00--X00--Y01--T00--Z00--C00.ome.tif /jobname:Job 2
+
+ 6:14:09 PM	 : >> received from CAM server : /app:matrix /sys:0 /inf:scanfinished
+
+"movement" experiment done
+
+ 6:15:16 PM	 : << send to CAM server : /cli:embl /app:matrix /cmd:add /tar:camlist /exp:job2 /ext:none /slide:1 /wellx:1 /welly:1 /fieldx:1 /fieldy:1 /dxpos:0 /dypos:0
+
+ 6:15:16 PM	 : >> received from CAM server : Count Of CAM List Objects = 0
+ 6:15:16 PM	 : >> received from CAM server : /cli:embl /app:matrix /cmd:add /tar:camlist /exp:job2 /ext:none /slide:1 /wellx:1 /welly:1 /fieldx:1 /fieldy:1 /dxpos:0 /dypos:0
+
+Count == 0 ?? Adding more gives count 1,2,3... off by one error.
+
+ 6:15:21 PM	 : << send to CAM server : /cli:embl /app:matrix /cmd:startcamscan /runtime:200 /repeattime:20 /foldername:test
+
+  Exception in debugger, foldername is unknown command. Remove it:
+
+ 6:15:21 PM	 : >> received from CAM server : /cli:embl /app:matrix /cmd:startcamscan /runtime:200 /repeattime:20 /foldername:test
+ 6:16:42 PM	 : << send to CAM server : /cli:embl /app:matrix /cmd:startcamscan /runtime:600 /repeattime:60
+
+ 6:16:42 PM	 : >> received from CAM server : /cli:embl /app:matrix /cmd:startcamscan /runtime:600 /repeattime:60
+
+Nothing happens. CAM level 0 stated in LAS AF.
+
+
+++++++++++++ FROM DEBUGGER +++++++++++++++++
+
+
+ Welcome - The Logger for CAM events and more is now is listening ...
+ -------------------------------------------------------------------------------------------------------------------------------------------
+
+ 6:12:54 PM	 : Original Command: /cli:embl /app:matrix /sys:0 /cmd:load /fil:{ScanningTemplate}rotation
+ 6:12:54 PM	 : Client send this: embl
+ 6:12:54 PM	 : Detected Command: eIsLoadScanningtemplateCommand
+ 6:12:54 PM	 : File to load: {ScanningTemplate}rotation
+
+ 6:13:28 PM	 : Original Command: /app:matrix /sys:0 /inf:scanstart
+
+ 6:13:28 PM	 : Client send this:
+ 6:13:28 PM	 : Detected Command: eIsScanCommandToSend
+
+ 6:13:28 PM	 : Original Command: /cli:embl /app:matrix /cmd:startscan
+ 6:13:28 PM	 : Client send this: embl
+ 6:13:28 PM	 : Detected Command: eIsStartScanCommand
+
+ 6:14:09 PM	 : Original Command: /app:matrix /sys:0 /inf:scanfinished
+
+ 6:14:09 PM	 : Client send this:
+ 6:14:09 PM	 : Detected Command: eIsScanCommandToSend
+
+ 6:15:16 PM	 : Original Command: /cli:embl /app:matrix /cmd:add /tar:camlist /exp:job2 /ext:none /slide:1 /wellx:1 /welly:1 /fieldx:1 /fieldy:1 /dxpos:0 /dypos:0
+ 6:15:16 PM	 : Detected Command: eIsAddToCAMListCommand
+ 6:15:16 PM	 : Client send this: embl
+ 6:15:16 PM	 : Experiment: job2
+ 6:15:16 PM	 : Extension: eDoNothing
+ 6:15:16 PM	 : Scanfield [Slide, WellX, WellY, FieldX, FieldY] = [1, 1, 1, 1, 1]
+ 6:15:16 PM	 : Pixel Position [dx, dy] = [0, 0]
+
+ !CAM Exception Detected!
+ -----------------------------------------------------------------------------------------------
+ 6:15:21 PM	 : Original Command: /cli:embl /app:matrix /cmd:startcamscan /runtime:200 /repeattime:20 /foldername:test
+ 6:15:21 PM	 : Client send this:
+ 6:15:21 PM	 : Detected Exception: The CAM command you have sent is invalid and must be rejected! The app you have selected is True! Accepted commands = 5 of 6 !  ... 1 commands can not accepted. Please check your command string!
+
+ 6:16:42 PM	 : Original Command: /cli:embl /app:matrix /cmd:startcamscan /runtime:600 /repeattime:60
+ 6:16:42 PM	 : Client send this: embl
+ 6:16:42 PM	 : Detected Command: eIsStartCAMScanCommand
+ 6:16:42 PM	 : CAM Loop Runtime: 600 s
+ 6:16:42 PM	 : CAM Sub Folder Name:
+ 6:16:42 PM	 : CAM Loop Repeat Time: 60 s
+ 6:16:42 PM	 : CAM Loop Autofocus Interval: 1
+ 6:16:42 PM	 : CAM Loop Tracking Interval: 1
+ 6:16:42 PM	 : CAM Loop Pump Interval: 1
