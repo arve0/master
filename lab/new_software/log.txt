@@ -1,0 +1,5 @@
+514 + pmt ndd 3
+move = 1 sec + aquire
+hangs on socket open
+doesnt save, change filename, then save works
+load works if .xml omitted
