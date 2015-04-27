@@ -53,8 +53,10 @@ To be specific, this thesis will describe method and results for
 
 # Theory
 > ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og innholdet er mer klart.)
+
 ## Tumor stroma
 > ML: Tenker kanskje at biologien kan holdes til introduksjonen, ettersom hovedaspektet av oppgaven er teknisk.)
+
 ## Image Processing
 ## Scanning microscope
 focal volume
