@@ -3,9 +3,9 @@ This thesis will go through a semi-automatic method for collecting microscope im
 
 Pathologists suggest that aggressiveness of a tumor is related to how fiber is aligned at the tumor peripheral. In example straight aligned fibers can be a sign that tumor cells have modified the stroma to promote spreading of cells. The alignment of fibers is a feature which can be extracted by image processing. Since several techniques to extract features is imaginable, supervised machine learning is practical for finding novel approaches.
 
-Results on the dataset was positive/negative.
+Results on the dataset was positive/negative. Details on the result.
 
-A proposal for further research with the same dataset is extracting more features from the images and use equivalent methods to find relationships to the clinic data. IF POSITIVE RESULT: Also since collecting tissue sample is a part of the standard procedure in breast cancer diagnosis at St. Olavs hospital, one can do the analysis described in this thesis to further confirm or falsify the result.
+A proposal for further research with the same dataset is extracting more features from the images and use equivalent methods to find relationships to the clinic data. IF POSITIVE RESULT: Collecting tissue sample is a part of the standard procedure in breast cancer diagnosis at St. Olavs hospital, and one can do the analysis described in this thesis to further confirm or falsify the result.
 
 
 
