@@ -71,14 +71,14 @@ To be specific, this thesis will describe method and results for
 - effective way to scan whole glass slides of 126 samples
 - machine learning and correlation to clinical data
 
--> ML: En hoveddel i arbeidet har vært automatiseringen av TMA. Skrive noe om TMA og hvorfor automatisert analyse er nødvendig...skal lede opp til en beskrivelse av de tekniske utfordringene som er løst.
+> ML: En hoveddel i arbeidet har vært automatiseringen av TMA. Skrive noe om TMA og hvorfor automatisert analyse er nødvendig...skal lede opp til en beskrivelse av de tekniske utfordringene som er løst.
 
 
 # Theory
 
 What to communicate: theory and details that are not obvious for understanding the rest of the text
 
--> ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og innholdet er mer klart.)
+> ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og innholdet er mer klart.)
 
 ## Image Processing
 
@@ -183,7 +183,7 @@ Utilities (not specific thesis):
 - ipynbcompress: compress images in ipython notebooks
 
 
--> ML: Kan også skrive om spesifikke aspekter ved mikroskopsystemet som har muliggjort/begrenset/forhindret løsningene. All programvare som er utviklet bør omtales her, eventuelt med mer detaljer i et appendiks)
+> ML: Kan også skrive om spesifikke aspekter ved mikroskopsystemet som har muliggjort/begrenset/forhindret løsningene. All programvare som er utviklet bør omtales her, eventuelt med mer detaljer i et appendiks)
 
 
 
@@ -191,7 +191,7 @@ Utilities (not specific thesis):
 # Result
 What to communicate: achievements and show-stopper/hard limitations
 
--> ML: Resultat så langt: Kontroll via Python, segmentering, z-correction
+> ML: Resultat så langt: Kontroll via Python, segmentering, z-correction
 
 
 
@@ -200,11 +200,11 @@ What to communicate: achievements and show-stopper/hard limitations
 # Discussion
 What to communicate:
 
--> ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
+> ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
 
 
 
 # Conclusion
 What to communicate: brief summary of the result and discussion, advice for further work
 
--> ML: Automatic imaging and segmentation of TMA has been demonstrated)...and....
+> ML: Automatic imaging and segmentation of TMA has been demonstrated)...and....
