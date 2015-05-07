@@ -1,7 +1,22 @@
 # Abstract
-This thesis will go through a semi-automatic method for collecting microscope images of breast tissue micro arrays and how they can be analyzed for a supplement in breast cancer diagnosis. The overall research goal has been to classify cancer degree (I, II or III: does this classification have a name?) based on the fiber structure in the tissue samples. The analysis method discussed is supervised machine learning, where St. Olavs hospital has supplied a dataset of tissue samples at the tumor peripheral from 924 (TODO update excact number) patients.
 
-Pathologists suggest that aggressiveness of a tumor is related to how fiber is aligned at the tumor peripheral. In example straight aligned fibers can be a sign that tumor cells have modified the stroma to promote spreading of cells. The alignment of fibers is a feature which can be extracted by image processing. Since several techniques to extract features is imaginable, supervised machine learning is practical for finding novel approaches.
+What to communicate: goal, overview of experiences made, results
+
+This thesis documents work on automatic microscope imaging of breast tumor tissue micro arrays and how the images can be analyzed for a supplement in cancer diagnosis. The overall research goal has been to classify tumor grade (I, II or III) based on the fiber structure in the tissue samples. Supervised machine learning is the method of analysis, where St. Olavs hospital has supplied a dataset of tissue samples at the tumor peripheral from 924 (TODO update excact number) patients.
+
+Automated microscope scanning is in principle straight forward, but the implementation will be dependent on many aspects of the experimental setup. In general, some of the aspects discussed in this thesis are:
+
+- correcting for systematic errors like intensity variations
+- create image analysis algorithms that are robust to experimental variations
+- verify that metrics reported by the system are the real physical ones
+- finding good compromises between time, signal quality and ease of measurement
+- scanning mirror- versus stage coordinate system and reliable stitching
+- writing cross-platform software
+
+The general aspects listed above are not unique to the experiments and experimental setup, and could potentially be useful for others. But this thesis will also address issues directly associated to tissue micro arrays and the Leica SP8 microscope:
+
+- adjusting z-plane for large area samples with micrometer precision
+- working around Leica software limitations
 
 Results on the dataset was positive/negative. Details on the result.
 
@@ -18,7 +33,7 @@ With a population just above 5 million [1], three thousand women are diagnosed w
 - ultra sound screening
 - tissue sample(s)
 
-In particular, pathologists
+In particular, pathologists suggest that aggressiveness of a tumor is related to how fiber is aligned at the tumor peripheral. In example straight aligned fibers can be a sign that tumor cells have modified the stroma to promote spreading of cells. The alignment of fibers is a feature which can be extracted by image processing. Since several techniques to extract features is imaginable, supervised machine learning is practical for finding novel approaches.
 
 [1]: https://www.ssb.no/befolkning/statistikker/folkemengde
 [2]: http://www.stolav.no/Pasient/Pasientforlop/Pasientforlop/Kreftsykdommer/Behandling-av-brystkreft/130731/
@@ -53,11 +68,12 @@ To be specific, this thesis will describe method and results for
 - effective way to scan whole glass slides of 126 samples
 - machine learning and correlation to clinical data
 
-
+-> ML: En hoveddel i arbeidet har vært automatiseringen av TMA. Skrive noe om TMA og hvorfor automatisert analyse er nødvendig...skal lede opp til en beskrivelse av de tekniske utfordringene som er løst.
 
 
 # Theory
-## Tumor stroma
+-> ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og innholdet er mer klart.)
+
 ## Image Processing
 
 ORB and Ransac [1]
@@ -76,20 +92,33 @@ focal volume
 - finding tissues in micro array
 - correlation with patient data (sample map and clinic data)
 
+## Technical details
+### Hardware obstacles
+- z-plane off by several hundreds of micrometer
+  - piezo-holder was tilted
+  - samples not necessarily straight, coverslip placement
+  - too much tilt: out of focus in one image
+  - tolerated tilt: stitching
+-
+
+### Leica software limitations
+The microscope software in use was Leica LAS X version TODO.
+-> ML: Kan også skrive om spesifikke aspekter ved mikroskopsystemet som har muliggjort/begrenset/forhindret løsningene. All programvare som er utviklet bør omtales her, eventuelt med mer detaljer i et appendiks)
 
 
 
 
 # Result
-
+-> ML: Resultat så langt: Kontroll via Python, segmentering, z-correction
 
 
 
 
 
 # Discussion
-
+-> ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
 
 
 
 # Conclusion
+-> ML: Automatic imaging and segmentation of TMA has been demonstrated)...and....
