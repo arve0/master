@@ -93,16 +93,87 @@ focal volume
 - correlation with patient data (sample map and clinic data)
 
 ## Technical details
-### Hardware obstacles
+### Hardware aspects
 - z-plane off by several hundreds of micrometer
   - piezo-holder was tilted
   - samples not necessarily straight, coverslip placement
   - too much tilt: out of focus in one image
-  - tolerated tilt: stitching
--
+  - tolerated tilt and software autofocus: stitching when edge not from same physical area (especially thick samples)
+- signal variations and chosen optimum
+  - collector 0.55 vs 0.9 when overview vs SHG
+  - aperture not adjustable from software, resets when using occular
+  - hard to get same conditions every time (might move to discussion: suggest using test sample routine along with image analysis)
+- rotation scanning mirror
+  - stitch
+  - finding angle with image registration / phase correlation
+- edge of image, intensity variation
+  - zoom
+  - correction for overview vs SHG
+- HyD shutdown too much light
+  - HyD behind mirror might get less light, but still good signal
+  - pinhole adjustment for HyD behind mirror to avoid bright spots?
+- reported resolution from LAS not same as stage movement
+  - use image registration to calculate px-resolution
+  - calibration of measurement-equiptment
+  - what measurement to trust
+- outage and service
+  - logging, feedback and communication between researchers
+  - service contracts
 
-### Leica software limitations
+
+
+### Leica software details
 The microscope software in use was Leica LAS X version TODO.
+
+- loading template with variable positioned wells not working
+  - offset first well will offset all wells
+  - Properties/XStartPosition not used
+  - no "template-type" property
+  - must be loaded in GUI first time
+    - through CAM opens GUI dialog "Import?"
+- CAM only available after manually loading a template in GUI
+  - GUI automation
+- loading modified template with same name
+- loading templates automatic goes to position and changes objective
+  - crashes possible
+  - trouble if using imersion objective
+- switching between AF / job in GUI will automatically switch objective without warning
+  - trouble if using imersion objective
+- mix of 0-indexed and 1-index variables
+  - files 0 indexed
+  - cam 1 indexed
+  - xml 1 indexed (TODO: verify)
+- GUI hangs if socket is not read
+- loading template should omit .xml from filename
+  - saving template should not
+  - not noted in documentation
+  - "templ.xml.xml not found"
+- save template does not update with latest changes in GUI
+- XML does not read when missing return char "\r"
+  - not in XML specification
+- z-position in template not read
+- z-position from CAM sometimes gives "0" instead of real position
+- adjusting x/y-coordinate on USB-control panel moves stage to zero or max position
+
+### Software development
+- Separate of concerns
+  - modules and code reuse
+  - publication of software packages and python ecosystem
+- leicacam: talking with microscope
+- leicascanningtemplate: modify templates
+- leicaexperiment: read, stitch, ome.tif experiments
+- microscopestitching: reliable stitching with phase corralation (remove outliers vs median)
+- leicaautomator: find regions to scan, unifies all of the above
+- python cross platform and compilation
+  - heavy c/c++ dependency
+  - miniconda
+  - wheel packages
+
+Utilities (not specific thesis):
+- fijibin: automate fiji/imagej from python
+- ipynbcompress: compress images in ipython notebooks
+
+
 -> ML: Kan også skrive om spesifikke aspekter ved mikroskopsystemet som har muliggjort/begrenset/forhindret løsningene. All programvare som er utviklet bør omtales her, eventuelt med mer detaljer i et appendiks)
 
 
