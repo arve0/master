@@ -190,6 +190,7 @@ Utilities (not specific thesis):
 
 # Result
 What to communicate: achievements and show-stopper/hard limitations
+
 -> ML: Resultat så langt: Kontroll via Python, segmentering, z-correction
 
 
@@ -198,10 +199,12 @@ What to communicate: achievements and show-stopper/hard limitations
 
 # Discussion
 What to communicate:
+
 -> ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
 
 
 
 # Conclusion
 What to communicate: brief summary of the result and discussion, advice for further work
+
 -> ML: Automatic imaging and segmentation of TMA has been demonstrated)...and....
