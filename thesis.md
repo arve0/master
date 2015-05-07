@@ -27,6 +27,9 @@ A proposal for further research with the same dataset is extracting more feature
 
 
 # Introduction
+
+What to communicate: motivation, brief summary of chapters
+
 With a population just above 5 million [1], three thousand women are diagnosed with breast cancer each year [2] in Norway. This makes breast cancer the most common kind of cancer, affecting one of every eleventh woman. Luckily the cancer form is often treatable, and in 2012 there was 649 fatalities caused by breast cancer [3]. The diagnosis is an act of several steps, and currently contains the following at St. Olavs hospital:
 
 - x-ray mammography
@@ -72,6 +75,9 @@ To be specific, this thesis will describe method and results for
 
 
 # Theory
+
+What to communicate: theory and details that are not obvious for understanding the rest of the text
+
 -> ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og innholdet er mer klart.)
 
 ## Image Processing
@@ -87,6 +93,9 @@ focal volume
 
 
 # Method
+
+What to communicate: experimental setup to reproduce results, limitations/obstacles specific to our experimental setup, brief description of software modules in use
+
 ## Collection of SHG images
 - alignment of z-plane
 - finding tissues in micro array
@@ -180,6 +189,7 @@ Utilities (not specific thesis):
 
 
 # Result
+What to communicate: achievements and show-stopper/hard limitations
 -> ML: Resultat så langt: Kontroll via Python, segmentering, z-correction
 
 
@@ -187,9 +197,11 @@ Utilities (not specific thesis):
 
 
 # Discussion
+What to communicate:
 -> ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
 
 
 
 # Conclusion
+What to communicate: brief summary of the result and discussion, advice for further work
 -> ML: Automatic imaging and segmentation of TMA has been demonstrated)...and....
