@@ -198,7 +198,7 @@ What to communicate: achievements and show-stopper/hard limitations
 
 
 # Discussion
-What to communicate:
+What to communicate: discuss results, limitations, possibilities for improvement
 
 > ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
 
