@@ -94,7 +94,35 @@ focal volume
 
 # Method
 
-What to communicate: experimental setup to reproduce results, limitations/obstacles specific to our experimental setup, brief description of software modules in use
+What to communicate: experimental setup to reproduce results, description of automatic process, limitations/obstacles specific to our experimental setup, brief description of software modules in use
+
+## Microscope
+The images has been taken with a Leica SP8 microscope using LAS X software version TODO. Three lasers has been in use, for SHG the Coherent at 890 nanometers with power adjusted so that damage to the sample was prevented ($\approx$ 1950 mW reported output power, intensity 20, gain 40, offset 80)
+
+| Brand    | Model              | Type                   | Wavelength [nm] | Power [mW] | Details |
+| -------- | ------------------ | ---------------------- | --------------- | ---------- | ------- |
+| Coherent | Chameleon Vision-S | Modelocked Ti:Sapphire | 690-1050        | 2500       | 80 MHz pulsing, $\approx$ 75 ps pulse width |
+|          |                    | Argon Continious wave  | 458, 476, 488, 496 and 514 | 65mW | |
+|          |                    | White light laser      | 470-670         | 1.5        | Variable pulsing up to 80 MHz, $\approx$ 200 ps pulse width |
+|          |                    |                        | 405 | 3 | 5, 10, 20 or 40 MHz pulsing, < 70 ps pulse width |
+
+## Automated scanning
+
+Communicate: the procedure of automatic scanning
+
+The automated scanning aims to lift the burden of manually labor and prevent errors in the imaging process by finding regions with the samples in an overview image. Overview images was taken with a low magnification 10x air objective, filtered and stitched. The filtering tries to remove signal variations to improve segmentation later on. The further improve segmentation, the stitched image was filtered with a local entropy filter. Each separate segmented region are sorted by their area size, small regions are excluded and the user can exclude or add regions if some of the samples are not detected. Row and column position of the regions are calculated by sorting them by their position in the image. The pixel size was calculated from the overlap in the stitching process and the physical position from image-metadata. A more details description follows, which also includes some of the obstacles which has led to the design of this automated process.
+
+### Image variations
+To avoid uneven illumination, overview images was filtered to remove this variation.
+
+![Caption..](figures/uneven_illumination.png)
+
+
+
+
+
+
+
 
 ## Collection of SHG images
 - alignment of z-plane
