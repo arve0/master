@@ -1,0 +1,43 @@
+\documentclass[pdftex,10pt,b5paper,twoside]{book}
+\usepackage[lmargin=25mm,rmargin=25mm,tmargin=27mm,bmargin=30mm]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage[Lenny]{fncychap}
+\usepackage[pdftex,bookmarks=true]{hyperref}
+\usepackage[pdftex]{hyperref}
+\hypersetup{
+    colorlinks,%
+    citecolor=black,%
+    filecolor=black,%
+    linkcolor=black,%
+    urlcolor=black
+}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{fancyhdr}
+\usepackage{times}
+\usepackage{natbib}
+\usepackage{float}
+\restylefloat{figure}
+
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[LE,RO]{\thepage}\renewcommand{\headrulewidth}{0ex}}
+
+
+\begin{document}
+
+\hypersetup{linkcolor=black}
+\setcounter{tocdepth}{$toc-depth$}
+\tableofcontents
+
+
+$body$
+
+
+\end{document}
