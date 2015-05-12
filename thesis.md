@@ -126,7 +126,7 @@ Overview images was taken with a 10x air objective, equalized and stitched. The 
 ### Overview images
 
 #### Uneven illumination
-![Uneven illumination...](figures/uneven_illumination_images.png) {#fig:illumination}
+![(a) Image of glass slide only and no tissue. Dots are impurities in the sample. (b) Original image of sample. The white line is the row with least variance used for equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are displaying values from 130 to 230 to highlight the intensity variation, colorbar is shown to the right.](figures/uneven_illumination_images.png) {#fig:illumination}
 
 Figure \ref{fig:illumination} (a) demonstrates the experienced illumination in our experimental setup. Assuming the intensity variation in all pixels are following the slope of the background, filtering was done by dividing each row in the image by the normalized intensity profile of the background.
 
@@ -145,7 +145,7 @@ ef{fig:illumination}_intensities (a).
 The effect on pixel values can be seen in figure
 ef{fig:illumination}_intensities (b) and (c), where each dot represents a pixel value with increasing x-position on the x-axis.
 
-![Equalize intensities...](figures/uneven_illumination_intensities.png) {#fig:illumination_intensities}
+![(a) Intensities for the line with least variance of figure \ref{fig:illumination} (b). The curve is fitted to a second degree polynom to supress noise. (b) Intensities for image in figure \ref{fig:illumination} (b). Each dot represents a pixel. (c) Intensities for the equalized image in figure \ref{fig:illumination} (c). Each dot represents a pixel. Note that the intensities is both spread across the whole intensity range (0-255) and the skewness is fairly straightened out.](figures/uneven_illumination_intensities.png) {#fig:illumination_intensities}
 
 #### Stitching
 ![(a) Automatic stitching with Fiji is unreliable, as the image translation calculated by phase correlation is chosen without displacement constraints. (b) Using same overlap for all images gives negliable errors, here using the python package microscopestitching.](figures/stitching_comparison.png) {#fig:stitching}
