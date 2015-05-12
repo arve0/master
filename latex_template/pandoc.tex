@@ -61,6 +61,12 @@ $endif$
 $endif$
 $if(listings)$
 \usepackage{listings}
+\lstset{
+basicstyle=\footnotesize\ttfamily,
+xleftmargin=1cm,
+xrightmargin=1cm,
+basewidth=0.5em
+}
 $endif$
 $if(lhs)$
 \lstnewenvironment{code}{\lstset{language=Haskell,basicstyle=\small\ttfamily}}{}
