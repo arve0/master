@@ -1,3 +1,7 @@
+---
+figPrefix: ''
+---
+
 # Abstract
 
 What to communicate: goal, overview of experiences made, results
@@ -110,17 +114,61 @@ The images has been taken with a Leica SP8 microscope using LAS X software versi
 
 Communicate: the procedure of automatic scanning
 
-The automated scanning aims to lift the burden of manually labor and prevent errors in the imaging process by finding regions with the samples in an overview image. Overview images was taken with a low magnification 10x air objective, filtered and stitched. The filtering tries to remove signal variations to improve segmentation later on. The further improve segmentation, the stitched image was filtered with a local entropy filter. Each separate segmented region are sorted by their area size, small regions are excluded and the user can exclude or add regions if some of the samples are not detected. Row and column position of the regions are calculated by sorting them by their position in the image. The pixel size was calculated from the overlap in the stitching process and the physical position from image-metadata. A more details description follows, which also includes some of the obstacles which has led to the design of this automated process.
+The automated scanning aims to lift the burden of manually labor and prevent errors in the imaging process by finding regions with the samples in an overview image. The process consists roughly of the steps:
 
-### Image variations
-To avoid uneven illumination, overview images was filtered to remove this variation.
+- Take an overview image with low magnification
+- Segment the overview image
+- Allow user to confirm or adjust the segmentation
+- Scan each region
 
-![Caption..](figures/uneven_illumination.png)
+Overview images was taken with a 10x air objective, equalized and stitched. The equalization step corrects uneven illumination and increases contrast. To improve robustness of segmentation, a local bilateral population filter was applied to the stitched image before it is thresholded. Each separate region in the segmentation are sorted by their area size, small regions are excluded and the user can exclude or add regions if some of the samples are not detected. Row and column position of the regions are calculated by sorting them by their position in the image. A more detailed description follows.
 
+### Overview images
 
+#### Uneven illumination
+![Uneven illumination...](figures/uneven_illumination_images.png) {#fig:illumination}
 
+Figure \ref{fig:illumination} (a) demonstrates the experienced illumination in our experimental setup. Assuming the intensity variation in all pixels are following the slope of the background, filtering was done by dividing each row in the image by the normalized intensity profile of the background.
 
+``` {caption="Equalizing an image" label=code:equalize .python}
+equalized = imread(p1).astype(np.float) # assure datatype have real division ability
+equalized -= images_minimum             # normalize
+equalized /= images_maximum - images_minimum
+equalized /= intensity_profile          # equalize
+equalized[equalized > 1] = 1            # clip values
+```
 
+As seen in code listing \ref{code:equalize} the image is first normalized. `images_minimum` and `images_maximum` is found by selecting the median of respectively minimum and maximum intensity of all images. By taking the median of all images one avoids outliers and gets the same normalization for all images. Similar technique could be used for normalizing the images after equalization, but clipping gave acceptable results. The variable `intensity_profile` is a curve fit for one of the background rows, which can be found by selecting the row with least variance (given the image does have a row with background only). Figure
+ef{fig:illumination} (b) indicate the row with least variance with a white line. The same intensity profile is used on all images, and it is fitted to a second degree polynomial to steer clear from noise as illustrated in
+ef{fig:illumination}_intensities (a).
+
+The effect on pixel values can be seen in figure
+ef{fig:illumination}_intensities (b) and (c), where each dot represents a pixel value with increasing x-position on the x-axis.
+
+![Equalize intensities...](figures/uneven_illumination_intensities.png) {#fig:illumination_intensities}
+
+#### Stitching
+![(a) Automatic stitching with Fiji is unreliable, as the image translation calculated by phase correlation is chosen without displacement constraints. (b) Using same overlap for all images gives negliable errors, here using the python package microscopestitching.](figures/stitching_comparison.png) {#fig:stitching}
+
+Due to little signal in areas between samples, automatic stitching with correlation methods are prone to fail. To remedy this, the same overlap was chosen when stitching the overview image. Using the same overlap in this context gives reliable stitching with negligible errors. The overlap is chosen by calculating all overlaps with phase correlation and taking the median. The stitching was put in a python package and can be used as shown in code listing \ref{code:stitch}.
+
+``` {caption="Stitching images with the python package microscopestitching." label=code:stitch .python}
+from microscopestitching import stitch
+from glob import glob
+
+files = glob('path/to/images/*')
+images = []
+i = 0
+for file in files:
+    # rectangle of 4 rows and len(files)//4 columns
+    row = i % 4
+    column = i // 4
+    images.append((file, row, column))
+
+stitched_image = stitch(images)
+```
+
+#### Segmentation
 
 
 
@@ -218,6 +266,9 @@ Utilities (not specific thesis):
 
 # Result
 What to communicate: achievements and show-stopper/hard limitations
+
+## Segmentation
+![Comparison of thresholding](figures/thresholding.png)
 
 > ML: Resultat så langt: Kontroll via Python, segmentering, z-correction
 
