@@ -98,17 +98,30 @@ focal volume
 
 # Method
 
-What to communicate: experimental setup to reproduce results, description of automatic process, limitations/obstacles specific to our experimental setup, brief description of software modules in use
+What to communicate: experimental setup to reproduce results, description of automatic process, limitations/obstacles specific to experimental setup, brief description of software modules in use
 
 ## Microscope
 The images has been taken with a Leica SP8 microscope using LAS X software version TODO. Three lasers has been in use, for SHG the Coherent at 890 nanometers with power adjusted so that damage to the sample was prevented ($\approx$ 1950 mW reported output power, intensity 20, gain 40, offset 80)
 
-| Brand    | Model              | Type                   | Wavelength [nm] | Power [mW] | Details |
-| -------- | ------------------ | ---------------------- | --------------- | ---------- | ------- |
-| Coherent | Chameleon Vision-S | Modelocked Ti:Sapphire | 690-1050        | 2500       | 80 MHz pulsing, $\approx$ 75 ps pulse width |
-|          |                    | Argon Continious wave  | 458, 476, 488, 496 and 514 | 65mW | |
-|          |                    | White light laser      | 470-670         | 1.5        | Variable pulsing up to 80 MHz, $\approx$ 200 ps pulse width |
-|          |                    |                        | 405 | 3 | 5, 10, 20 or 40 MHz pulsing, < 70 ps pulse width |
+
++----------+--------------------+--------------------------------------------+
+| Brand    | Model              | Specifications                             |
++==========+====================+============================================+
+| Coherent | Chameleon Vision-S | Modelocked Ti:Sapphire,                    |
+|          |                    | wavelengths 690-1050 nm,                   |
+|          |                    | 2500 mW,                                   |
+|          |                    | 80 MHz pulsing,                            |
+|          |                    | $\approx$ 75 ps pulse width                |
++----------+--------------------+--------------------------------------------+
+| LASOS    | LGK 7872 ML05      | Argon Continious wave,                     |
+|          |                    | wavelengths 458, 476, 488, 496 and 514 nm, |
+|          |                    | 65mW                                       |
++----------+--------------------+--------------------------------------------+
+
+: Lasers {#tbl:lasers}
+
+
+
 
 ## Automated scanning
 
@@ -121,31 +134,30 @@ The automated scanning aims to lift the burden of manually labor and prevent err
 - Allow user to confirm or adjust the segmentation
 - Scan each region
 
-Overview images was taken with a 10x air objective, equalized and stitched. The equalization step corrects uneven illumination and increases contrast. To improve robustness of segmentation, a local bilateral population filter was applied to the stitched image before it is thresholded. Each separate region in the segmentation are sorted by their area size, small regions are excluded and the user can exclude or add regions if some of the samples are not detected. Row and column position of the regions are calculated by sorting them by their position in the image. A more detailed description follows.
+Overview images was taken with a 10x air objective, equalized and stitched. The equalization step corrects uneven illumination and increases contrast for viewing purposes. To improve robustness of segmentation, a local bilateral population filter was applied to the stitched image before it is thresholded. Each separate region in the segmentation are sorted by their area size, small regions are excluded and the user can exclude or add regions if some of the samples are not detected. Row and column position of the regions are calculated by sorting them by their position in the image. A more detailed description follows.
 
 ### Overview images
+Overview images was taken with the argon laser in table \ref{tbl:lasers} with output power set to 2.48% and intensity to 0.10. The detector in use was
+
 
 #### Uneven illumination
-![(a) Image of glass slide only and no tissue. Dots are impurities in the sample. (b) Original image of sample. The white line is the row with least variance used for equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are displaying values from 130 to 230 to highlight the intensity variation, colorbar is shown to the right.](figures/uneven_illumination_images.png) {#fig:illumination}
+![(a) Image of glass slide only and no tissue for illustrating the uneven illumination. Dots are impurities in the sample. (b) Original image of sample. The white line is the row with least variance used for equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are displaying values from 130 to 230 to highlight the intensity variation, colorbar is shown to the right.](figures/uneven_illumination_images.png) {#fig:illumination}
 
-Figure \ref{fig:illumination} (a) demonstrates the experienced illumination in our experimental setup. Assuming the intensity variation in all pixels are following the slope of the background, filtering was done by dividing each row in the image by the normalized intensity profile of the background.
+The uneven illumination in the experimental setup is illustrated in figure \ref{fig:illumination}(a). By assuming the intensity variation in all pixels are following the slope of the background, equalization was done by dividing each row in the image by the normalized intensity profile of the background.
 
 ``` {caption="Equalizing an image" label=code:equalize .python}
-equalized = imread(p1).astype(np.float) # assure datatype have real division ability
+equalized = img.astype(np.float)        # assure datatype have real division ability
 equalized -= images_minimum             # normalize
 equalized /= images_maximum - images_minimum
 equalized /= intensity_profile          # equalize
 equalized[equalized > 1] = 1            # clip values
 ```
 
-As seen in code listing \ref{code:equalize} the image is first normalized. `images_minimum` and `images_maximum` is found by selecting the median of respectively minimum and maximum intensity of all images. By taking the median of all images one avoids outliers and gets the same normalization for all images. Similar technique could be used for normalizing the images after equalization, but clipping gave acceptable results. The variable `intensity_profile` is a curve fit for one of the background rows, which can be found by selecting the row with least variance (given the image does have a row with background only). Figure
-ef{fig:illumination} (b) indicate the row with least variance with a white line. The same intensity profile is used on all images, and it is fitted to a second degree polynomial to steer clear from noise as illustrated in
-ef{fig:illumination}_intensities (a).
+As seen in code listing \ref{code:equalize} the image is first normalized. `images_minimum` and `images_maximum` is found by selecting the median of respectively minimum and maximum intensity of all images. By taking the median of all images one avoids outliers and gets the same normalization for all images. Similar technique could be used for normalizing the images after equalization, but clipping gave acceptable results. `intensity_profile` is a curve fit for one of the background rows. The background row was found by selecting the row with least variance (given that the image does have a row with background only). In figure \ref{fig:illumination}(b) the row with least variance is indicated with a white line. The same intensity profile is used on all images, and it's fitted to a second degree polynomial to steer clear from noise as illustrated in \ref{fig:illumination_intensities}(a).
 
-The effect on pixel values can be seen in figure
-ef{fig:illumination}_intensities (b) and (c), where each dot represents a pixel value with increasing x-position on the x-axis.
+The effect on pixel values can be seen in figure \ref{fig:illumination}_intensities (b) and (c), where each dot represents a pixel value with increasing image x-position on the x-axis.
 
-![(a) Intensities for the line with least variance of figure \ref{fig:illumination} (b). The curve is fitted to a second degree polynom to supress noise. (b) Intensities for image in figure \ref{fig:illumination} (b). Each dot represents a pixel. (c) Intensities for the equalized image in figure \ref{fig:illumination} (c). Each dot represents a pixel. Note that the intensities is both spread across the whole intensity range (0-255) and the skewness is fairly straightened out.](figures/uneven_illumination_intensities.png) {#fig:illumination_intensities}
+![(a) Intensities for the line with least variance of figure \ref{fig:illumination}(b). The curve is fitted to a second degree polynom to supress noise. (b) Intensities for image in figure \ref{fig:illumination}(b). Each dot represents a pixel. (c) Intensities for the equalized image in figure \ref{fig:illumination}(c). Each dot represents a pixel. Note that the intensities is both spread across the whole intensity range (0-255) and the skewness is fairly straightened out.](figures/uneven_illumination_intensities.png) {#fig:illumination_intensities}
 
 #### Stitching
 ![(a) Automatic stitching with Fiji is unreliable, as the image translation calculated by phase correlation is chosen without displacement constraints. (b) Using same overlap for all images gives negliable errors, here using the python package microscopestitching.](figures/stitching_comparison.png) {#fig:stitching}
@@ -158,8 +170,7 @@ from glob import glob
 
 files = glob('path/to/images/*')
 images = []
-i = 0
-for file in files:
+for i, file in enumerate(files):
     # rectangle of 4 rows and len(files)//4 columns
     row = i % 4
     column = i // 4
@@ -169,7 +180,7 @@ stitched_image = stitch(images)
 ```
 
 #### Segmentation
-
+As seen in figure \ref{fig:stitching}(b), the absorption
 
 
 ## Collection of SHG images
