@@ -85,10 +85,15 @@ What to communicate: theory and details that are not obvious for understanding t
 > ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og innholdet er mer klart.)
 
 ## Image Processing
+- scikit-image, utils.ipynb, defaults in code blocks
+
 
 ORB and Ransac [1]
 [1]: https://peerj.com/articles/453/#p-1
 ## Scanning microscope
+- Epi setup
+- scanning, descanned detectors
+
 focal volume
 ## Nonlinear light interaction
 
@@ -101,13 +106,12 @@ focal volume
 What to communicate: experimental setup to reproduce results, description of automatic process, limitations/obstacles specific to experimental setup, brief description of software modules in use
 
 ## Microscope
-The images has been taken with a Leica SP8 microscope using LAS X software version TODO. Three lasers has been in use, for SHG the Coherent at 890 nanometers with power adjusted so that damage to the sample was prevented ($\approx$ 1950 mW reported output power, intensity 20, gain 40, offset 80)
-
+The images has been taken with a Leica SP8 microscope using LAS X software version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a pulsing Coherent laser and a continious argon laser. Full specifications of lasers are in table \ref{tbl:lasers}.
 
 +----------+--------------------+--------------------------------------------+
 | Brand    | Model              | Specifications                             |
 +==========+====================+============================================+
-| Coherent | Chameleon Vision-S | Modelocked Ti:Sapphire,                    |
+| Coherent | Chameleon Vision-S | Modelocked Ti:Sapphire,                    |
 |          |                    | wavelengths 690-1050 nm,                   |
 |          |                    | 2500 mW,                                   |
 |          |                    | 80 MHz pulsing,                            |
@@ -120,7 +124,7 @@ The images has been taken with a Leica SP8 microscope using LAS X software versi
 
 : Lasers {#tbl:lasers}
 
-
+The SP8 microscope has an inverted epi-setup, with four descanned detectors and four non descanned detectors. The descanned detectors use a prism along with adjustable mirrors so that specific wavelengths can be picked out in the signal, ranging from TODO. The descanned detectors was used with band pass filters of 525 $\Delta$ 50 nm and 445 $\Delta$ 20 nm. Two of the descanned detectors are detecting forward light through a collector instead of backward light through the objective.
 
 
 ## Automated scanning
@@ -137,8 +141,9 @@ The automated scanning aims to lift the burden of manually labor and prevent err
 Overview images was taken with a 10x air objective, equalized and stitched. The equalization step corrects uneven illumination and increases contrast for viewing purposes. To improve robustness of segmentation, a local bilateral population filter was applied to the stitched image before it is thresholded. Each separate region in the segmentation are sorted by their area size, small regions are excluded and the user can exclude or add regions if some of the samples are not detected. Row and column position of the regions are calculated by sorting them by their position in the image. A more detailed description follows.
 
 ### Overview images
-Overview images was taken with the argon laser in table \ref{tbl:lasers} with output power set to 2.48% and intensity to 0.10. The detector in use was
+Overview images was taken with an technique similar to bright-field microscopy except that the light source is a scanning laser. The laser in use was the argon laser in table \ref{tbl:lasers} with 514 nm emission line, output power set to 2.48% and intensity to 0.10. Forward light was imaged using a 0.55 NA air collector with the non descanned detector having the 525/50 nm bandpass filter. Aperture and detector gain was adjusted so that the histogram of intensities was in the center of the total range without getting peaks at minimum and maximum values.
 
+Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500 $\mu$m (read more about resolution and image size in the discussion).
 
 #### Uneven illumination
 ![(a) Image of glass slide only and no tissue for illustrating the uneven illumination. Dots are impurities in the sample. (b) Original image of sample. The white line is the row with least variance used for equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are displaying values from 130 to 230 to highlight the intensity variation, colorbar is shown to the right.](figures/uneven_illumination_images.png) {#fig:illumination}
@@ -160,11 +165,11 @@ The effect on pixel values can be seen in figure \ref{fig:illumination}_intensit
 ![(a) Intensities for the line with least variance of figure \ref{fig:illumination}(b). The curve is fitted to a second degree polynom to supress noise. (b) Intensities for image in figure \ref{fig:illumination}(b). Each dot represents a pixel. (c) Intensities for the equalized image in figure \ref{fig:illumination}(c). Each dot represents a pixel. Note that the intensities is both spread across the whole intensity range (0-255) and the skewness is fairly straightened out.](figures/uneven_illumination_intensities.png) {#fig:illumination_intensities}
 
 #### Stitching
-![(a) Automatic stitching with Fiji is unreliable, as the image translation calculated by phase correlation is chosen without displacement constraints. (b) Using same overlap for all images gives negliable errors, here using the python package microscopestitching.](figures/stitching_comparison.png) {#fig:stitching}
+![(a) Automatic stitching with Fiji is unreliable, as the image translation calculated by phase correlation is chosen without displacement constraints. (b) Using same overlap for all images gives negliable errors, here using the python package *microscopestitching*.](figures/stitching_comparison.png) {#fig:stitching}
 
 Due to little signal in areas between samples, automatic stitching with correlation methods are prone to fail. To remedy this, the same overlap was chosen when stitching the overview image. Using the same overlap in this context gives reliable stitching with negligible errors. The overlap is chosen by calculating all overlaps with phase correlation and taking the median. The stitching was put in a python package and can be used as shown in code listing \ref{code:stitch}.
 
-``` {caption="Stitching images with the python package microscopestitching." label=code:stitch .python}
+``` {caption="Stitching images with the python package *microscopestitching*." label=code:stitch .python}
 from microscopestitching import stitch
 from glob import glob
 
@@ -180,7 +185,26 @@ stitched_image = stitch(images)
 ```
 
 #### Segmentation
-As seen in figure \ref{fig:stitching}(b), the absorption
+![Otsu thresholding of figure \ref{fig:stitching}(b). (a) Otsu thresholding applied without any filters. Picks out dark areas, but disjointed, especially for brighter sample spots in bottom left. (b) Thresholding after a local bilateral population filter. Quite noisy in the background. (c) Thresholding after local bilateral population and local mean filter. Background noise is gone and sample spots are coherent.](figures/segmentation.png) {#fig:segmentation}
+
+As seen in figure \ref{fig:stitching}(b), the samples at the edge are darker than the samples in the center. To improve this intensity variation, the overview image is filtered with a local bilateral population filter. The filter counts number of neighbour pixels that are within a specified range. The effect of the filter is somewhat similar to an entropy filter (though converse), and less computational demanding. Areas with low signal variation (the background) gives high values and areas with high signal variation gives low values (the samples). To reduce noise after the bilateral population filter, a mean filter was applied. The size of structure elements was 9x9 pixels for both filters. Figure \ref{fig:segmentation}(a), (b) and (c) show how the segmentation is affected by the filters. Code for reproducing the steps are in code listing \ref{code:segmentation}.
+
+``` {caption="Filter and segment an image with local bilateral population and Otsu thresholding." label=code:segmentation .python}
+from skimage.morphology import square
+from skimage.filters import threshold_otsu
+from skimage.filters.rank import mean, pop_bilateral
+
+selem = square(9)
+filtered = pop_bilateral(image, selem)
+filtered = mean(filtered, selem)
+
+threshold = threshold_otsu(filtered)
+segmented = filtered < threshold # low values indicate signal
+```
+
+After segmentation, regions are sorted by their area size and only the largest regions are kept. Row and column of regions is calculated by measuring the distance to closest region and increment row or column number when there is a peak in the position derivative.
+
+![(a) Regions sorted by position. There is a gap between the positions when row and columns are increasing. (b) Distance to closest region. 14 peaks indicate that the image contain 15 columns.](figures/row_column.png)
 
 
 ## Collection of SHG images
