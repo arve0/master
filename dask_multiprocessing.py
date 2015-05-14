@@ -113,18 +113,36 @@ t2 = time()
 print(t2-t1)
 
 # In[10]:
+from multiprocessing import Pool
 
 def f(img):
     selem = square(9)
     return mean(img, selem)
+
+# lets be silly and just chop it
+y,x = img.shape
+chunks = (img[:y//2, :x//2], img[:y//2, x//2:],
+          img[y//2:, :x//2], img[y//2:, x//2:])
+
+
+t1 = time()
+with Pool(4) as p:
+    p.map(f, chunks)
+t2 = time()
+print(t2-t1)
+
 
 
 import dask
 from dask.multiprocessing import get as mpget
 dask.set_options(get=mpget)
 
+
 t1 = time()
-da_res = apply_chunks(f, img, depth=selem.shape[0]//2, extra_arguments=(selem,))
+try:
+    da_res = apply_chunks(f, img, depth=selem.shape[0]//2)
+except Exception as e:
+    print('dask failed', e)
 t2 = time()
 
 print(t2-t1)
