@@ -106,7 +106,7 @@ focal volume
 What to communicate: experimental setup to reproduce results, description of automatic process, limitations/obstacles specific to experimental setup, brief description of software modules in use
 
 ## Microscope
-The images has been taken with a Leica SP8 microscope using LAS X software version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a pulsing Coherent laser and a continious argon laser. Full specifications of lasers are in table \ref{tbl:lasers}.
+The images has been taken with a Leica SP8 microscope using LAS X software version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a pulsing Coherent laser and a continious LASOS argon laser. Full specifications of lasers are in table \ref{tbl:lasers}.
 
 +----------+--------------------+--------------------------------------------+
 | Brand    | Model              | Specifications                             |
@@ -124,7 +124,7 @@ The images has been taken with a Leica SP8 microscope using LAS X software versi
 
 : Lasers {#tbl:lasers}
 
-The SP8 microscope has an inverted epi-setup, with four descanned detectors and four non descanned detectors. The descanned detectors use a prism along with adjustable mirrors so that specific wavelengths can be picked out in the signal, ranging from TODO. The descanned detectors was used with band pass filters of 525 $\Delta$ 50 nm and 445 $\Delta$ 20 nm. Two of the descanned detectors are detecting forward light through a collector instead of backward light through the objective.
+The SP8 microscope has an inverted epi-setup, with four descanned detectors and four non descanned detectors. The descanned detectors use a prism along with adjustable mirrors so that specific wavelengths can be picked out in the signal, ranging from TODO. The descanned detectors was used with band pass filters of 525/50 nm and 445/20 nm. Two of the descanned detectors are behind the objective and two on opposite side of the objective behind a collector, which makes it possible to measure both backward and forward light.
 
 
 ## Automated scanning
@@ -202,9 +202,41 @@ threshold = threshold_otsu(filtered)
 segmented = filtered < threshold # low values indicate signal
 ```
 
-After segmentation, regions are sorted by their area size and only the largest regions are kept. Row and column of regions is calculated by measuring the distance to closest region and increment row or column number when there is a peak in the position derivative.
+After segmentation, regions are sorted by their area size and only the largest regions are kept. Row and column was calculated by sorting regions by position, measuring the distance between them and increment row or column number when there is a peak in the distance to previous region. The code can be seen in code listing \ref{code:regions} and figure \ref{fig:regions} illustrate typical area size, position and position derivative.
 
-![(a) Regions sorted by position. There is a gap between the positions when row and columns are increasing. (b) Distance to closest region. 14 peaks indicate that the image contain 15 columns.](figures/row_column.png)
+![(a) Sorted region areas. Area size drops dramatically around region 125 according to number of samples on slide. (b) Regions sorted by position. There is a gap between the positions when row and columns are increasing. (c) X distance to previous region when regions are sorted by x-position. 14 peaks indicate that the image contain 15 columns. Note that x-axes in (a), (b) and (c) doesn't correspond, as the graphs are not sorted by the same attribute.](figures/regions_area_and_position.png) {#fig:regions}
+
+
+``` {caption="" label=code:regions .python}
+from skimage.measure import label, regionprops
+
+labels = label(segmented, background=0) # background=0: exclude background
+regions = regionprops(labels)           # measure region properties
+regions.sort(key=lambda r: -r.area)     # sort by area size, largest first
+
+max_regions = 126
+if len(regions) > max_regions:
+    regions = regions[:max_regions]     # only keep max_regions
+
+for r in regions:
+    r.y, r.x, r.y_end, r.x_end = r.bbox # for convenience
+
+for direction in 'yx':                  # same algorithm for row and columns
+    regions.sort(key=lambda r: getattr(r, direction))
+
+    previous = regions[0]
+    for region in regions:              # calc distance to previous region
+        dx = getattr(region, direction) - getattr(previous, direction)
+        setattr(region, 'd' + direction, dx)
+        previous = region
+```
+
+The whole process of segmentation is interactive as part of the python package *leicaautomator*, where settings can be adjusted to improve segmentation and regions can be adjusted by moving, deleting or adding. The interface is shown in figure \ref{fig:leicaautomator}.
+
+![The process of segmentation in a graphical user interface. Regions 4-2, 11-7 and 14-1 might be adjusted by the user, all other regions are detected fairly well.](figures/leicaautomator.png)
+
+#### Taking SHG and DAPI images
+settings, laser, objective, collector, aperture
 
 
 ## Collection of SHG images
@@ -215,8 +247,8 @@ After segmentation, regions are sorted by their area size and only the largest r
 ## Technical details
 ### Hardware aspects
 - z-plane off by several hundreds of micrometer
-  - piezo-holder was tilted
-  - samples not necessarily straight, coverslip placement
+  - piezo-holder tilted
+  - slides not necessarily straight, coverslip placement
   - too much tilt: out of focus in one image
   - tolerated tilt and software autofocus: stitching when edge not from same physical area (especially thick samples)
 - signal variations and chosen optimum
@@ -322,3 +354,10 @@ What to communicate: discuss results, limitations, possibilities for improvement
 What to communicate: brief summary of the result and discussion, advice for further work
 
 > ML: Automatic imaging and segmentation of TMA has been demonstrated)...and....
+
+
+# Appendix
+Leica LAS design:
+- user should be mainly in LAS - automating on the side as a supplement
+  - load before CAM can be used
+  - does not load all settings from XML
