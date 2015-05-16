@@ -1,6 +1,4 @@
-pdf:
-	pandoc thesis.md -s \
-		--filter pandoc-crossref \
+PANDOC_SETTINGS=-s --filter pandoc-crossref \
 		--template latex_template/pandoc.tex \
 		--listings \
 		-V fontsize=10pt \
@@ -8,18 +6,22 @@ pdf:
 		-V classoption=twoside \
 		-V papersize=b5paper \
 		-V documentclass=book \
-		-o thesis.pdf
+
+
+
+default: web-pdf
+
+pdf:
+	pandoc thesis.md $(PANDOC_SETTINGS) -o thesis.pdf
 
 tex:
-	pandoc thesis.md -s \
-		--filter pandoc-crossref \
-		--template latex_template/pandoc.tex \
-		--listings \
-		-V fontsize=10pt \
-		-V geometry=lmargin=10mm,rmargin=10mm,tmargin=27mm,bmargin=30mm \
-		-V classoption=twoside \
-		-V papersize=b5paper \
-		-V documentclass=book \
-		-o thesis.tex
+	pandoc thesis.md $(PANDOC_SETTINGS) -o thesis.tex
 
 latex: tex
+
+
+web-figures:
+	python web_figures.py
+
+web-pdf: web-figures
+	pandoc thesis_web.md $(PANDOC_SETTINGS) -o thesis_web.pdf
