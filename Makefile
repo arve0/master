@@ -9,7 +9,7 @@ PANDOC_SETTINGS=-s --filter pandoc-crossref \
 
 
 
-default: web-pdf
+default: web
 
 pdf:
 	pandoc thesis.md $(PANDOC_SETTINGS) -o thesis.pdf
@@ -23,5 +23,5 @@ latex: tex
 web-figures:
 	python web_figures.py
 
-web-pdf: web-figures
+web: web-figures
 	pandoc thesis_web.md $(PANDOC_SETTINGS) -o thesis_web.pdf
