@@ -7,6 +7,8 @@ files = glob('figures/*.png')
 
 web_name = '_web.png'
 web_res = (72, 72)
+md_source = 'thesis.md'
+md_web = 'thesis_web.md'
 
 for f in files:
     if web_name in f:
@@ -32,11 +34,17 @@ for f in files:
     img.save(small_name, dpi=web_res)
 
 
-fp = open('thesis.md')
+try:
+    if stat(md_source).st_mtime < stat(md_web).st_mtime:
+        exit()
+except OSError:
+    pass
+
+fp = open(md_source)
 md = fp.read()
 fp.close()
 md = md.replace('.png', web_name)
 
-fp = open('thesis_web.md', 'w')
+fp = open(md_web, 'w')
 fp.write(md)
 fp.close()
