@@ -9,8 +9,7 @@ PANDOC_SETTINGS=-s --filter pandoc-crossref \
 		-V documentclass=book
 
 
-
-default: thesis_web.pdf
+default: thesis_web.pdf thesis.html
 	open thesis_web.pdf
 
 pdf:
@@ -27,3 +26,7 @@ thesis_web.md: thesis.md
 
 thesis_web.pdf: thesis_web.md
 	pandoc thesis_web.md $(PANDOC_SETTINGS) -o thesis_web.pdf
+
+thesis.html: thesis_web.md
+	pandoc thesis_web.md -s --toc -o thesis.html
+	open thesis.html

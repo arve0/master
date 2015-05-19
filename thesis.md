@@ -113,7 +113,7 @@ focal volume
 What to communicate: experimental setup to reproduce results, description of automatic process, limitations/obstacles specific to experimental setup, brief description of software modules in use
 
 ## Microscope
-The images has been taken with a Leica SP8 microscope using LAS X software version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a pulsing Coherent laser and a continious LASOS argon laser. Full specifications of lasers are in table \ref{tbl:lasers}.
+The images has been taken with a Leica SP8 microscope using LAS X software version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a pulsing Coherent laser and a continious LASOS argon laser. Full specifications of lasers are in [table \ref{tbl:lasers}](#tbl:lasers).
 
 +----------+--------------------+--------------------------------------------+
 | Brand    | Model              | Specifications                             |
