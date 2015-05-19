@@ -92,6 +92,7 @@ What to communicate: theory and details that are not obvious for understanding t
 
 ## Image Processing
 - scikit-image, utils.ipynb, defaults in code blocks
+- OCR
 
 
 ORB and Ransac [1]
@@ -271,7 +272,7 @@ $$ f_x = \lceil \frac{\Delta X}{\Delta X_{field}} \rceil. $$ {#eq:enabledfields}
 #### Scanning each region
 To avoid unnecessary long stage movements between rows or columns, regions was looped through in a zick-zack pattern, given by their row and column position. For each region the scanning template was edited, the template was loaded and the scan was started through CAM. Single templates was used due to a Leica LAS software limitation; scanning templates with irregular spaced wells can not be loaded. Code listing \ref{code:automatedscan} illustrates the process.
 
-``` {caption="Scanning" label=code:automatedscan}
+``` {caption="Scanning" label=code:automatedscan .python}
 from leicascanningtemplate import ScanningTemplate
 from leicaautomator import zick_zack_sort
 from leicacam import CAM
@@ -314,12 +315,45 @@ SHG images was taken with a 25x/0.95 NA water objective. The pulsed infrared las
 
 A resolution of 1024x1024 pixels with 8 bit image depth was used. Frequency of scanning mirror was set to 600 lines/second. 
 
-#### DAPI images
+### DAPI images
 TODO
+
+
+## Correlating images with patient data
+
+![Top of slide map TP-1. Ids are not incrementing systematically and need to be registered to correlate samples to respective patients. Ids are inside circles and hard to read with OCR. First part of id is same as `ID_deltaker` in patient database, second number is sample number. There should be three samples for each patient.](figures/slidemap.png) {#fig:slidemap}
+
+Slide maps, seen in figure \ref{fig:slidemap}, and patient database was given by St. Olavs. As the slide maps contained circles, slide maps were filtered to remove all but text before it was read with OCR. The OCR text output was checked for errors programatically (id should be of correct format, id should increment, patients should be registered with correct slide in database column `TP_nr`, each patient should have three samples). OCR errors was fixed manually and other errors was recorded (see section [Slide map errors](#slidemaperrors) in the appendix).
+
+Every pasient id from the slide map was then saved to a stata database along with its slide number, row and column. Code listing \ref{code:correlate} show how the clinical data was correlated with samples.
+
+``` {caption="Get patient outcome of sample on TP-1 row 3 column 5." label=code:correlate .python}
+import pandas as pd
+
+# read databases
+locations = pd.read_stata('data/ids/locations.dta')
+clinical_data = pd.read_stata('data/clinic_data.dta')
+
+# position query
+condition = (locations.TP_nr == 1) & \
+            (locations.TP_rad == 3) & \
+            (locations.TP_kolonne == 5)
+
+# get patient id
+patient_id = locations[condition]['ID_deltaker']
+
+# check exactly 1 patient registered at given row/col
+assert len(patient_id) == 1
+
+# clinical data query
+condition = clinical_data.ID_deltaker == patient_id.iloc[0]
+
+# get outcome
+outcome = clinical_data[condition]['GRAD']
+```
 
 ## Collection of SHG images
 - alignment of z-plane
-- finding tissues in micro array
 - correlation with patient data (sample map and clinic data)
 
 ## Technical details
@@ -439,3 +473,47 @@ Leica LAS design:
 - user should be mainly in LAS - automating on the side as a supplement
   - load before CAM can be used
   - does not load all settings from XML
+
+
+## Slide map errors {#slidemaperrors}
+```
+ TP2, row  3, col  6 - pasient id missing in db: 66
+ TP6, row  1, col  9 - pasient id missing in db: 222
+ TP3, row  1, col  3 - id 68, wrong TP_nr in db: 3.0 != 2.0
+ TP6, row  1, col  3 - id 209, wrong TP_nr in db: 6.0 != 4.0
+ TP6, row  1, col  6 - id 221, wrong TP_nr in db: 6.0 != 5.0
+TP22, row  2, col  6 - id 130, wrong TP_nr in db: 22.0 != 3.0
+TP22, row  2, col  9 - id 244, wrong TP_nr in db: 22.0 != 5.0
+TP22, row  3, col  3 - id 281, wrong TP_nr in db: 22.0 != 6.0
+TP22, row  3, col  6 - id 296, wrong TP_nr in db: 22.0 != 6.0
+TP22, row  3, col  9 - id 309, wrong TP_nr in db: 22.0 != 6.0
+TP22, row  4, col  3 - id 318, wrong TP_nr in db: 22.0 != 6.0
+TP22, row  4, col  6 - id 376, wrong TP_nr in db: 22.0 != 7.0
+TP22, row  4, col  9 - id 396, wrong TP_nr in db: 22.0 != 8.0
+TP22, row  5, col  3 - id 413, wrong TP_nr in db: 22.0 != 8.0
+TP22, row  5, col  6 - id 449, wrong TP_nr in db: 22.0 != 9.0
+TP22, row  5, col  9 - id 453, wrong TP_nr in db: 22.0 != 9.0
+TP22, row  6, col  3 - id 487, wrong TP_nr in db: 22.0 != 10.0
+TP22, row  6, col  6 - id 493, wrong TP_nr in db: 22.0 != 10.0
+TP22, row  6, col  9 - id 525, wrong TP_nr in db: 22.0 != 10.0
+TP22, row  7, col  3 - id 728, wrong TP_nr in db: 22.0 != 15.0
+ TP3, row  9, col  6 - TP_nr not registered in db for ID_deltaker 140
+ TP5, row  9, col  9 - TP_nr not registered in db for ID_deltaker 251
+ TP9, row 10, col  9 - there should be 3 samples: ['467a-1']
+ TP9, row 11, col  3 - there should be 3 samples: ['467b-1', '467b-2']
+ TP9, row 12, col  6 - there should be 3 samples: ['471a-1', '471a-2']
+ TP9, row 12, col  9 - there should be 3 samples: ['471b-1']
+TP10, row  8, col  6 - there should be 3 samples: ['507-1', '507-2']
+TP10, row 12, col  6 - there should be 3 samples: ['525-2', '525-3']
+TP11, row 11, col  6 - there should be 3 samples: ['566-1', '566-2']
+ TP3, row  1, col  3 - pasient id did not increment: ['68-1', '68-2', '68-3']
+                                                   < ['102b-1', '102b-2', '102b-3']
+ TP4, row  1, col  3 - pasient id did not increment: ['162a-1', '162a-2', '162a-3']
+                                                   < ['163-1', '163-2', '163-3']
+ TP6, row  1, col  3 - pasient id did not increment: ['209-1', '209-2', '209-3']
+                                                   < ['268-1', '268-2', '268-3']
+TP11, row  6, col  3 - pasient id did not increment: ['549-1', '549-2', '549-3']
+                                                   < ['552-1', '552-2', '552-3']
+TP22, row  2, col  6 - pasient id did not increment: ['130-1', '130-2', '130-3']
+                                                   < ['3067-1', '3067-2', '3067-3']
+```
