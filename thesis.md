@@ -84,6 +84,12 @@ What to communicate: theory and details that are not obvious for understanding t
 
 > ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og innholdet er mer klart.)
 
+## Leica software
+- socket
+- CAM
+- XML and scanning template (overview ST vs job ST)
+- wells and fields
+
 ## Image Processing
 - scikit-image, utils.ipynb, defaults in code blocks
 
@@ -143,7 +149,7 @@ Overview images was taken with a 10x air objective, equalized and stitched. The 
 ### Overview images
 Overview images was taken with an technique similar to bright-field microscopy except that the light source is a scanning laser. The laser in use was the argon laser in table \ref{tbl:lasers} with 514 nm emission line, output power set to 2.48% and intensity to 0.10. Forward light was imaged using a 0.55 NA air collector with the non descanned detector having the 525/50 nm bandpass filter. Aperture and detector gain was adjusted so that the histogram of intensities was in the center of the total range without getting peaks at minimum and maximum values.
 
-Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500 $\mu$m (read more about resolution and image size in the discussion).
+Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500 $\mu$m (read more about resolution and image size in the discussion). After images is scanned, they are rotated 270 degrees, as Leica LAS store *.tif*-images with axes swapped in regards to the stage axes.
 
 #### Uneven illumination
 ![(a) Image of glass slide only and no tissue for illustrating the uneven illumination. Dots are impurities in the sample. (b) Original image of sample. The white line is the row with least variance used for equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are displaying values from 130 to 230 to highlight the intensity variation, colorbar is shown to the right.](figures/uneven_illumination_images.png) {#fig:illumination}
@@ -187,22 +193,22 @@ stitched_image = stitch(images)
 #### Segmentation
 ![Otsu thresholding of figure \ref{fig:stitching}(b). (a) Otsu thresholding applied without any filters. Picks out dark areas, but disjointed, especially for brighter sample spots in bottom left. (b) Thresholding after a local bilateral population filter. Quite noisy in the background. (c) Thresholding after local bilateral population and local mean filter. Background noise is gone and sample spots are coherent.](figures/segmentation.png) {#fig:segmentation}
 
-As seen in figure \ref{fig:stitching}(b), the samples at the edge are darker than the samples in the center. To improve this intensity variation, the overview image is filtered with a local bilateral population filter. The filter counts number of neighbour pixels that are within a specified range. The effect of the filter is somewhat similar to an entropy filter (though converse), and less computational demanding. Areas with low signal variation (the background) gives high values and areas with high signal variation gives low values (the samples). To reduce noise after the bilateral population filter, a mean filter was applied. The size of structure elements was 9x9 pixels for both filters. Figure \ref{fig:segmentation}(a), (b) and (c) show how the segmentation is affected by the filters. Code for reproducing the steps are in code listing \ref{code:segmentation}.
+As seen in figure \ref{fig:stitching}(b), the samples at the edge are darker than the samples in the center. To improve this intensity variation, the overview image is filtered with a local bilateral population filter. The filter counts number of neighbour pixels that are outside a specified range. The effect of the filter is less computational demanding and somewhat similar to an entropy filter. Areas with low signal variation (the background) give low values and areas with high signal variation (the samples) give high values. To reduce noise after the bilateral population filter, a mean filter was applied. The size of structure elements was 9x9 pixels for both filters. Figure \ref{fig:segmentation}(a), (b) and (c) show how the segmentation is affected by the filters. Code for reproducing the steps are in code listing \ref{code:segmentation}.
 
 ``` {caption="Filter and segment an image with local bilateral population and Otsu thresholding." label=code:segmentation .python}
 from skimage.morphology import square
 from skimage.filters import threshold_otsu
-from skimage.filters.rank import mean, pop_bilateral
+from leicaautomator.filters import mean, pop_bilateral
 
 selem = square(9)
 filtered = pop_bilateral(image, selem)
 filtered = mean(filtered, selem)
 
 threshold = threshold_otsu(filtered)
-segmented = filtered < threshold # low values indicate signal
+segmented = filtered >= threshold # high values indicate signal
 ```
 
-After segmentation, regions are sorted by their area size and only the largest regions are kept. Row and column was calculated by sorting regions by position, measuring the distance between them and increment row or column number when there is a peak in the distance to previous region. The code can be seen in code listing \ref{code:regions} and figure \ref{fig:regions} illustrate typical area size, position and position derivative.
+After segmentation, regions was sorted by their area size and only the largest regions are kept. Row and column was calculated by sorting regions by position, measuring the distance between them and increment row or column number when there is a peak in the distance to previous region. The code can be seen in code listing \ref{code:regions} and figure \ref{fig:regions} illustrate typical area size (a), position (b) and position derivative (c).
 
 ![(a) Sorted region areas. Area size drops dramatically around region 125 according to number of samples on slide. (b) Regions sorted by position. There is a gap between the positions when row and columns are increasing. (c) X distance to previous region when regions are sorted by x-position. 14 peaks indicate that the image contain 15 columns. Note that x-axes in (a), (b) and (c) doesn't correspond, as the graphs are not sorted by the same attribute.](figures/regions_area_and_position.png) {#fig:regions}
 
@@ -231,13 +237,85 @@ for direction in 'yx':                  # same algorithm for row and columns
         previous = region
 ```
 
-The whole process of segmentation is interactive as part of the python package *leicaautomator*, where settings can be adjusted to improve segmentation and regions can be adjusted by moving, deleting or adding. The interface is shown in figure \ref{fig:leicaautomator}.
+The whole process of segmentation was done interactive as part of the python package *leicaautomator*, where settings can be adjusted to improve segmentation and regions can be moved, deleted or added with mouse clicks. The interface is shown in figure \ref{fig:leicaautomator}.
 
-![The process of segmentation in a graphical user interface. Regions 4-2, 11-7 and 14-1 might be adjusted by the user, all other regions are detected fairly well.](figures/leicaautomator.png)
+![The process of segmentation in a graphical user interface. Regions 4,2, 11,7 and 14,1 might be adjusted by the user, all other regions are detected fairly well.](figures/leicaautomator.png) {#fig:leicaautomator}
 
-#### Taking SHG and DAPI images
-settings, laser, objective, collector, aperture
+#### Calculate stage position from pixel position
 
+After regions was localized, pixel-size in meters was calculated by
+
+$$ x_{resolution} = \frac{\Delta x}{\Delta X}. $$ {#eq:resolution}
+
+Here $\Delta x$ is displacement in pixels and $\Delta X$ is stage displacement in meters read from the overview scanning template in the experiment `AdditionalData/{ScanningTemplate}overview.xml` at XPath `./ScanningTemplate/Properties/ScanFieldStageDistanceX`. Left most left pixel was calculated by
+
+$$ X_{start} = X_{center} - \frac{S_x \cdot x_{resolution}}{2}. $$ {#eq:firstx}
+
+In equation \ref{eq:firstx} $X_{center}$ and $S_x$ is respectively the stage position and number of pixels in the top left image of the overview scan. $X_{center}$ was read from the overview scanning template at XPath `./ScanFieldArray/ScanFieldData[@WellX="1"][@WellY="1"][@FieldX="1"][@FieldY="1"]/FieldXCoordinate`. The stage x-coordinate for any pixel was then calculated by
+
+$$ X = X_{start} + x \cdot x_{resolution}. $$ {#eq:pos}
+
+To be able to scan regions of different shape and size, a bounding box for the region was used to calculate the scanning area. Moving the stage to the boundary position will center the boundary in the image, and therefor start position of first image is calculated by
+
+$$ X_{start} = X + \frac{\Delta X_{job}}{2}. $$ {#eq:xstart}
+
+Here, $\Delta X_{job}$ is stage displacement between images in the job scanning template. $X_{start}$ will have an error of
+
+$$ \epsilon = \frac{1}{2} (\Delta X_{job} - \Delta X_{img}), $$ {#eq:xerror}
+
+where $\Delta X_{img}$ is the total size of the scanned image. This was considered neglectible as $\Delta X_{job} \approx \Delta X_{img}$ and number of columns scanned was calculated by
+
+$$ f_x = \lceil \frac{\Delta X}{\Delta X_{field}} \rceil. $$ {#eq:enabledfields}
+
+
+#### Scanning each region
+To avoid unnecessary long stage movements between rows or columns, regions was looped through in a zick-zack pattern, given by their row and column position. For each region the scanning template was edited, the template was loaded and the scan was started through CAM. Single templates was used due to a Leica LAS software limitation; scanning templates with irregular spaced wells can not be loaded. Code listing \ref{code:automatedscan} illustrates the process.
+
+``` {caption="Scanning" label=code:automatedscan}
+from leicascanningtemplate import ScanningTemplate
+from leicaautomator import zick_zack_sort
+from leicacam import CAM
+
+cam = CAM() # instantiate connection to microscope
+
+# regions sorted as [r(1,1), r(1,2), r(2,2), r(2,1), r(3,1), r(3,2), ...]
+# here r(2,1) is region(col=2, row=1)
+regions = zick_zack_sort(regions, ('well_x', 'well_y'))
+
+tmpl_path = r"C:\Users\TCS-User\AppData\Roaming\Leica Microsystems\LAS X" + \
+            r"\MatrixScreener\ScanningTemplates" + "\\"
+tmpl_name = tmpl_path + '{ScanningTemplate}leicaautomator'
+for n, region in enumerate(regions):
+    # alternate between tmpl_name0/1.xml, due to a
+    # bug LAS cannot load the same name twice
+    tmpl = ScanningTemplate(tmpl_name + str(n%2) + '.xml')
+
+    tmpl.move_well(1, 1, region.real_x, region.real_y)
+    tmpl.write()
+
+    cam.load_template(tmpl.filename)
+ 
+    # do an autofocus
+    cam.autofocus_scan()
+    cam.wait_for('inf', 'scanfinished')
+         
+    # run the scan job
+    cam.start_scan()
+    # record output filename
+    region.experiment_name = cam.wait_for('relpath')['relpath']
+
+    # continue with next region when scan is done
+    cam.wait_for('inf', 'scanfinished')
+```
+
+
+### SHG images
+SHG images was taken with a 25x/0.95 NA water objective. The pulsed infrared laser was set to 890 nm, intensity 20%, gain 40%, offset 80% and electro-optic modulator (EOM) on. Forward light was measured with non descanned PMT sensor behind a 0.9 NA air collector. Filters before the detector was band pass 445/20 nm and gain of detector was adjusted so that signal spanned the whole intensity range. Aperture was set to 24 (maximum).
+
+A resolution of 1024x1024 pixels with 8 bit image depth was used. Frequency of scanning mirror was set to 600 lines/second. 
+
+#### DAPI images
+TODO
 
 ## Collection of SHG images
 - alignment of z-plane
