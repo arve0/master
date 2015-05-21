@@ -10,3 +10,4 @@ Use pandoc to generate .tex or .pdf (see the [makefile](Makefile)).
 Filters in use:
 
 - [pandoc-crossref](https://github.com/lierdakil/pandoc-crossref)
+- [pandoc-citeproc](https://github.com/jgm/pandoc-citeproc)
