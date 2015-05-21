@@ -5,7 +5,7 @@ from os import stat
 
 files = glob('figures/*.png')
 
-web_name = '_web.png'
+web_name = '_web.jpg'
 web_res = (72, 72)
 md_source = 'thesis.md'
 md_web = 'thesis_web.md'
@@ -31,7 +31,7 @@ for f in files:
         size = [int(x*scale) for x in img.size]
         img = img.resize(size, resample=Image.LANCZOS)
 
-    img.save(small_name, dpi=web_res)
+    img.save(small_name, dpi=web_res, quality=80, optimize=True, progressive=True)
 
 
 try:

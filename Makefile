@@ -4,6 +4,7 @@ PANDOC_SETTINGS=-s \
 		--template latex_template/pandoc.tex \
 		--listings \
 		--toc \
+		-V graphics \
 		-V fontsize=10pt \
 		-V geometry=lmargin=10mm,rmargin=10mm,tmargin=27mm,bmargin=30mm \
 		-V classoption=twoside \
