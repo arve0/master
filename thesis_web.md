@@ -1,9 +1,12 @@
 ---
-figPrefix: ''
+eqPrefix: 'equation'
+figPrefix: 'figure'
+tblPrefix: 'table'
+bibliography: bibliography.bib
+csl: american-medical-association.csl
 ---
 
 # Abstract
-
 What to communicate: goal, overview of experiences made, results
 
 This thesis documents work on automatic microscope imaging of breast tumor tissue micro arrays and how the images can be analyzed for a supplement in cancer diagnosis. The overall research goal has been to classify tumor grade (I, II or III) based on the fiber structure in the tissue samples. Supervised machine learning is the method of analysis, where St. Olavs hospital has supplied a dataset of tissue samples at the tumor peripheral from 924 (TODO update excact number) patients.
@@ -34,46 +37,22 @@ A proposal for further research with the same dataset is extracting more feature
 
 What to communicate: motivation, brief summary of chapters
 
-With a population just above 5 million [1], three thousand women are diagnosed with breast cancer each year [2] in Norway. This makes breast cancer the most common kind of cancer, affecting one of every eleventh woman. Luckily the cancer form is often treatable, and in 2012 there was 649 fatalities caused by breast cancer [3]. The diagnosis is an act of several steps, and currently contains the following at St. Olavs hospital:
+With a population just above 5 million [@statistisk_sentralbyra_folkemengde_2015], three thousand women are diagnosed with breast cancer each year [@statistisk_sentralbyra_dodsarsaker_2013] in Norway. This makes breast cancer the most common kind of cancer, affecting one of every eleventh woman. Luckily breast cancer is often treatable, shown by the fatalities which was 649 in 2012 [-@statistisk_sentralbyra_dodsarsaker_2013]. In improving diagnosis, the work behind this thesis has explored ways to automate analysis of microscope images of breast tissue. Focus has mainly been on automating scanning of tissue micro arrays. Tissue micro arrays are glass slides with samples arranged in a matrix pattern seen in [@fig:tma]. As tissue micro arrays is standard procedure, not unique to breast cancer tissue, the work of this master are relevant for other studies too.
 
-- x-ray mammography
-- ultra sound screening
-- tissue sample(s)
 
-In particular, pathologists suggest that aggressiveness of a tumor is related to how fiber is aligned at the tumor peripheral. In example straight aligned fibers can be a sign that tumor cells have modified the stroma to promote spreading of cells. The alignment of fibers is a feature which can be extracted by image processing. Since several techniques to extract features is imaginable, supervised machine learning is practical for finding novel approaches.
+![Tissue micro array of breast tissue at perifer of tumor. Three test samples are beside the array of 14x9 samples to avoid mix up of patients when rotating the slide.](figures/tma_web.png) {#fig:tma}
 
-[1]: https://www.ssb.no/befolkning/statistikker/folkemengde
-[2]: http://www.stolav.no/Pasient/Pasientforlop/Pasientforlop/Kreftsykdommer/Behandling-av-brystkreft/130731/
-[3]: https://www.ssb.no/dodsarsak
+The tissue micro array shown in [@fig:tma] is $\approx$ 24x15 mm in size. Using a moderate objective of 25x with 400 \si{\micro\metre} field of view, a single scan of the total dataset will be
 
-From report - may use some of this:
-Over three million published articles on pubmed with keyword cancer shows
-the huge research effort for understanding, diagnosing and treating cancer
-diseases. The research focus is mainly on tumor cells, but a segment of
-interest which is increasing is research on tumor stroma as seen in figure
-1.1.
+$$ \frac{24 \si{\milli\metre}}{400 \si{\micro\metre}} \cdot \frac{15 \si{\milli\metre}}{400 \si{\micro\metre}} = 2250 \text{ images.} $$ {#eq:datasize}
 
-Figure 1.1: Amount of published articles by year on different search terms. The search term tumor cells outnumber the others by two orders of magnitude. Note the logarithmic scale on y-axis.
+Depending on the precission of the microscope stage, images are not necessarry easily put together. Also, keeping microscope in focus for the whole surface can become challenging. Another approach would be to scan each of the $14 \cdot 9 = 126$ samples one by one. The challenge with this approach is that the samples are often not equally spaced, and a lot of manual error prone labor is required to define the areas to scan. The method in this thesis tries to simplify the scanning process and perpare the images for further analysis.
 
-Tumor stroma is the environment of cells, and it can be suppressing
-or supporting the function of the tumor cells. It is suggested that in
-the development of a tumor, the stroma is changing from being suppressive to
-supportive of the tumor cells [TODO REF].
+The thesis are written with focus on two parts, namely automating the collection of images and correlating samples to clinical data. How this can be used in supervised machine learning will be briefly mentioned in the end.
 
-In particular, collagen fiber is known to be altered in the surroundings of
-tumor cells under the development towards metastasis. One bio-marker for
-collagen fibers, is their alignment at the vincinity of the tumor, which may
-predict if a tumor is malignant. The fiber alignment can be used as a
-diagnosis tool for malignant tumor, and an article written at NTNU have
-studied collagen fiber alignment in a manual qualitative manner.
+A reader of this text should be familiar with general physics. Subjects that are specific to scanning microscopy and image processing will be described in the theory section, along with concepts used in particular software used. The method section seeks to make it possible for others to replicate the experimental setup on any kind of microscope, but some will be specific to the Leica SP8 microscope in use. The result section will mark out leverages gained with automated scanning, and the discussion holds details on choices made when developing the method and limitations specific to the Leica SP8 microscope.
 
-St. Olav hospital have breast tissue samples from 900 pasients along with
-clinical data. In total three samples per pasient, one sample inside, one sample at the boundary and one sample outside the tumor. The samples is laid in a matrix on a glass slide, each glass slide having about 130 samples. As microscope scanning and analysis of such a large data set is not straightforward, this project have explored possibilities for automating the process.
 
-To be specific, this thesis will describe method and results for
-- parameters for obtaining quality SHG images
-- effective way to scan whole glass slides of 126 samples
-- machine learning and correlation to clinical data
 
 > ML: En hoveddel i arbeidet har vært automatiseringen av TMA. Skrive noe om TMA og hvorfor automatisert analyse er nødvendig...skal lede opp til en beskrivelse av de tekniske utfordringene som er løst.
 
@@ -113,7 +92,7 @@ focal volume
 What to communicate: experimental setup to reproduce results, description of automatic process, limitations/obstacles specific to experimental setup, brief description of software modules in use
 
 ## Microscope
-The images has been taken with a Leica SP8 microscope using LAS X software version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a pulsing Coherent laser and a continious LASOS argon laser. Full specifications of lasers are in [table \ref{tbl:lasers}](#tbl:lasers).
+The images has been taken with a Leica SP8 microscope using LAS X software version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a pulsing Coherent laser and a continious LASOS argon laser. Full specifications of lasers are in [@tbl:lasers].
 
 +----------+--------------------+--------------------------------------------+
 | Brand    | Model              | Specifications                             |
@@ -148,14 +127,14 @@ The automated scanning aims to lift the burden of manually labor and prevent err
 Overview images was taken with a 10x air objective, equalized and stitched. The equalization step corrects uneven illumination and increases contrast for viewing purposes. To improve robustness of segmentation, a local bilateral population filter was applied to the stitched image before it is thresholded. Each separate region in the segmentation are sorted by their area size, small regions are excluded and the user can exclude or add regions if some of the samples are not detected. Row and column position of the regions are calculated by sorting them by their position in the image. A more detailed description follows.
 
 ### Overview images
-Overview images was taken with an technique similar to bright-field microscopy except that the light source is a scanning laser. The laser in use was the argon laser in table \ref{tbl:lasers} with 514 nm emission line, output power set to 2.48% and intensity to 0.10. Forward light was imaged using a 0.55 NA air collector with the non descanned detector having the 525/50 nm bandpass filter. Aperture and detector gain was adjusted so that the histogram of intensities was in the center of the total range without getting peaks at minimum and maximum values.
+Overview images was taken with an technique similar to bright-field microscopy except that the light source is a scanning laser. The laser in use was the argon laser in [@tbl:lasers] with 514 nm emission line, output power set to 2.48% and intensity to 0.10. Forward light was imaged using a 0.55 NA air collector with the non descanned detector having the 525/50 nm bandpass filter. Aperture and detector gain was adjusted so that the histogram of intensities was in the center of the total range without getting peaks at minimum and maximum values.
 
 Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500 $\mu$m (read more about resolution and image size in the discussion). After images is scanned, they are rotated 270 degrees, as Leica LAS store *.tif*-images with axes swapped in regards to the stage axes.
 
 #### Uneven illumination
 ![(a) Image of glass slide only and no tissue for illustrating the uneven illumination. Dots are impurities in the sample. (b) Original image of sample. The white line is the row with least variance used for equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are displaying values from 130 to 230 to highlight the intensity variation, colorbar is shown to the right.](figures/uneven_illumination_images_web.png) {#fig:illumination}
 
-The uneven illumination in the experimental setup is illustrated in figure \ref{fig:illumination}(a). By assuming the intensity variation in all pixels are following the slope of the background, equalization was done by dividing each row in the image by the normalized intensity profile of the background.
+The uneven illumination in the experimental setup is illustrated in [@fig:illumination](a). By assuming the intensity variation in all pixels are following the slope of the background, equalization was done by dividing each row in the image by the normalized intensity profile of the background.
 
 ``` {caption="Equalizing an image" label=code:equalize .python}
 equalized = img.astype(np.float)        # assure datatype have real division ability
@@ -165,11 +144,11 @@ equalized /= intensity_profile          # equalize
 equalized[equalized > 1] = 1            # clip values
 ```
 
-As seen in code listing \ref{code:equalize} the image is first normalized. `images_minimum` and `images_maximum` is found by selecting the median of respectively minimum and maximum intensity of all images. By taking the median of all images one avoids outliers and gets the same normalization for all images. Similar technique could be used for normalizing the images after equalization, but clipping gave acceptable results. `intensity_profile` is a curve fit for one of the background rows. The background row was found by selecting the row with least variance (given that the image does have a row with background only). In figure \ref{fig:illumination}(b) the row with least variance is indicated with a white line. The same intensity profile is used on all images, and it's fitted to a second degree polynomial to steer clear from noise as illustrated in \ref{fig:illumination_intensities}(a).
+As seen in code listing \ref{code:equalize} the image is first normalized. `images_minimum` and `images_maximum` is found by selecting the median of respectively minimum and maximum intensity of all images. By taking the median of all images one avoids outliers and gets the same normalization for all images. Similar technique could be used for normalizing the images after equalization, but clipping gave acceptable results. `intensity_profile` is a curve fit for one of the background rows. The background row was found by selecting the row with least variance (given that the image does have a row with background only). In [@fig:illumination](b) the row with least variance is indicated with a white line. The same intensity profile is used on all images, and it's fitted to a second degree polynomial to steer clear from noise as illustrated in [@fig:illumination_intensities](a).
 
-The effect on pixel values can be seen in figure \ref{fig:illumination}_intensities (b) and (c), where each dot represents a pixel value with increasing image x-position on the x-axis.
+The effect on pixel values can be seen in [@fig:illumination_intensities] (b) and (c), where each dot represents a pixel value with increasing image x-position on the x-axis.
 
-![(a) Intensities for the line with least variance of figure \ref{fig:illumination}(b). The curve is fitted to a second degree polynom to supress noise. (b) Intensities for image in figure \ref{fig:illumination}(b). Each dot represents a pixel. (c) Intensities for the equalized image in figure \ref{fig:illumination}(c). Each dot represents a pixel. Note that the intensities is both spread across the whole intensity range (0-255) and the skewness is fairly straightened out.](figures/uneven_illumination_intensities_web.png) {#fig:illumination_intensities}
+![(a) Intensities for the line with least variance of [@fig:illumination](b). The curve is fitted to a second degree polynom to supress noise. (b) Intensities for image in [@fig:illumination](b). Each dot represents a pixel. (c) Intensities for the equalized image in [@fig:illumination](c). Each dot represents a pixel. Note that the intensities is both spread across the whole intensity range (0-255) and the skewness is fairly straightened out.](figures/uneven_illumination_intensities_web.png) {#fig:illumination_intensities}
 
 #### Stitching
 ![(a) Automatic stitching with Fiji is unreliable, as the image translation calculated by phase correlation is chosen without displacement constraints. (b) Using same overlap for all images gives negliable errors, here using the python package *microscopestitching*.](figures/stitching_comparison_web.png) {#fig:stitching}
@@ -192,9 +171,9 @@ stitched_image = stitch(images)
 ```
 
 #### Segmentation
-![Otsu thresholding of figure \ref{fig:stitching}(b). (a) Otsu thresholding applied without any filters. Picks out dark areas, but disjointed, especially for brighter sample spots in bottom left. (b) Thresholding after a local bilateral population filter. Quite noisy in the background. (c) Thresholding after local bilateral population and local mean filter. Background noise is gone and sample spots are coherent.](figures/segmentation_web.png) {#fig:segmentation}
+![Otsu thresholding of [@fig:stitching](b). (a) Otsu thresholding applied without any filters. Picks out dark areas, but disjointed, especially for brighter sample spots in bottom left. (b) Thresholding after a local bilateral population filter. Quite noisy in the background. (c) Thresholding after local bilateral population and local mean filter. Background noise is gone and sample spots are coherent.](figures/segmentation_web.png) {#fig:segmentation}
 
-As seen in figure \ref{fig:stitching}(b), the samples at the edge are darker than the samples in the center. To improve this intensity variation, the overview image is filtered with a local bilateral population filter. The filter counts number of neighbour pixels that are outside a specified range. The effect of the filter is less computational demanding and somewhat similar to an entropy filter. Areas with low signal variation (the background) give low values and areas with high signal variation (the samples) give high values. To reduce noise after the bilateral population filter, a mean filter was applied. The size of structure elements was 9x9 pixels for both filters. Figure \ref{fig:segmentation}(a), (b) and (c) show how the segmentation is affected by the filters. Code for reproducing the steps are in code listing \ref{code:segmentation}.
+As seen in [@fig:stitching](b), the samples at the edge are darker than the samples in the center. To improve this intensity variation, the overview image is filtered with a local bilateral population filter. The filter counts number of neighbour pixels that are outside a specified range. The effect of the filter is less computational demanding and somewhat similar to an entropy filter. Areas with low signal variation (the background) give low values and areas with high signal variation (the samples) give high values. To reduce noise after the bilateral population filter, a mean filter was applied. The size of structure elements was 9x9 pixels for both filters. Figure [@fig:segmentation](a), (b) and (c) show how the segmentation is affected by the filters. Code for reproducing the steps are in code listing \ref{code:segmentation}.
 
 ``` {caption="Filter and segment an image with local bilateral population and Otsu thresholding." label=code:segmentation .python}
 from skimage.morphology import square
@@ -209,7 +188,7 @@ threshold = threshold_otsu(filtered)
 segmented = filtered >= threshold # high values indicate signal
 ```
 
-After segmentation, regions was sorted by their area size and only the largest regions are kept. Row and column was calculated by sorting regions by position, measuring the distance between them and increment row or column number when there is a peak in the distance to previous region. The code can be seen in code listing \ref{code:regions} and figure \ref{fig:regions} illustrate typical area size (a), position (b) and position derivative (c).
+After segmentation, regions was sorted by their area size and only the largest regions are kept. Row and column was calculated by sorting regions by position, measuring the distance between them and increment row or column number when there is a peak in the distance to previous region. The code can be seen in code listing \ref{code:regions} and [@fig:regions] illustrate typical area size (a), position (b) and position derivative (c).
 
 ![(a) Sorted region areas. Area size drops dramatically around region 125 according to number of samples on slide. (b) Regions sorted by position. There is a gap between the positions when row and columns are increasing. (c) X distance to previous region when regions are sorted by x-position. 14 peaks indicate that the image contain 15 columns. Note that x-axes in (a), (b) and (c) doesn't correspond, as the graphs are not sorted by the same attribute.](figures/regions_area_and_position_web.png) {#fig:regions}
 
@@ -238,7 +217,7 @@ for direction in 'yx':                  # same algorithm for row and columns
         previous = region
 ```
 
-The whole process of segmentation was done interactive as part of the python package *leicaautomator*, where settings can be adjusted to improve segmentation and regions can be moved, deleted or added with mouse clicks. The interface is shown in figure \ref{fig:leicaautomator}.
+The whole process of segmentation was done interactive as part of the python package *leicaautomator*, where settings can be adjusted to improve segmentation and regions can be moved, deleted or added with mouse clicks. The interface is shown in [@fig:leicaautomator].
 
 ![The process of segmentation in a graphical user interface. Regions 4,2, 11,7 and 14,1 might be adjusted by the user, all other regions are detected fairly well.](figures/leicaautomator_web.png) {#fig:leicaautomator}
 
@@ -252,7 +231,7 @@ Here $\Delta x$ is displacement in pixels and $\Delta X$ is stage displacement i
 
 $$ X_{start} = X_{center} - \frac{S_x \cdot x_{resolution}}{2}. $$ {#eq:firstx}
 
-In equation \ref{eq:firstx} $X_{center}$ and $S_x$ is respectively the stage position and number of pixels in the top left image of the overview scan. $X_{center}$ was read from the overview scanning template at XPath `./ScanFieldArray/ScanFieldData[@WellX="1"][@WellY="1"][@FieldX="1"][@FieldY="1"]/FieldXCoordinate`. The stage x-coordinate for any pixel was then calculated by
+In [@eq:firstx] $X_{center}$ and $S_x$ is respectively the stage position and number of pixels in the top left image of the overview scan. $X_{center}$ was read from the overview scanning template at XPath `./ScanFieldArray/ScanFieldData[@WellX="1"][@WellY="1"][@FieldX="1"][@FieldY="1"]/FieldXCoordinate`. The stage x-coordinate for any pixel was then calculated by
 
 $$ X = X_{start} + x \cdot x_{resolution}. $$ {#eq:pos}
 
@@ -295,11 +274,11 @@ for n, region in enumerate(regions):
     tmpl.write()
 
     cam.load_template(tmpl.filename)
- 
+
     # do an autofocus
     cam.autofocus_scan()
     cam.wait_for('inf', 'scanfinished')
-         
+
     # run the scan job
     cam.start_scan()
     # record output filename
@@ -313,7 +292,7 @@ for n, region in enumerate(regions):
 ### SHG images
 SHG images was taken with a 25x/0.95 NA water objective. The pulsed infrared laser was set to 890 nm, intensity 20%, gain 40%, offset 80% and electro-optic modulator (EOM) on. Forward light was measured with non descanned PMT sensor behind a 0.9 NA air collector. Band pass filter in front of the detector was 445/20 nm and gain of detector was adjusted so that signal spanned the whole intensity range. Aperture was set to 24 (maximum).
 
-A resolution of 1024x1024 pixels with 8 bit image depth was used. Frequency of scanning mirror was set to 600 lines/second. 
+A resolution of 1024x1024 pixels with 8 bit image depth was used. Frequency of scanning mirror was set to 600 lines/second.
 
 ### DAPI images
 TODO
@@ -323,7 +302,7 @@ TODO
 
 ![Top of slide map TP-1. Ids are not incrementing systematically and need to be registered to correlate samples to respective patients. Ids are inside circles and hard to read with OCR. First part of id is same as `ID_deltaker` in patient database, second number is sample number. There should be three samples for each patient.](figures/slidemap_web.png) {#fig:slidemap}
 
-Slide maps, seen in figure \ref{fig:slidemap}, and patient database was given by St. Olavs. As the slide maps contained circles, slide maps were filtered to remove all but text before it was read with OCR. The OCR text output was checked for errors programatically (id should be of correct format, id should increment, patients should be registered with correct slide in database column `TP_nr`, each patient should have three samples). OCR errors was fixed manually and other errors was recorded (see section [Slide map errors](#slidemaperrors) in the appendix).
+Slide maps, seen in [@fig:slidemap], and patient database was given by St. Olavs. As the slide maps contained circles, slide maps were filtered to remove all but text before it was read with OCR. The OCR text output was checked for errors programatically (id should be of correct format, id should increment, patients should be registered with correct slide in database column `TP_nr`, each patient should have three samples). OCR errors was fixed manually and other errors was recorded (see section [Slide map errors](#slidemaperrors) in the appendix).
 
 Every pasient id from the slide map was then saved to a stata database along with its slide number, row and column. Code listing \ref{code:correlate} show how the clinical data was correlated with samples.
 
@@ -467,7 +446,6 @@ What to communicate: brief summary of the result and discussion, advice for furt
 
 > ML: Automatic imaging and segmentation of TMA has been demonstrated)...and....
 
-
 # Appendix
 Leica LAS design:
 - user should be mainly in LAS - automating on the side as a supplement
@@ -517,3 +495,6 @@ TP11, row  6, col  3 - pasient id did not increment: ['549-1', '549-2', '549-3']
 TP22, row  2, col  6 - pasient id did not increment: ['130-1', '130-2', '130-3']
                                                    < ['3067-1', '3067-2', '3067-3']
 ```
+
+
+# References
