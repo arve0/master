@@ -17,10 +17,12 @@ I would also like to thank my family, who always have been supportive for the ch
 
 Lastly, the greatest thanks go to my life companion Yngvild, it wouldn't have been the same without you.
 
-And the cheesy quote is..
+The cheesy quote is..
+
 > The future is already here, it's just not very evenly distributed. - William Gibson
 
 
+\clearpage
 \tableofcontents
 
 
@@ -33,8 +35,8 @@ Automated microscope scanning is in principle straight forward, but the implemen
 
 - Create image analysis algorithms that are robust to experimental variations.
 - Correction of systematic errors like
-  - intensity variations and
-  - difference in coordinate systems of scanning raster patterns and stage movement.
+    - intensity variations and
+    - difference in coordinate systems of scanning raster patterns and stage movement.
 - Automatic stitching of regular spaced images with variable degree of signal entropy in seams.
 - Adjusting z-plane for large area samples with micrometer precision.
 
@@ -44,7 +46,7 @@ The conclusions are:
 
 - Large area scans should adjust speciment plane to be at even distance to the objective to be time effective and avoid out of focus images.
 - Using heuristics/constraints improves the reliability to automatic stitching algorithms, failing gracefully on images with little entropy in overlap.
-- Leica LAS X version 1.1.0.12420 have limited support for automatic microscopy, but it exist workarounds for fully automatic TMA-scanning.
+- Leica LAS X version 1.1.0.12420 have limited support for automatic microscopy, but it's possible to work around limitations to leverage fully automatic TMA-scanning.
 
 
 # Introduction
@@ -69,7 +71,7 @@ The thesis are written with focus on two parts, namely automating the collection
 
 A reader of this text should be familiar with general physics. Matters that are specific to scanning microscopy and image processing will be described in the theory section, along with software concepts in use. The method section seeks to make the reader able to replicate the experiment on any kind of microscope, but some software and solutions will be specific to the Leica SP8 microscope. The result section will mark out leverages gained with automated scanning, and the discussion holds details on choices made when developing the method and limitations stumbled upon.
 
-All source code in the thesis will be in the programming language python [@python_software_foundation_official_2015]. The reader should not need to be proficient in python programming, but acquaintance with the syntax is assumed. Code listings will be used to clarify how problems have been solved or algorithms have been implemented. Details not essential to the problem at hand have been omitted, but all source code can be read at github [@seljebu_arve0_2015].
+All source code in the thesis will be in the programming language python [@python_software_foundation_official_2015]. The reader does not need to be proficient in python programming, but acquaintance with the syntax is assumed. Code listings will be used to clarify how problems have been solved or algorithms have been implemented. Details not essential to the problem at hand have been omitted, all source code is avaialable at github [@seljebu_arve0_2015].
 
 > ML: En hoveddel i arbeidet har vært automatiseringen av TMA. Skrive noe om TMA og hvorfor automatisert analyse er nødvendig...skal lede opp til en beskrivelse av de tekniske utfordringene som er løst.
 
@@ -91,27 +93,24 @@ $f(x, y)$ denotes the intesity of pixel at position $(x, y)$, where $(0, 0)$ is 
 - scikit-image, utils.ipynb, defaults in code blocks
 
 
-### OCR
-Optical character recognition (OCR) is in this context recognition of characters in a digital image. OCR internals are not discussed, but it basically works by looking at patterns in the image to convert the image to text.
-
 ## Scanning microscope
-Figure \ref{fig:epi} illustrate the internal workings of a Leica SP8 scanning microscope which have an epi-illumination setup. Epi-illumination is when the detectors (26) and light source (1, 3, 5, 7) are on the same side of the objective (18). But as seen, the epi-setup also allows for external detectors (19). By scanning one means that the light source is focused to a specific part of the specimen and scanned line by line in a raster pattern. While the laser are scanned over the surface, a detector measure light in samples and each measured sample of light will be saved to an image pixel. The scanning is done by a oscillation mirror (14). The term non descanned detector indicate that the light does not travel by the scanning mirror before the detector. In SP8 (17) and (19) are non descanned detectors, where (17) measure reflected light and (19) measure transmitted light.
+Figure \ref{fig:epi} illustrate the internal workings of a Leica SP8 scanning microscope which have an epi-illumination setup. Epi-illumination is when the detectors (26) and light source (1, 3, 5, 7) are on the same side of the objective (18). But as seen, the epi-setup also allows for external detectors (19). By scanning one means that the light source is focused to a specific part of the specimen and scanned line by line in a raster pattern. While the laser are scanned over the surface, a detector measure light in samples and each measured sample will be saved to an image pixel. The scanning is done by a oscillation mirror (14). The term non descanned detector indicate that the light does not travel by the scanning mirror before reaching the detector. In SP8 (17) and (19) are non descanned detectors, where (17) measure reflected light and (19) measure transmitted light.
 
 ![Internals of a Leica SP8 microscope. Picture from Leica SP8 brochure [@leica_microsystems_cms_gmbh_leica_2014].](figures/epi.jpg) {#fig:epi}
 
-The view field of a microscope is the physical size of viewable area. The view field depends on the magnification of the objective and the scanner zoom. Scanner zoom is when the scanner is set to oscillate with less amplitude while still sampling at the same rate. As field of view is at the magnitude of \num{1e-4} \si{\metre}, specimen must be moved around to image a larger area. The device that moves the specimen is called a stage. The stage position, or specimen position if you like, is denoted with a upper case $X$ to distinguish it from lower case $x$ which denote image pixel position.
+The view field of a microscope is the physical size of viewable area. The view field depends on the magnification of the objective and the scanner zoom. Scanner zoom is when the scanner is set to oscillate with less amplitude while still sampling at the same rate. As field of view is at the magnitude of \SI{1e-4}{\metre}, specimen must be moved around to image a larger area. The device that moves the specimen is called a stage. The stage position, or specimen position if you like, is denoted with a upper case $X$ to distinguish it from lower case $x$ which denote image pixel position.
 
 ## Software
 
 ### Leica LAS X
-The Leica software comes with an function called *Matrix Screener*, which allows the user to define structured areas to scan. The software uses the concepts fields and wells. A field is essentially an image, and a well is a collection of regular spaced images. The wells may be regular spaced, or an offset between wells can be defined in the graphical user interface. The scan job is started, Leica LAS will store images in a tree of folders in TIFF format.
+LAS X is the software that contols the Leica SP8 microscope. LAS X comes with an function called *Matrix Screener*, which allows the user to define structured areas to scan. The software uses the concepts fields and wells. A field is essentially an image, and a well is a collection of regular spaced images. The wells may be regular spaced, or an offset between wells can be defined in the graphical user interface. When the scan job is started Leica LAS will store images in a tree of folders in TIFF format.
 
 
 ### CAM
-In addition to controlling the microscope with the graphical user interface, a function called *Computer Assisted Microscopy* (CAM) can be turned on. CAM is a socket interface, meaning one send bytes over a network interface. This is very similar to how one can write bytes to a file, but in addition the socket interface can respond and send bytes back. The network interface runs on TCP port 8895 and one may be communicate locally or over TCP/IP network. A set of 44 commands are available, but only three of them are intresting for the purpose of controlling scans; `load`, `autofocusscan` and `startscan`. More details on the interface can be read in the manual [@frank_sieckmann_cam_2013] or by studying the source code of the package `leicacam` [@arve_seljebu_arve0/leicacam_2015]. Code listing \ref{code:leicacam} show how one can communicate with the microscope in python.
+In addition to controlling the microscope with the graphical user interface, a function called *Computer Assisted Microscopy* (CAM) can be turned on. CAM is a socket interface, meaning one send bytes over a network interface. This is very similar to how one can write bytes to a file, but in addition the socket interface can respond and send bytes back. The network interface runs on TCP port 8895 and one may communicate locally or over TCP/IP network. A set of 44 commands are available, but only three of them are intresting for the purpose of controlling scans; `load`, `autofocusscan` and `startscan`. More details on the interface can be read in the manual [@frank_sieckmann_cam_2013] or by studying the source code of the python package `leicacam` [@arve_seljebu_arve0/leicacam_2015]. Code listing \ref{code:leicacam} show how one can communicate with the microscope in python.
 
 
-``` {caption="" label=code:leicacam .python}
+``` {caption="Communicating with the Leica SP8 microscope using the python package leicacam." label=code:leicacam language=Python}
 from leicacam import CAM
 
 # connect to localhost:8895
@@ -131,10 +130,11 @@ relpath = cam.wait_for('relpath')
 ```
 
 ### XML
-Extensible Markup Language is a declarative language which most high level programming languages speak, which makes it adapted for communicating between computer programs. A XML-file contain a single root and tree structure with parent and children nodes. Any position in the tree can be specified with an *XPath*. Code listing \ref{code:xml} show a typical structure of a XML-file.
+Extensible Markup Language is a declarative language which most high level programming languages speak, which makes it suitable for computer program communication. A XML-file contain a single root and tree structure with parent and children nodes. Any position in the tree can be specified with an *XPath*. Code listing \ref{code:xml} show a typical structure of a XML-file.
 
 
-``` {caption="XML-tree structure with " label=code:xml .xml}
+
+``` {caption="Illustration of a typical XML-tree structure." label=code:xml .xml}
 <?xml version="1.0"?>
 <root>
     <parent>
@@ -148,9 +148,9 @@ Extensible Markup Language is a declarative language which most high level progr
 </root>
 ```
 
-The XML-file might be nested with several childen and parents, but code listing \ref{code:xml} holds for illustration purposes. XPath for the first child in parent will be `./parent/child[@attribute="val1"]`. Here `.` is the root, `/` defines path (or nesting if you like) and `[@attribute="val"]` defines that the attribute named `attr` should be the value `val1`. This XPath will find only the first child of the first parent, but if other childs with same path also had an attribute named `attr` with the value `val1`, the XPath would have found them also. E.g. `./parent/child` will find all children. Code listing \ref{code:pythonxml} show how one would read properties from the XML-file in code listing \ref{code:xml}.
+The XML-file might be nested with several childen and parents, but code listing \ref{code:xml} holds for illustration purposes. XPath for the first child in parent will be `./parent/child[@attribute="val1"]`. Here `.` is the root, `/` defines path (or nesting if you like) and `[@attribute="val"]` defines that the attribute named `attr` should be of value `val1`. This XPath will find only the first child of the first parent, but if other childs with same path also had an attribute named `attr` with the value `val1`, the XPath would have found them also. E.g. `./parent/child` will find all children. Code listing \ref{code:pythonxml} show how one would read properties in the XML-file from code listing \ref{code:xml}.
 
-``` {caption="Accessing XML properties with python build-in module xml.etree." label=code:pythonxml .python}
+``` {caption="Accessing XML properties with the python build-in module xml.etree." label=code:pythonxml .python}
 import xml.etree.ElementTree as ET
 
 tree = ET.parse('/path/to/file.xml')
@@ -169,6 +169,9 @@ A scanning template is a XML-file which defines which regions a scan job exists 
 - **./ScanFieldArray** holds all fields (images) and their settings as attributes in `./ScanFieldArray/ScanFieldData`.
 - **./ScanWellArray** holds all wells (collection of images) and their settings as attributes in `./ScanWellArray/ScanWellData`.
 
+
+### OCR
+Optical character recognition (OCR) is recognition of characters in an image. OCR internals are not discussed, but it basically works by looking at patterns in the image to convert it to text.
 
 ## Nonlinear light interaction
 
