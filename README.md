@@ -5,9 +5,14 @@ Read it: [Web](thesis_web.md) / [PDF] (thesis_web.pdf)
 
 
 # latex setup
-Use pandoc to generate .tex or .pdf (see the [makefile](Makefile)).
+To build .tex, .pdf or .html files one needs pandoc >= 1.14 which is not available in binary as of may 2015, and must be installed from [source](https://github.com/jgm/pandoc).
 
-Filters in use:
+Additional the filters
 
 - [pandoc-crossref](https://github.com/lierdakil/pandoc-crossref)
 - [pandoc-citeproc](https://github.com/jgm/pandoc-citeproc)
+
+are required (`cabal install pandoc-crossref pandoc-citeproc`).
+
+For more details on .pdf generation, see the [Makefile](Makefile).
+

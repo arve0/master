@@ -2,7 +2,6 @@ PANDOC_SETTINGS=-s \
 		--filter pandoc-crossref \
 		--filter pandoc-citeproc \
 		--template latex_template/pandoc.tex \
-		--listings \
 		-V graphics \
 		-V fontsize=10pt \
 		-V geometry=lmargin=10mm,rmargin=10mm,tmargin=27mm,bmargin=30mm \
@@ -19,7 +18,7 @@ latex:
 	pandoc thesis.md $(PANDOC_SETTINGS) -o thesis.tex
 
 texpdf:
-	pandoc thesis.tex -o thesis.pdf
+	pdflatex -shell-escape thesis.tex
 
 
 pdf: thesis.md
@@ -30,7 +29,7 @@ thesis_web.md: thesis.md
 	python web_figures.py
 
 thesis_web.pdf: thesis_web.md
-	pandoc thesis_web.md $(PANDOC_SETTINGS) -o thesis_web.pdf
+	pandoc thesis_web.md $(PANDOC_SETTINGS) -o thesis_web.pdf --latex-engine-opt="-shell-escape"
 
 thesis.html: thesis_web.md
 	pandoc thesis_web.md -s --toc -o thesis.html
