@@ -6,53 +6,70 @@ bibliography: bibliography.bib
 csl: american-medical-association.csl
 ---
 
-# Abstract
+# Preface {.unnumbered}
+Five years at NTNU have been a rollercoaster ride. Uphills at times, but also a great deal of fun. I'm grateful for the number of marvellous people I have met, the flexibility the student life brings, all the fun with the student society Spanskrøret and not to forget all the things I've learned.
+
+A special thank you go to all the professors who withstand sharing their knownledge every day, even at time when their students seems unmotivated.
+
+The last year I have been warmly included in Magnus Borstad Lilledahl's research group, with Andreas Finnøy, Elisabeth Inge Romijn and Rajesh Kumar. It's been educational to work with them and exciting to get an insight in how they perform their research. Thank you!
+
+I would also like to thank my family, who always have been supportive for the choices I've made.
+
+Lastly, the greatest thanks go to my life companion Yngvild, it wouldn't have been the same without you.
+
+And the cheesy quote is..
+> The future is already here, it's just not very evenly distributed. - William Gibson
+
+
+\tableofcontents
+
+
+# Abstract {.unnumbered}
 What to communicate: goal, overview of experiences made, results
 
-This thesis documents work on automatic microscope imaging of breast tumor tissue micro arrays and how the images can be analyzed for a supplement in cancer diagnosis. The overall research goal has been to classify tumor grade (I, II or III) based on the fiber structure in the tissue samples. Supervised machine learning is the method of analysis, where St. Olavs hospital has supplied a dataset of tissue samples at the tumor peripheral from 924 (TODO update excact number) patients.
+St. Olavs hospital has supplied a dataset of 2703 tissue samples at the tumor peripheral from $\approx$ 900 patients. NTNU want to examine all tissue samples with image processing to see if second harmonic generation microscope images of tissue can help classify cancer type (I, II, III) or in other words, cancer aggresiveness. This thesis documents a method which automates the microscope imaging of these tissue micro arrays (TMA) and show how images can be structured and correlated to clinical data.
 
-Automated microscope scanning is in principle straight forward, but the implementation will be dependent on many aspects of the experimental setup. In general, some of the aspects discussed in this thesis are:
+Automated microscope scanning is in principle straight forward, but the implementation is dependent on many aspects of the experimental setup. In general, some of the aspects discussed in this thesis are:
 
-- correcting for systematic errors like intensity variations
-- create image analysis algorithms that are robust to experimental variations
-- verify that metrics reported by the system are the real physical ones
-- finding good compromises between time, signal quality and ease of measurement
-- scanning mirror- versus stage coordinate system and reliable stitching
-- writing cross-platform software
+- Create image analysis algorithms that are robust to experimental variations.
+- Correction of systematic errors like
+  - intensity variations and
+  - difference in coordinate systems of scanning raster patterns and stage movement.
+- Automatic stitching of regular spaced images with variable degree of signal entropy in seams.
+- Adjusting z-plane for large area samples with micrometer precision.
 
-The general aspects listed above are not unique to the experiments and experimental setup, and could potentially be useful for others. But this thesis will also address issues directly associated to tissue micro arrays and the Leica SP8 microscope:
+The aspects listed above are not unique to TMA-specimens and the experimental setup, and could be useful for similar projects. But the focus of the thesis will be on TMA and the experimental setup with a Leica SP8 microscope.
 
-- adjusting z-plane for large area samples with micrometer precision
-- working around Leica software limitations
+The conclusions are:
 
-Results on the dataset was positive/negative. Details on the result.
-
-A proposal for further research with the same dataset is extracting more features from the images and use equivalent methods to find relationships to the clinic data. IF POSITIVE RESULT: Collecting tissue sample is a part of the standard procedure in breast cancer diagnosis at St. Olavs hospital, and one can do the analysis described in this thesis to further confirm or falsify the result.
-
-
-
+- Large area scans should adjust speciment plane to be at even distance to the objective to be time effective and avoid out of focus images.
+- Using heuristics/constraints improves the reliability to automatic stitching algorithms, failing gracefully on images with little entropy in overlap.
+- Leica LAS X version 1.1.0.12420 have limited support for automatic microscopy, but it exist workarounds for fully automatic TMA-scanning.
 
 
 # Introduction
 
 What to communicate: motivation, brief summary of chapters
 
-With a population just above 5 million [@statistisk_sentralbyra_folkemengde_2015], three thousand women are diagnosed with breast cancer each year [@statistisk_sentralbyra_dodsarsaker_2013] in Norway. This makes breast cancer the most common kind of cancer, affecting one of every eleventh woman. Luckily breast cancer is often treatable, shown by the fatalities which was 649 in 2012 [-@statistisk_sentralbyra_dodsarsaker_2013]. In improving diagnosis, the work behind this thesis has explored ways to automate analysis of microscope images of breast tissue. Focus has mainly been on automating scanning of tissue micro arrays. Tissue micro arrays are glass slides with samples arranged in a matrix pattern seen in [@fig:tma]. As tissue micro arrays is standard procedure, not unique to breast cancer tissue, the work of this master are relevant for other studies too.
+With a population just above 5 million [@statistisk_sentralbyra_folkemengde_2015], three thousand women are diagnosed with breast cancer each year [@statistisk_sentralbyra_dodsarsaker_2013] in Norway. This makes breast cancer the most common kind of cancer, affecting one of every eleventh woman. Luckily breast cancer is often treatable, shown by the fatalities which was 649 in 2012 [-@statistisk_sentralbyra_dodsarsaker_2013]. NTNU and St. Olavs hospital have been cooperating on reasearch to find new ways to diagnose patients. The cooperation yielded a study [@brabrand_alterations_2015] on 37 subjects which showed positive results on difference of collagen structure from different parts of tumor tissue. This thesis seeks to make it possible to expand the study from 37 subjects to the whole dataset available of $\approx$ 900 subjects.
+
+The means to achieve the expanded dataset is automating the microscope imaging, with main focus on automated scanning of tissue micro arrays. Tissue micro arrays are glass slides with samples arranged in a matrix pattern seen in [@fig:tma]. As tissue micro arrays is standard procedure, not unique to breast cancer tissue, the work of this master is relevant for other studies too.
 
 
 ![Tissue micro array of breast tissue at perifer of tumor. Three test samples are beside the array of 14x9 samples to avoid mix up of patients when rotating the slide.](figures/tma.png) {#fig:tma}
 
+
 The tissue micro array shown in [@fig:tma] is $\approx$ 24x15 mm in size. Using a moderate objective of 25x with 400 \si{\micro\metre} field of view, a single scan of the total dataset will be
 
-$$ \frac{24 \si{\milli\metre}}{400 \si{\micro\metre}} \cdot \frac{15 \si{\milli\metre}}{400 \si{\micro\metre}} = 2250 \text{ images.} $$ {#eq:datasize}
+$$ \frac{24 \si{\milli\metre}}{400 \si{\micro\metre}} \cdot \frac{15 \si{\milli\metre}}{400 \si{\micro\metre}} = 2250 \text{ images.} $$
 
-Depending on the precission of the microscope stage, images are not necessarry easily put together. Also, keeping microscope in focus for the whole surface can become challenging. Another approach would be to scan each of the $14 \cdot 9 = 126$ samples one by one. The challenge with this approach is that the samples are often not equally spaced, and a lot of manual error prone labor is required to define the areas to scan. The method in this thesis tries to simplify the scanning process and perpare the images for further analysis.
+Depending on the precission of the microscope stage, images are not necessarry easily put together. Also, keeping microscope in focus for the whole surface can become challenging. Another approach would be not to scan the whole area in one scan, but to scan each of the $14 \cdot 9 = 126$ tissue specimens one by one. The challenge with scanning each region one by one is that the samples are often not equally spaced, and a lot of manual error prone labor is required to define the areas to scan. The method in this thesis tries to simplify the scanning process and prepare the images for further analysis.
 
-The thesis are written with focus on two parts, namely automating the collection of images and correlating samples to clinical data. How this can be used in supervised machine learning will be briefly mentioned in the end.
+The thesis are written with focus on two parts, namely automating the collection of images and correlating samples to clinical data. How this can be used in supervised machine learning will be briefly mentioned in the end. In total the method described should enable researchers to run experiments on large datasets of tissue micro arrays in a structured and determined manner.
 
-A reader of this text should be familiar with general physics. Subjects that are specific to scanning microscopy and image processing will be described in the theory section, along with concepts used in particular software used. The method section seeks to make it possible for others to replicate the experimental setup on any kind of microscope, but some will be specific to the Leica SP8 microscope in use. The result section will mark out leverages gained with automated scanning, and the discussion holds details on choices made when developing the method and limitations specific to the Leica SP8 microscope.
+A reader of this text should be familiar with general physics. Matters that are specific to scanning microscopy and image processing will be described in the theory section, along with software concepts in use. The method section seeks to make the reader able to replicate the experiment on any kind of microscope, but some software and solutions will be specific to the Leica SP8 microscope. The result section will mark out leverages gained with automated scanning, and the discussion holds details on choices made when developing the method and limitations stumbled upon.
 
-
+All source code in the thesis will be in the programming language python [@python_software_foundation_official_2015]. The reader should not need to be proficient in python programming, but acquaintance with the syntax is assumed. Code listings will be used to clarify how problems have been solved or algorithms have been implemented. Details not essential to the problem at hand have been omitted, but all source code can be read at github [@seljebu_arve0_2015].
 
 > ML: En hoveddel i arbeidet har vært automatiseringen av TMA. Skrive noe om TMA og hvorfor automatisert analyse er nødvendig...skal lede opp til en beskrivelse av de tekniske utfordringene som er løst.
 
@@ -63,33 +80,106 @@ What to communicate: theory and details that are not obvious for understanding t
 
 > ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og innholdet er mer klart.)
 
-## Leica software
-- socket
-- CAM
-- XML and scanning template (overview ST vs job ST)
-- wells and fields
 
 ## Image Processing
+The term image in this contex a two dimentional array of values, where each position in the array is called a pixel. Resolution is the number of pixels an image holds. E.g. a resolution of 1024x1024 is an image with 1024 pixels in both x- and y-direction, totalling \num{1e6} pixels. Each pixel represent a physical position of the specimen, where the value is the amount of light measured from the detector when scanning the specimen surface with a light source. The physical size of the pixel will depend on sampling rate. All images in this thesis are 8 bit grayscale images, meaning that each pixel can hold $2^8=256$ values. In an ideal experiment a pixel value of zero denote zero detected light and 255 is the maximum, but this is an simplification as noise will be measured too.
+
+$f(x, y)$ denotes the intesity of pixel at position $(x, y)$, where $(0, 0)$ is the top left of the image. Positive x-direction is to the left, positive y-direction is downwards. In 
+
+
+
 - scikit-image, utils.ipynb, defaults in code blocks
-- OCR
 
 
-ORB and Ransac [1]
-[1]: https://peerj.com/articles/453/#p-1
+### OCR
+Optical character recognition (OCR) is in this context recognition of characters in a digital image. OCR internals are not discussed, but it basically works by looking at patterns in the image to convert the image to text.
+
 ## Scanning microscope
-- Epi setup
-- scanning, descanned detectors
+Figure \ref{fig:epi} illustrate the internal workings of a Leica SP8 scanning microscope which have an epi-illumination setup. Epi-illumination is when the detectors (26) and light source (1, 3, 5, 7) are on the same side of the objective (18). But as seen, the epi-setup also allows for external detectors (19). By scanning one means that the light source is focused to a specific part of the specimen and scanned line by line in a raster pattern. While the laser are scanned over the surface, a detector measure light in samples and each measured sample of light will be saved to an image pixel. The scanning is done by a oscillation mirror (14). The term non descanned detector indicate that the light does not travel by the scanning mirror before the detector. In SP8 (17) and (19) are non descanned detectors, where (17) measure reflected light and (19) measure transmitted light.
 
-focal volume
+![Internals of a Leica SP8 microscope. Picture from Leica SP8 brochure [@leica_microsystems_cms_gmbh_leica_2014].](figures/epi.jpg) {#fig:epi}
+
+The view field of a microscope is the physical size of viewable area. The view field depends on the magnification of the objective and the scanner zoom. Scanner zoom is when the scanner is set to oscillate with less amplitude while still sampling at the same rate. As field of view is at the magnitude of \num{1e-4} \si{\metre}, specimen must be moved around to image a larger area. The device that moves the specimen is called a stage. The stage position, or specimen position if you like, is denoted with a upper case $X$ to distinguish it from lower case $x$ which denote image pixel position.
+
+## Software
+
+### Leica LAS X
+The Leica software comes with an function called *Matrix Screener*, which allows the user to define structured areas to scan. The software uses the concepts fields and wells. A field is essentially an image, and a well is a collection of regular spaced images. The wells may be regular spaced, or an offset between wells can be defined in the graphical user interface. The scan job is started, Leica LAS will store images in a tree of folders in TIFF format.
+
+
+### CAM
+In addition to controlling the microscope with the graphical user interface, a function called *Computer Assisted Microscopy* (CAM) can be turned on. CAM is a socket interface, meaning one send bytes over a network interface. This is very similar to how one can write bytes to a file, but in addition the socket interface can respond and send bytes back. The network interface runs on TCP port 8895 and one may be communicate locally or over TCP/IP network. A set of 44 commands are available, but only three of them are intresting for the purpose of controlling scans; `load`, `autofocusscan` and `startscan`. More details on the interface can be read in the manual [@frank_sieckmann_cam_2013] or by studying the source code of the package `leicacam` [@arve_seljebu_arve0/leicacam_2015]. Code listing \ref{code:leicacam} show how one can communicate with the microscope in python.
+
+
+``` {caption="" label=code:leicacam .python}
+from leicacam import CAM
+
+# connect to localhost:8895
+cam = CAM()
+
+# load a template named leicaautomator
+cam.load_template('leicaautomator')
+
+# start the autofocus scan defined in 'leicaautomator' template
+cam.autofocus_scan()
+
+# start the scan job
+cam.start_scan()
+
+# read filename in response from microscope when images are scanned
+relpath = cam.wait_for('relpath')
+```
+
+### XML
+Extensible Markup Language is a declarative language which most high level programming languages speak, which makes it adapted for communicating between computer programs. A XML-file contain a single root and tree structure with parent and children nodes. Any position in the tree can be specified with an *XPath*. Code listing \ref{code:xml} show a typical structure of a XML-file.
+
+
+``` {caption="XML-tree structure with " label=code:xml .xml}
+<?xml version="1.0"?>
+<root>
+    <parent>
+        <child attr="val1">text</child>
+        <child attr="val2">text2</child>
+    </parent>
+    <parent>
+        <child attr="val3">text</child>
+        <child attr="val4">text2</child>
+    </parent>
+</root>
+```
+
+The XML-file might be nested with several childen and parents, but code listing \ref{code:xml} holds for illustration purposes. XPath for the first child in parent will be `./parent/child[@attribute="val1"]`. Here `.` is the root, `/` defines path (or nesting if you like) and `[@attribute="val"]` defines that the attribute named `attr` should be the value `val1`. This XPath will find only the first child of the first parent, but if other childs with same path also had an attribute named `attr` with the value `val1`, the XPath would have found them also. E.g. `./parent/child` will find all children. Code listing \ref{code:pythonxml} show how one would read properties from the XML-file in code listing \ref{code:xml}.
+
+``` {caption="Accessing XML properties with python build-in module xml.etree." label=code:pythonxml .python}
+import xml.etree.ElementTree as ET
+
+tree = ET.parse('/path/to/file.xml')
+
+first_child = tree.find('./parent/child')
+first_child.attrib['attr'] == "val1" # True
+
+all_children = tree.findall('./parent/child')
+len(all_children) == 4 # True
+```
+
+### Scanning Template
+A scanning template is a XML-file which defines which regions a scan job exists of. The structure of the file is the following:
+
+- **./ScanningTemplate/Properties** holds experiment settings like start position, displacement between fields and wells, start position, which Z-drive to use, and so on.
+- **./ScanFieldArray** holds all fields (images) and their settings as attributes in `./ScanFieldArray/ScanFieldData`.
+- **./ScanWellArray** holds all wells (collection of images) and their settings as attributes in `./ScanWellArray/ScanWellData`.
+
+
 ## Nonlinear light interaction
 
+- focal volume
 
 
 
 
 # Method
 
-What to communicate: experimental setup to reproduce results, description of automatic process, limitations/obstacles specific to experimental setup, brief description of software modules in use
+What to communicate: experimental setup to reproduce results, description of process, brief software listings to show usage of software modules
 
 ## Microscope
 The images has been taken with a Leica SP8 microscope using LAS X software version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a pulsing Coherent laser and a continious LASOS argon laser. Full specifications of lasers are in [@tbl:lasers].
@@ -117,14 +207,14 @@ The SP8 microscope has an inverted epi-setup, with four descanned detectors and 
 
 Communicate: the procedure of automatic scanning
 
-The automated scanning aims to lift the burden of manually labor and prevent errors in the imaging process by finding regions with the samples in an overview image. The process consists roughly of the steps:
+The automated scanning aims to lift the burden of manually labor and prevent errors in the imaging process by finding regions with the specimens in an overview image. The process consists roughly of the steps:
 
 - Take an overview image with low magnification
 - Segment the overview image
 - Allow user to confirm or adjust the segmentation
 - Scan each region
 
-Overview images was taken with a 10x air objective, equalized and stitched. The equalization step corrects uneven illumination and increases contrast for viewing purposes. To improve robustness of segmentation, a local bilateral population filter was applied to the stitched image before it is thresholded. Each separate region in the segmentation are sorted by their area size, small regions are excluded and the user can exclude or add regions if some of the samples are not detected. Row and column position of the regions are calculated by sorting them by their position in the image. A more detailed description follows.
+Overview images was taken with a 10x air objective, equalized and stitched. The equalization step corrects uneven illumination and increases contrast for viewing purposes. To improve robustness of segmentation, a local bilateral population filter was applied to the stitched image before it is thresholded. Each separate region in the segmentation are sorted by their area size, small regions are excluded and the user can exclude or add regions if some of the specimens are not detected. Row and column position of the regions are calculated by sorting them by their position in the image. A more detailed description follows.
 
 ### Overview images
 Overview images was taken with an technique similar to bright-field microscopy except that the light source is a scanning laser. The laser in use was the argon laser in [@tbl:lasers] with 514 nm emission line, output power set to 2.48% and intensity to 0.10. Forward light was imaged using a 0.55 NA air collector with the non descanned detector having the 525/50 nm bandpass filter. Aperture and detector gain was adjusted so that the histogram of intensities was in the center of the total range without getting peaks at minimum and maximum values.
@@ -132,7 +222,7 @@ Overview images was taken with an technique similar to bright-field microscopy e
 Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500 $\mu$m (read more about resolution and image size in the discussion). After images is scanned, they are rotated 270 degrees, as Leica LAS store *.tif*-images with axes swapped in regards to the stage axes.
 
 #### Uneven illumination
-![(a) Image of glass slide only and no tissue for illustrating the uneven illumination. Dots are impurities in the sample. (b) Original image of sample. The white line is the row with least variance used for equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are displaying values from 130 to 230 to highlight the intensity variation, colorbar is shown to the right.](figures/uneven_illumination_images.png) {#fig:illumination}
+![(a) Image of glass slide only and no tissue for illustrating the uneven illumination. Dots are impurities on the glass slide. (b) Original image with part of speciment. The white line is the row with least variance used for equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are displaying values from 130 to 230 to highlight the intensity variation, colorbar is shown to the right.](figures/uneven_illumination_images.png) {#fig:illumination}
 
 The uneven illumination in the experimental setup is illustrated in [@fig:illumination](a). By assuming the intensity variation in all pixels are following the slope of the background, equalization was done by dividing each row in the image by the normalized intensity profile of the background.
 
@@ -146,12 +236,15 @@ equalized[equalized > 1] = 1            # clip values
 
 As seen in code listing \ref{code:equalize} the image is first normalized. `images_minimum` and `images_maximum` is found by selecting the median of respectively minimum and maximum intensity of all images. By taking the median of all images one avoids outliers and gets the same normalization for all images. Similar technique could be used for normalizing the images after equalization, but clipping gave acceptable results. `intensity_profile` is a curve fit for one of the background rows. The background row was found by selecting the row with least variance (given that the image does have a row with background only). In [@fig:illumination](b) the row with least variance is indicated with a white line. The same intensity profile is used on all images, and it's fitted to a second degree polynomial to steer clear from noise as illustrated in [@fig:illumination_intensities](a).
 
-The effect on pixel values can be seen in [@fig:illumination_intensities] (b) and (c), where each dot represents a pixel value with increasing image x-position on the x-axis.
+The effect on pixel values can be seen in [@fig:illumination_intensities] (b) and (c), where each dot represents a pixel value with increasing image x-position on the x-axis. The intensity variation shown here was directed in one axis only which allowed for the simple divide all rows by the intensity profile. For more complex intensity variations, similiar approach can be done by fitting the two dimentional background to a surface, then divide the image by this intensity surface profile.
 
 ![(a) Intensities for the line with least variance of [@fig:illumination](b). The curve is fitted to a second degree polynom to supress noise. (b) Intensities for image in [@fig:illumination](b). Each dot represents a pixel. (c) Intensities for the equalized image in [@fig:illumination](c). Each dot represents a pixel. Note that the intensities is both spread across the whole intensity range (0-255) and the skewness is fairly straightened out.](figures/uneven_illumination_intensities.png) {#fig:illumination_intensities}
 
 #### Stitching
-![(a) Automatic stitching with Fiji is unreliable, as the image translation calculated by phase correlation is chosen without displacement constraints. (b) Using same overlap for all images gives negliable errors, here using the python package *microscopestitching*.](figures/stitching_comparison.png) {#fig:stitching}
+![Stitch of three images with scanning pattern rotated compared to stage movement. Calculating stage position by y-equivalent to [@eq:loc] will fail, giving a systematic error in the y-position.](figures/stitch_rotation.png) {#fig:stitchrotation}
+
+
+![(a) Unreliable automatic stitching with Fiji, the image translation calculated by phase correlation is chosen without adhering to displacement constraints. (b) Using same overlap for all images gives negliable errors, here using the python package *microscopestitching*.](figures/stitching_comparison.png) {#fig:stitching}
 
 Due to little signal in areas between samples, automatic stitching with correlation methods are prone to fail. To remedy this, the same overlap was chosen when stitching the overview image. Using the same overlap in this context gives reliable stitching with negligible errors. The overlap is chosen by calculating all overlaps with phase correlation and taking the median. The stitching was put in a python package and can be used as shown in code listing \ref{code:stitch}.
 
@@ -294,9 +387,10 @@ SHG images was taken with a 25x/0.95 NA water objective. The pulsed infrared las
 
 A resolution of 1024x1024 pixels with 8 bit image depth was used. Frequency of scanning mirror was set to 600 lines/second.
 
-### DAPI images
-TODO
 
+## Alignment of z-plane
+The samples in [@fig:tma] are 5 \si{\micro\metre} thick and keeping the sample plane at same distance from . 
+![Sample holder with adjustment of z-plane. ](figures/stage_insert.png)
 
 ## Correlating images with patient data
 
@@ -331,9 +425,6 @@ condition = clinical_data.ID_deltaker == patient_id.iloc[0]
 outcome = clinical_data[condition]['GRAD']
 ```
 
-## Collection of SHG images
-- alignment of z-plane
-- correlation with patient data (sample map and clinic data)
 
 ## Technical details
 ### Hardware aspects
