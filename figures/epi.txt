@@ -1,0 +1,26 @@
+1 Visible line lasers or White Light Laser
+2 Acousto-optical tunable filter (AOTF)
+3 Infrared (IR) lasers
+4 Electro-optical modulation (EOM)
+5 Ultraviolet (UV) lasers
+6 AOTF or direct modulation (DMOD)
+7 STED laser
+8 Monitoring diode for Setlight
+9 Acousto-optical beam splitter (AOBS), other options available
+10 FRAP Booster
+11 IR laser incoupling
+12 UV laser incoupling with CS2 UV optics
+13 STED laser incoupling
+14 FOV scanner with tandem scanner option *optional
+15 Scan optics with alternative UVIS, HIVIS or VISIR coating
+16 Scan field rotation (Abbe-König rotator)*
+17 Reflected light detection (RLD) in non-descanned position
+18 Objective lens (different options available)
+19 Transmitted light detection (TLD) in non-descanned position
+20 Square confocal pinhole
+21 Fluorifier disc
+22 Outcoupling with X1 port
+23 External detection
+24 Prism-based dispersion
+25 SP detection with spectrophotometer arrangement
+26 Up to five photomultipliers (PMT) or up to four hybrid photodetectors (HyDTM)
