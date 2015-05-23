@@ -1,0 +1,377 @@
+<?xml version="1.0" ?>
+<!--Leica Application Suite X (LAS X)-->
+<!--Leica Microsystems CMS GmbH-->
+<!--http://www.confocal-microscopy.com-->
+<!--LAS-AF 1.1.0.12420-->
+<Configuration ID="2271935676" SystemType="-1" Type="7">
+  <LDM_Block_Sequence BlockName="collecting pattern">
+    <LDM_Block_Sequence_Element_List>
+      <LDM_Block_Sequence_Element AFLinkBlockID="0" AF_LDM_Mode="0" AF_Offset="0" BlockID="16" BlockType="0" ElementID="1" IsLoopActive="0" LoopCount="-1" LoopToNextElement="0" PauseTime="0" RemainingLoopCount="-1" WFInTriggerMode="-1" WFOutTriggerMode="-1" WaitTimeBeforeDelayTriggerOut="0" m_eInTrigger="-1" m_eInTriggerDescription="" m_eInTriggerRecordInEventlist="0" m_eInTriggerShowInGraph="1" m_eOutTrigger="-1" m_eOutTriggerDescription="" m_eOutTriggerOnDelay="-1" m_eOutTriggerOnDelayDescription="" m_eOutTriggerOnDelayRecordInEventlist="1" m_eOutTriggerOnDelayShowInGraph="1" m_eOutTriggerOnEnd="-1" m_eOutTriggerOnEndDescription="" m_eOutTriggerOnEndRecordInEventlist="1" m_eOutTriggerOnEndShowInGraph="1" m_eOutTriggerOnStart="-1" m_eOutTriggerOnStartDescription="" m_eOutTriggerOnStartRecordInEventlist="1" m_eOutTriggerOnStartShowInGraph="1" m_eOutTriggerRecordInEventlist="1" m_eOutTriggerShowInGraph="1"/>
+      <LDM_Block_Sequence_Element AFLinkBlockID="0" AF_LDM_Mode="0" AF_Offset="0" BlockID="17" BlockType="0" ElementID="2" IsLoopActive="0" LoopCount="-1" LoopToNextElement="0" PauseTime="0" RemainingLoopCount="-1" WFInTriggerMode="-1" WFOutTriggerMode="-1" WaitTimeBeforeDelayTriggerOut="0" m_eInTrigger="-1" m_eInTriggerDescription="" m_eInTriggerRecordInEventlist="0" m_eInTriggerShowInGraph="1" m_eOutTrigger="-1" m_eOutTriggerDescription="" m_eOutTriggerOnDelay="-1" m_eOutTriggerOnDelayDescription="" m_eOutTriggerOnDelayRecordInEventlist="1" m_eOutTriggerOnDelayShowInGraph="1" m_eOutTriggerOnEnd="-1" m_eOutTriggerOnEndDescription="" m_eOutTriggerOnEndRecordInEventlist="1" m_eOutTriggerOnEndShowInGraph="1" m_eOutTriggerOnStart="-1" m_eOutTriggerOnStartDescription="" m_eOutTriggerOnStartRecordInEventlist="1" m_eOutTriggerOnStartShowInGraph="1" m_eOutTriggerRecordInEventlist="1" m_eOutTriggerShowInGraph="1"/>
+    </LDM_Block_Sequence_Element_List>
+    <LDM_Block_Sequence_Block_List>
+      <LDM_Block_Sequence_Block BlockID="16" BlockIsUsingCameraImageSource="0" BlockType="0">
+        <LDM_Block BlockName="AF Job">
+          <ATLConfocalSettingDefinition ActiveCS_SubModeForRLD="0" ActiveCS_SubModeForRLDName="Empty" ActiveCS_SubModeForTLD="0" ActiveCS_SubModeForTLDName="Scan-BF" AreBleachPointsEnabled="0" AutofocusRedoEveryNTimePoints="0" BaseZoom="0.75" BitSize="8" CanDoCSMode="1" CanDoOpticalZoom="0" CanDoSTED="0" CompleteTime="1.293" CycleCount="1" CycleTime="0" EmissionWavelengthForPinholeAiryCalculation="580" FrameAccumulation="1" FrameAverage="1" FrameTime="1.293" Immersion="DRY" InDimension="512" InTrigger="-1" Is3DLimitedRoiScanEnable="0" IsAutofocusOnStart="1" IsConstantIntegrationTimeActive="1" IsFCSFilterAutomationActive="0" IsFastZStack="0" IsInverseMicroscopeModel="1" IsMPFormulaForStepSizerUsageActive="0" IsRoiScanEnable="0" IsSMDChaserUVAOTFAutomationActive="0" IsSTEDActive="0" IsSuperZ="0" IsTimeMinimizeEnabled="0" IsUserSettingNameSet="0" IsZStackAroundCurrent="0" LambdaExcitationMode="0" LambdaExcitationModeBegin="0" LambdaExcitationModeEnd="0" LastNonMP_MFP_FW_Name="Substrate " LastNonMP_Pol_FW_Name="Empty" LastTCalcMode="3" Limited3DRoiFirstSection="1" Limited3DRoiLastSection="1" LineAverage="1" LineTime="0.0025" Line_Accumulation="1" Lines="512" Magnification="10" MaxLines="1" MicroscopeModel="DMI6000B-CS" NumericalAperture="0.4" ObjectiveName="HC PL APO    10x/0.40 DRY " ObjectiveNumber="11506511" ObjectivePos="2" OpticalZoom="1" OutDimension="512" OutTrigger="-1" Pages="1" PanFirstDim="8.67361737988404E-19" PanSecondDim="8.67361737988404E-19" Pinhole="5.30206177527711E-05" PinholeAiry="0.999069488463747" PixelDwellTime="0.0000012" ReferencePosition="0" RefractionIndex="1" RotatorAngle="0" STEDDelayTimeOffset="0" STEDDelayTimeOffset2="0" ScanDirectionX="1" ScanDirectionXName="Unidirectional" ScanMode="xyz" ScanSpeed="400" Sections="1" StackCalculationMode="2" StackCalculationModeName="System optimized step size" StagePosX="0.03009999923723" StagePosY="0.03009999923723" StageRangeX="0.11279375084332" StageRangeY="0.0793181234516" StedDelayWavelength="470" SystemSerialNumber="8100000303" UseMaxIterationsForT="0" UseScanFormatRestriction="0" UseSystemOptimizedVoxelCalculation="1" UserSettingName="S13" ValidBeginStack="0" ValidEndStack="0" VersionNumber="8" ZCompensationModes="0" ZPosition="-2.3841880645312E-10" ZStackDirectionMode="1" ZStackDirectionModeName="Unidirectional" ZUseMode="1" ZUseModeName="z-galvo" Zoom="1">
+            <EasySRMappingArray/>
+            <EasySRSlider GentleRelative="25" SRRelative="75" ThreeDRelative="0"/>
+            <Quantity Unit="" Value="0.000000042"/>
+            <AdditionalZPositionList>
+              <AdditionalZPosition SuperZMode="1" SuperZModeName="RestrictedRange" Valid="1" ZMode="1" ZPosition="-2.3841880645312E-10" ZUseModeName="z-galvo"/>
+              <AdditionalZPosition SuperZMode="1" SuperZModeName="RestrictedRange" Valid="1" ZMode="2" ZPosition="0.000278198" ZUseModeName="z-wide"/>
+            </AdditionalZPositionList>
+            <Autofocus-config AFAnalyseType="1" AFAnalyseTypeName="EveryChannel" AFCAutonomousOffset="-2" AFCOffset="-2" AFSubsystem="3" AFSubsystemName="CombinedConfocal" AutoFocusMode="2" AutoFocusModeName="FirstChannelOnly" AutofocusChannel="0" AutofocusChannelName="0" FocusRange="0.00008" OptimalStepSize="2.40796995428705E-06" PositionDimension="122" Precision="2" UseFixSliceNumber="0" VersionNumber="1" WorkflowTimelapse="1" WorkflowTimelapseIterator="1" WorkflowTimelapseName="FirstTime" WorkflowXY="1" WorkflowXYIterator="1" WorkflowXYName="FirstPos" ZUseMode="1" ZUseModeName="z-galvo"/>
+            <ShutterList>
+              <Shutter IsActive="0" LightSourceName="SuperCont" LightSourceQualifier="70" ShutterName="WLL" ShutterQualifier="8"/>
+              <Shutter IsActive="0" LightSourceName="Vis" LightSourceQualifier="10" ShutterName="Visible" ShutterQualifier="3"/>
+              <Shutter IsActive="0" LightSourceName="MP" LightSourceQualifier="40" ShutterName="MP" ShutterQualifier="4"/>
+            </ShutterList>
+            <BleachPoints>
+              <LMSDataContainerHeader Version="2">
+                <Element CopyOption="1" Name="BleachPointROISet" UniqueID="0cd1f5f5-c754-11e4-8c4e-bcf685d7650c" Visibility="2">
+                  <Data>
+                    <ROISet PossibleChildROITypes="-1" PossibleROIActions="65535" PossibleROITransforms="65535" ROISetType="1"/>
+                  </Data>
+                  
+									
+                  <Memory MemoryBlockID="MemBlock_160" Size="0"/>
+                  <Children/>
+                </Element>
+              </LMSDataContainerHeader>
+              
+						
+            </BleachPoints>
+            <ATLConfocalBleachPointsSettings/>
+            <FilterWheel BeamSplitterAutoSelection="0" FluorifierAutoSelection="1" MultiFunctionPortAutoSelection="1" StedBeamSelectionPinholeCoupling="0">
+              <Wheel FilterIndex="0" FilterName="Min" FilterSpectrumPos="21132" FilterWheelName="Attenuation MP" IndexChanged="0" IsSpectrumTurnMode="0" LightSourceQualifier="40" Qualifier="214" SpectrumChanged="0">
+                <WheelName FilterName="Min"/>
+                <WheelName FilterName="Max"/>
+              </Wheel>
+              <Wheel FilterIndex="2" FilterName="Mirror " FilterSpectrumPos="0" FilterWheelName="External Detection FW" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="140" SpectrumChanged="0">
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="Substrate "/>
+                <WheelName FilterName="Mirror "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="--- " FilterSpectrumPos="0" FilterWheelName="FCS-FW" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="26" SpectrumChanged="0">
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="CleaningFilter 458"/>
+                <WheelName FilterName="CleaningFilter 488"/>
+                <WheelName FilterName="CleaningFilter 514"/>
+                <WheelName FilterName="CleaningFilter 458/514"/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Galvo X Normal " FilterSpectrumPos="0" FilterWheelName="Galvo Slider" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="160" SpectrumChanged="0">
+                <WheelName FilterName="Galvo X Normal "/>
+                <WheelName FilterName="Galvo X Res "/>
+              </Wheel>
+              <Wheel FilterIndex="4" FilterName="Substrate " FilterSpectrumPos="0" FilterWheelName="Multi Function Port" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="180" SpectrumChanged="0">
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="SP 815"/>
+                <WheelName FilterName="SP 665"/>
+                <WheelName FilterName="Mirror "/>
+                <WheelName FilterName="Substrate "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Empty" FilterSpectrumPos="0" FilterWheelName="Notch FW 2" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="131" SpectrumChanged="0">
+                <WheelName FilterName="Empty"/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="MP1 SP 680"/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="OPO SP 800"/>
+                <WheelName FilterName="SMD1 NF 405/470"/>
+                <WheelName FilterName="SMD2 NF 405/640"/>
+                <WheelName FilterName="SMD3 NF 470/640"/>
+                <WheelName FilterName="--- "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Empty" FilterSpectrumPos="79246" FilterWheelName="Polarization FW" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="130" SpectrumChanged="0">
+                <WheelName FilterName="Empty"/>
+                <WheelName FilterName="NF 488"/>
+                <WheelName FilterName="NF 514"/>
+                <WheelName FilterName="NF 458/514"/>
+                <WheelName FilterName="NF 488/561/633"/>
+                <WheelName FilterName="--- "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Galvo X Pan Center " FilterSpectrumPos="0" FilterWheelName="Galvo Resonant Pan" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="200" SpectrumChanged="0">
+                <WheelName FilterName="Galvo X Pan Center "/>
+                <WheelName FilterName="Galvo X Pan Mirror "/>
+                <WheelName FilterName="Galvo X Pan Polfilter "/>
+                <WheelName FilterName="Galvo X Pan RefDiode "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Target Park " FilterSpectrumPos="0" FilterWheelName="Target Slider" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="170" SpectrumChanged="0">
+                <WheelName FilterName="Target Park "/>
+                <WheelName FilterName="Target Inserted "/>
+                <WheelName FilterName="Target Mirror "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="CS2 UV Optics 1 " FilterSpectrumPos="0" FilterWheelName="X2 Lens Changer" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="31" SpectrumChanged="0">
+                <WheelName FilterName="CS2 UV Optics 1 "/>
+                <WheelName FilterName="CS2 UV Optics 2 "/>
+              </Wheel>
+            </FilterWheel>
+            <Spectro>
+              <MultiBand Channel="1" ChannelName="Channel 1" DyeName="" LeftWorld="406.25" RightWorld="458.75"/>
+              <MultiBand Channel="2" ChannelName="Channel 2" DyeName="" LeftWorld="511.25" RightWorld="563.75"/>
+              <MultiBand Channel="3" ChannelName="Channel 3" DyeName="" LeftWorld="616.25" RightWorld="668.75"/>
+              <MultiBand Channel="4" ChannelName="Channel 4" DyeName="" LeftWorld="721.25" RightWorld="773.75"/>
+            </Spectro>
+            <AotfList>
+              <Aotf AotfQualifier="90" AotfQualifierName="WLL" CanDoPulseFreq="0" CanDoTwoLaserPIE="0" ExcitationControlMode="0" ExcitationControlModeBegin="0" ExcitationControlModeEnd="0" IsChanged="0" LightSourceQualifier="70" LightSourceQualifierName="SuperCont" OpenVirtual="0" PulsFreq="0" TwoLaserPIEActive="0" TwoLaserPIEPossibleLastState="0">
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="1" LaserLine="470" LineIndex="0" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="471" LineIndex="1" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="472" LineIndex="2" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="473" LineIndex="3" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="667" LineIndex="4" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="668" LineIndex="5" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="669" LineIndex="6" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="670" LineIndex="7" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+              </Aotf>
+              <Aotf AotfQualifier="10" AotfQualifierName="Visible" CanDoPulseFreq="0" CanDoTwoLaserPIE="0" IsChanged="0" LightSourceQualifier="10" LightSourceQualifierName="Vis" OpenVirtual="0" PulsFreq="0" TwoLaserPIEActive="0" TwoLaserPIEPossibleLastState="0">
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="458" LineIndex="0" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="476" LineIndex="1" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="488" LineIndex="2" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="496" LineIndex="3" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="514" LineIndex="4" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+              </Aotf>
+              <Aotf AotfQualifier="50" AotfQualifierName="MP" CanDoGainOffset="1" CanDoPulseFreq="0" CanDoTwoLaserPIE="0" ExcitationControlMode="0" ExcitationControlModeBegin="0" ExcitationControlModeEnd="0" Gain="0" IsChanged="0" IsEomOptimizedModeActive="1" LightSourceQualifier="40" LightSourceQualifierName="MP" Offset="97.2213321126116" OpenVirtual="0" PulsFreq="0" TwoLaserPIEActive="0" TwoLaserPIEPossibleLastState="0">
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="890" LineIndex="0" OutCheckedIntensity="0" Qualifier="50" SequenceIndex="0" SuppressionMode="-1"/>
+              </Aotf>
+            </AotfList>
+            <LUT_List>
+              <LUT Channel="1" LutName="Green"/>
+              <LUT Channel="2" LutName="Red"/>
+              <LUT Channel="3" LutName="Blue"/>
+              <LUT Channel="4" LutName="Gray"/>
+              <LUT Channel="1002" LutName="Red"/>
+              <LUT Channel="1003" LutName="Green"/>
+              <LUT Channel="1200" LutName="Red"/>
+              <LUT Channel="1201" LutName="Green"/>
+            </LUT_List>
+            <DetectorList DetectorAutoSelection="1" InExternalDetectionMode="0">
+              <Detector AcquisitionMode="0" AcquisitionModeName="PhotonIntegration" CanDoPhotonCounting="1" CanDoTimeGate="1" Channel="1" ChannelName="Channel 1" Gain="99.9981315396114" IsActive="0" IsEnabled="0" IsFlimDetector="0" IsHPDDetector="1" IsHPDOverloaded="0" IsSTEDDetector="1" IsTimeGateActivated="0" Name="HyD 1" Offset="-6.6666666666606E-03" ScanType="Internal" TimeGatePulseEnd="6000" TimeGatePulseStart="300" TimeGateWavelength="-1" Type="HyD"/>
+              <Detector CanDoTimeGate="0" Channel="2" ChannelName="Channel 2" Gain="0" IsActive="1" IsFlimDetector="0" IsHPDDetector="0" IsSTEDDetector="1" Name="PMT 2" Offset="0" ScanType="Internal" Type="PMT"/>
+              <Detector AcquisitionMode="0" AcquisitionModeName="PhotonIntegration" CanDoPhotonCounting="1" CanDoTimeGate="1" Channel="3" ChannelName="Channel 3" Gain="99.9981315396114" IsActive="0" IsEnabled="0" IsFlimDetector="0" IsHPDDetector="1" IsHPDOverloaded="0" IsSTEDDetector="1" IsTimeGateActivated="0" Name="HyD 3" Offset="-6.6666666666606E-03" ScanType="Internal" TimeGatePulseEnd="6000" TimeGatePulseStart="300" TimeGateWavelength="-1" Type="HyD"/>
+              <Detector CanDoTimeGate="0" Channel="4" ChannelName="Channel 4" Gain="0" IsActive="0" IsFlimDetector="0" IsHPDDetector="0" IsSTEDDetector="1" Name="PMT 4" Offset="0" ScanType="Internal" Type="PMT"/>
+              <Detector CanDoTimeGate="0" Channel="1002" ChannelName="NDD3" Gain="0" IsActive="0" IsFlimDetector="0" IsHPDDetector="0" IsSTEDDetector="0" Name="PMT NDD3" Offset="0" ScanType="TLD" Type="PMT"/>
+              <Detector CanDoTimeGate="0" Channel="1003" ChannelName="NDD4" Gain="0" IsActive="0" IsFlimDetector="0" IsHPDDetector="0" IsSTEDDetector="0" Name="PMT NDD4" Offset="0" ScanType="TLD" Type="PMT"/>
+              <Detector AcquisitionMode="0" AcquisitionModeName="PhotonIntegration" CanDoPhotonCounting="1" CanDoTimeGate="0" Channel="1200" ChannelName="APD1" Gain="99.9981315396114" IsActive="0" IsEnabled="0" IsFlimDetector="0" IsHPDDetector="1" IsHPDOverloaded="0" IsSTEDDetector="0" Name="HyD6" Offset="-6.6666666666606E-03" ScanType="RLD" Type="HyD"/>
+              <Detector AcquisitionMode="0" AcquisitionModeName="PhotonIntegration" CanDoPhotonCounting="1" CanDoTimeGate="0" Channel="1201" ChannelName="APD2" Gain="99.9981315396114" IsActive="0" IsEnabled="0" IsFlimDetector="0" IsHPDDetector="1" IsHPDOverloaded="0" IsSTEDDetector="0" Name="HyD7" Offset="-6.6666666666606E-03" ScanType="RLD" Type="HyD"/>
+            </DetectorList>
+            <LaserArray>
+              <Laser CanDoChangeWavelength="0" CanDoLinearOutputPower="1" CanDoOutputPowerWatt="1" CanDoPulsing="1" HighPowerModeActive="0" LaserName="WLL" LightSourceName="SuperCont" LightSourceQualifier="70" OutputPowerPercentage="0" OutputPowerWatt="0" PowerState="Off" PulsePickerRatio="0" Qualifier="90" QualifierName="WLL" StedAlignFlag="1" Version="3" Wavelength="0"/>
+              <Laser CanDoChangeWavelength="0" CanDoLinearOutputPower="1" CanDoOutputPowerWatt="1" CanDoPulsing="0" HighPowerModeActive="0" LaserName="Argon" LightSourceName="Vis" LightSourceQualifier="10" OutputPowerPercentage="0" OutputPowerWatt="0.014" PowerState="Off" Qualifier="10" QualifierName="Visible" StedAlignFlag="0" Version="3" Wavelength="458"/>
+              <Laser CanDoChangeWavelength="1" CanDoLinearOutputPower="0" CanDoOutputPowerWatt="1" CanDoPulsing="0" GDDCurveID="0" HighPowerModeActive="0" LaserName="MP" LightSourceName="MP" LightSourceQualifier="40" OutputPowerWatt="0" PowerState="Off" Qualifier="50" QualifierName="MP" StedAlignFlag="0" TuningRangeMax="1050" TuningRangeMin="690" Version="3" Wavelength="890"/>
+            </LaserArray>
+            <ROI>
+              <LMSDataContainerHeader Version="2">
+                <Element CopyOption="1" Name="DCROISet" UniqueID="0cd1f5f4-c754-11e4-8c4e-bcf685d7650c" Visibility="2">
+                  <Data>
+                    <ROISet PossibleChildROITypes="-1" PossibleROIActions="65535" PossibleROITransforms="65535" ROISetType="1"/>
+                  </Data>
+                  
+									
+                  <Memory MemoryBlockID="MemBlock_159" Size="0"/>
+                  <Children/>
+                </Element>
+              </LMSDataContainerHeader>
+              
+						
+            </ROI>
+            <CompensationInterpolationPoints>
+              <IntensityCompArray/>
+            </CompensationInterpolationPoints>
+            <OnlineDyeSeparation Channels="0" Detectors="0" Enabled="0" KeepRawImage="0" Normalize="0">
+              <OnlineDyeSeparationDetectorList/>
+              <OnlineDyeSeparationChannelList/>
+            </OnlineDyeSeparation>
+          </ATLConfocalSettingDefinition>
+        </LDM_Block>
+      </LDM_Block_Sequence_Block>
+      <LDM_Block_Sequence_Block BlockID="17" BlockIsUsingCameraImageSource="0" BlockType="0">
+        <LDM_Block BlockName="Job 2">
+          <ATLConfocalSettingDefinition ActiveCS_SubModeForRLD="0" ActiveCS_SubModeForRLDName="Empty" ActiveCS_SubModeForTLD="0" ActiveCS_SubModeForTLDName="Scan-BF" AreBleachPointsEnabled="0" AutofocusRedoEveryNTimePoints="0" BaseZoom="0.75" BitSize="8" CanDoCSMode="1" CanDoOpticalZoom="0" CanDoSTED="0" CompleteTime="1.293" CycleCount="1" CycleTime="0" EmissionWavelengthForPinholeAiryCalculation="580" FrameAccumulation="1" FrameAverage="1" FrameTime="1.293" Immersion="DRY" InDimension="512" InTrigger="-1" Is3DLimitedRoiScanEnable="0" IsAutofocusOnStart="0" IsConstantIntegrationTimeActive="1" IsFCSFilterAutomationActive="0" IsFastZStack="0" IsInverseMicroscopeModel="1" IsMPFormulaForStepSizerUsageActive="0" IsRoiScanEnable="0" IsSMDChaserUVAOTFAutomationActive="0" IsSTEDActive="0" IsSuperZ="0" IsTimeMinimizeEnabled="0" IsUserSettingNameSet="0" IsZStackAroundCurrent="0" LambdaExcitationMode="0" LambdaExcitationModeBegin="0" LambdaExcitationModeEnd="0" LastNonMP_MFP_FW_Name="Substrate " LastNonMP_Pol_FW_Name="Empty" LastTCalcMode="3" Limited3DRoiFirstSection="1" Limited3DRoiLastSection="1" LineAverage="1" LineTime="0.0025" Line_Accumulation="1" Lines="512" Magnification="10" MaxLines="1" MicroscopeModel="DMI6000B-CS" NumericalAperture="0.4" ObjectiveName="HC PL APO    10x/0.40 DRY " ObjectiveNumber="11506511" ObjectivePos="2" OpticalZoom="1" OutDimension="512" OutTrigger="-1" Pages="1" PanFirstDim="8.67361737988404E-19" PanSecondDim="8.67361737988404E-19" Pinhole="5.30206177527711E-05" PinholeAiry="0.999069488463747" PixelDwellTime="0.0000012" ReferencePosition="0" RefractionIndex="1" RotatorAngle="0" STEDDelayTimeOffset="0" STEDDelayTimeOffset2="0" ScanDirectionX="1" ScanDirectionXName="Unidirectional" ScanMode="xyz" ScanSpeed="400" Sections="1" StackCalculationMode="2" StackCalculationModeName="System optimized step size" StagePosX="0.03009999923723" StagePosY="0.03009999923723" StageRangeX="0.11279375084332" StageRangeY="0.0793181234516" StedDelayWavelength="470" SystemSerialNumber="8100000303" UseMaxIterationsForT="0" UseScanFormatRestriction="0" UseSystemOptimizedVoxelCalculation="1" UserSettingName="S14" ValidBeginStack="0" ValidEndStack="0" VersionNumber="8" ZCompensationModes="0" ZPosition="-2.3841880645312E-10" ZStackDirectionMode="1" ZStackDirectionModeName="Unidirectional" ZUseMode="1" ZUseModeName="z-galvo" Zoom="1">
+            <EasySRMappingArray/>
+            <EasySRSlider GentleRelative="25" SRRelative="75" ThreeDRelative="0"/>
+            <Quantity Unit="" Value="0"/>
+            <AdditionalZPositionList>
+              <AdditionalZPosition SuperZMode="1" SuperZModeName="RestrictedRange" Valid="1" ZMode="1" ZPosition="-2.3841880645312E-10" ZUseModeName="z-galvo"/>
+              <AdditionalZPosition SuperZMode="1" SuperZModeName="RestrictedRange" Valid="1" ZMode="2" ZPosition="0.000278198" ZUseModeName="z-wide"/>
+            </AdditionalZPositionList>
+            <Autofocus-config AFAnalyseType="1" AFAnalyseTypeName="EveryChannel" AFCAutonomousOffset="-2" AFCOffset="-2" AFSubsystem="3" AFSubsystemName="CombinedConfocal" AutoFocusMode="2" AutoFocusModeName="FirstChannelOnly" AutofocusChannel="0" AutofocusChannelName="0" FocusRange="0.00008" OptimalStepSize="2.40796995428705E-06" PositionDimension="122" Precision="2" UseFixSliceNumber="0" VersionNumber="1" WorkflowTimelapse="1" WorkflowTimelapseIterator="1" WorkflowTimelapseName="FirstTime" WorkflowXY="1" WorkflowXYIterator="1" WorkflowXYName="FirstPos" ZUseMode="1" ZUseModeName="z-galvo"/>
+            <ShutterList>
+              <Shutter IsActive="0" LightSourceName="SuperCont" LightSourceQualifier="70" ShutterName="WLL" ShutterQualifier="8"/>
+              <Shutter IsActive="0" LightSourceName="Vis" LightSourceQualifier="10" ShutterName="Visible" ShutterQualifier="3"/>
+              <Shutter IsActive="0" LightSourceName="MP" LightSourceQualifier="40" ShutterName="MP" ShutterQualifier="4"/>
+            </ShutterList>
+            <BleachPoints>
+              <LMSDataContainerHeader Version="2">
+                <Element CopyOption="1" Name="BleachPointROISet" UniqueID="0cd1f5f7-c754-11e4-8c4e-bcf685d7650c" Visibility="2">
+                  <Data>
+                    <ROISet PossibleChildROITypes="-1" PossibleROIActions="65535" PossibleROITransforms="65535" ROISetType="1"/>
+                  </Data>
+                  
+									
+                  <Memory MemoryBlockID="MemBlock_164" Size="0"/>
+                  <Children/>
+                </Element>
+              </LMSDataContainerHeader>
+              
+						
+            </BleachPoints>
+            <ATLConfocalBleachPointsSettings/>
+            <FilterWheel BeamSplitterAutoSelection="0" FluorifierAutoSelection="1" MultiFunctionPortAutoSelection="1" StedBeamSelectionPinholeCoupling="0">
+              <Wheel FilterIndex="0" FilterName="Min" FilterSpectrumPos="21132" FilterWheelName="Attenuation MP" IndexChanged="0" IsSpectrumTurnMode="0" LightSourceQualifier="40" Qualifier="214" SpectrumChanged="0">
+                <WheelName FilterName="Min"/>
+                <WheelName FilterName="Max"/>
+              </Wheel>
+              <Wheel FilterIndex="2" FilterName="Mirror " FilterSpectrumPos="0" FilterWheelName="External Detection FW" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="140" SpectrumChanged="0">
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="Substrate "/>
+                <WheelName FilterName="Mirror "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="--- " FilterSpectrumPos="0" FilterWheelName="FCS-FW" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="26" SpectrumChanged="0">
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="CleaningFilter 458"/>
+                <WheelName FilterName="CleaningFilter 488"/>
+                <WheelName FilterName="CleaningFilter 514"/>
+                <WheelName FilterName="CleaningFilter 458/514"/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Galvo X Normal " FilterSpectrumPos="0" FilterWheelName="Galvo Slider" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="160" SpectrumChanged="0">
+                <WheelName FilterName="Galvo X Normal "/>
+                <WheelName FilterName="Galvo X Res "/>
+              </Wheel>
+              <Wheel FilterIndex="4" FilterName="Substrate " FilterSpectrumPos="0" FilterWheelName="Multi Function Port" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="180" SpectrumChanged="0">
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="SP 815"/>
+                <WheelName FilterName="SP 665"/>
+                <WheelName FilterName="Mirror "/>
+                <WheelName FilterName="Substrate "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Empty" FilterSpectrumPos="0" FilterWheelName="Notch FW 2" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="131" SpectrumChanged="0">
+                <WheelName FilterName="Empty"/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="MP1 SP 680"/>
+                <WheelName FilterName="--- "/>
+                <WheelName FilterName="OPO SP 800"/>
+                <WheelName FilterName="SMD1 NF 405/470"/>
+                <WheelName FilterName="SMD2 NF 405/640"/>
+                <WheelName FilterName="SMD3 NF 470/640"/>
+                <WheelName FilterName="--- "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Empty" FilterSpectrumPos="79246" FilterWheelName="Polarization FW" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="130" SpectrumChanged="0">
+                <WheelName FilterName="Empty"/>
+                <WheelName FilterName="NF 488"/>
+                <WheelName FilterName="NF 514"/>
+                <WheelName FilterName="NF 458/514"/>
+                <WheelName FilterName="NF 488/561/633"/>
+                <WheelName FilterName="--- "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Galvo X Pan Center " FilterSpectrumPos="0" FilterWheelName="Galvo Resonant Pan" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="200" SpectrumChanged="0">
+                <WheelName FilterName="Galvo X Pan Center "/>
+                <WheelName FilterName="Galvo X Pan Mirror "/>
+                <WheelName FilterName="Galvo X Pan Polfilter "/>
+                <WheelName FilterName="Galvo X Pan RefDiode "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="Target Park " FilterSpectrumPos="0" FilterWheelName="Target Slider" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="170" SpectrumChanged="0">
+                <WheelName FilterName="Target Park "/>
+                <WheelName FilterName="Target Inserted "/>
+                <WheelName FilterName="Target Mirror "/>
+              </Wheel>
+              <Wheel FilterIndex="0" FilterName="CS2 UV Optics 1 " FilterSpectrumPos="0" FilterWheelName="X2 Lens Changer" IndexChanged="0" IsSpectrumTurnMode="0" Qualifier="31" SpectrumChanged="0">
+                <WheelName FilterName="CS2 UV Optics 1 "/>
+                <WheelName FilterName="CS2 UV Optics 2 "/>
+              </Wheel>
+            </FilterWheel>
+            <Spectro>
+              <MultiBand Channel="1" ChannelName="Channel 1" DyeName="" LeftWorld="406.25" RightWorld="458.75"/>
+              <MultiBand Channel="2" ChannelName="Channel 2" DyeName="" LeftWorld="511.25" RightWorld="563.75"/>
+              <MultiBand Channel="3" ChannelName="Channel 3" DyeName="" LeftWorld="616.25" RightWorld="668.75"/>
+              <MultiBand Channel="4" ChannelName="Channel 4" DyeName="" LeftWorld="721.25" RightWorld="773.75"/>
+            </Spectro>
+            <AotfList>
+              <Aotf AotfQualifier="90" AotfQualifierName="WLL" CanDoPulseFreq="0" CanDoTwoLaserPIE="0" ExcitationControlMode="0" ExcitationControlModeBegin="0" ExcitationControlModeEnd="0" IsChanged="0" LightSourceQualifier="70" LightSourceQualifierName="SuperCont" OpenVirtual="0" PulsFreq="0" TwoLaserPIEActive="0" TwoLaserPIEPossibleLastState="0">
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="1" LaserLine="470" LineIndex="0" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="471" LineIndex="1" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="472" LineIndex="2" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="473" LineIndex="3" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="667" LineIndex="4" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="668" LineIndex="5" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="669" LineIndex="6" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="0" IsLineDeactivated="0" IsVisible="0" LaserLine="670" LineIndex="7" OutCheckedIntensity="0" Qualifier="90" SequenceIndex="0" SuppressionMode="-1"/>
+              </Aotf>
+              <Aotf AotfQualifier="10" AotfQualifierName="Visible" CanDoPulseFreq="0" CanDoTwoLaserPIE="0" IsChanged="0" LightSourceQualifier="10" LightSourceQualifierName="Vis" OpenVirtual="0" PulsFreq="0" TwoLaserPIEActive="0" TwoLaserPIEPossibleLastState="0">
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="458" LineIndex="0" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="476" LineIndex="1" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="488" LineIndex="2" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="496" LineIndex="3" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="514" LineIndex="4" OutCheckedIntensity="0" Qualifier="10" SequenceIndex="0" SuppressionMode="-1"/>
+              </Aotf>
+              <Aotf AotfQualifier="50" AotfQualifierName="MP" CanDoGainOffset="1" CanDoPulseFreq="0" CanDoTwoLaserPIE="0" ExcitationControlMode="0" ExcitationControlModeBegin="0" ExcitationControlModeEnd="0" Gain="0" IsChanged="0" IsEomOptimizedModeActive="1" LightSourceQualifier="40" LightSourceQualifierName="MP" Offset="97.2213321126116" OpenVirtual="0" PulsFreq="0" TwoLaserPIEActive="0" TwoLaserPIEPossibleLastState="0">
+                <LaserLineSetting AOBSIntensityDev="-1" AOBSIntensityLowDev="-1" EnableDoubleMode="0" IntensityDev="0" IntensityLowDev="0" IsLineChecked="1" IsLineDeactivated="0" IsVisible="1" LaserLine="890" LineIndex="0" OutCheckedIntensity="0" Qualifier="50" SequenceIndex="0" SuppressionMode="-1"/>
+              </Aotf>
+            </AotfList>
+            <LUT_List>
+              <LUT Channel="1" LutName="Green"/>
+              <LUT Channel="2" LutName="Red"/>
+              <LUT Channel="3" LutName="Blue"/>
+              <LUT Channel="4" LutName="Gray"/>
+              <LUT Channel="1002" LutName="Red"/>
+              <LUT Channel="1003" LutName="Green"/>
+              <LUT Channel="1200" LutName="Red"/>
+              <LUT Channel="1201" LutName="Green"/>
+            </LUT_List>
+            <DetectorList DetectorAutoSelection="1" InExternalDetectionMode="0">
+              <Detector AcquisitionMode="0" AcquisitionModeName="PhotonIntegration" CanDoPhotonCounting="1" CanDoTimeGate="1" Channel="1" ChannelName="Channel 1" Gain="99.9981315396114" IsActive="0" IsEnabled="0" IsFlimDetector="0" IsHPDDetector="1" IsHPDOverloaded="0" IsSTEDDetector="1" IsTimeGateActivated="0" Name="HyD 1" Offset="-6.6666666666606E-03" ScanType="Internal" TimeGatePulseEnd="6000" TimeGatePulseStart="300" TimeGateWavelength="-1" Type="HyD"/>
+              <Detector CanDoTimeGate="0" Channel="2" ChannelName="Channel 2" Gain="0" IsActive="1" IsFlimDetector="0" IsHPDDetector="0" IsSTEDDetector="1" Name="PMT 2" Offset="0" ScanType="Internal" Type="PMT"/>
+              <Detector AcquisitionMode="0" AcquisitionModeName="PhotonIntegration" CanDoPhotonCounting="1" CanDoTimeGate="1" Channel="3" ChannelName="Channel 3" Gain="99.9981315396114" IsActive="0" IsEnabled="0" IsFlimDetector="0" IsHPDDetector="1" IsHPDOverloaded="0" IsSTEDDetector="1" IsTimeGateActivated="0" Name="HyD 3" Offset="-6.6666666666606E-03" ScanType="Internal" TimeGatePulseEnd="6000" TimeGatePulseStart="300" TimeGateWavelength="-1" Type="HyD"/>
+              <Detector CanDoTimeGate="0" Channel="4" ChannelName="Channel 4" Gain="0" IsActive="0" IsFlimDetector="0" IsHPDDetector="0" IsSTEDDetector="1" Name="PMT 4" Offset="0" ScanType="Internal" Type="PMT"/>
+              <Detector CanDoTimeGate="0" Channel="1002" ChannelName="NDD3" Gain="0" IsActive="0" IsFlimDetector="0" IsHPDDetector="0" IsSTEDDetector="0" Name="PMT NDD3" Offset="0" ScanType="TLD" Type="PMT"/>
+              <Detector CanDoTimeGate="0" Channel="1003" ChannelName="NDD4" Gain="0" IsActive="0" IsFlimDetector="0" IsHPDDetector="0" IsSTEDDetector="0" Name="PMT NDD4" Offset="0" ScanType="TLD" Type="PMT"/>
+              <Detector AcquisitionMode="0" AcquisitionModeName="PhotonIntegration" CanDoPhotonCounting="1" CanDoTimeGate="0" Channel="1200" ChannelName="APD1" Gain="99.9981315396114" IsActive="0" IsEnabled="0" IsFlimDetector="0" IsHPDDetector="1" IsHPDOverloaded="0" IsSTEDDetector="0" Name="HyD6" Offset="-6.6666666666606E-03" ScanType="RLD" Type="HyD"/>
+              <Detector AcquisitionMode="0" AcquisitionModeName="PhotonIntegration" CanDoPhotonCounting="1" CanDoTimeGate="0" Channel="1201" ChannelName="APD2" Gain="99.9981315396114" IsActive="0" IsEnabled="0" IsFlimDetector="0" IsHPDDetector="1" IsHPDOverloaded="0" IsSTEDDetector="0" Name="HyD7" Offset="-6.6666666666606E-03" ScanType="RLD" Type="HyD"/>
+            </DetectorList>
+            <LaserArray>
+              <Laser CanDoChangeWavelength="0" CanDoLinearOutputPower="1" CanDoOutputPowerWatt="1" CanDoPulsing="1" HighPowerModeActive="0" LaserName="WLL" LightSourceName="SuperCont" LightSourceQualifier="70" OutputPowerPercentage="0" OutputPowerWatt="0" PowerState="Off" PulsePickerRatio="0" Qualifier="90" QualifierName="WLL" StedAlignFlag="1" Version="3" Wavelength="0"/>
+              <Laser CanDoChangeWavelength="0" CanDoLinearOutputPower="1" CanDoOutputPowerWatt="1" CanDoPulsing="0" HighPowerModeActive="0" LaserName="Argon" LightSourceName="Vis" LightSourceQualifier="10" OutputPowerPercentage="0" OutputPowerWatt="0.014" PowerState="Off" Qualifier="10" QualifierName="Visible" StedAlignFlag="0" Version="3" Wavelength="458"/>
+              <Laser CanDoChangeWavelength="1" CanDoLinearOutputPower="0" CanDoOutputPowerWatt="1" CanDoPulsing="0" GDDCurveID="0" HighPowerModeActive="0" LaserName="MP" LightSourceName="MP" LightSourceQualifier="40" OutputPowerWatt="0" PowerState="Off" Qualifier="50" QualifierName="MP" StedAlignFlag="0" TuningRangeMax="1050" TuningRangeMin="690" Version="3" Wavelength="890"/>
+            </LaserArray>
+            <ROI>
+              <LMSDataContainerHeader Version="2">
+                <Element CopyOption="1" Name="DCROISet" UniqueID="0cd1f5f6-c754-11e4-8c4e-bcf685d7650c" Visibility="2">
+                  <Data>
+                    <ROISet PossibleChildROITypes="-1" PossibleROIActions="65535" PossibleROITransforms="65535" ROISetType="1"/>
+                  </Data>
+                  
+									
+                  <Memory MemoryBlockID="MemBlock_163" Size="0"/>
+                  <Children/>
+                </Element>
+              </LMSDataContainerHeader>
+              
+						
+            </ROI>
+            <CompensationInterpolationPoints>
+              <IntensityCompArray/>
+            </CompensationInterpolationPoints>
+            <OnlineDyeSeparation Channels="0" Detectors="0" Enabled="0" KeepRawImage="0" Normalize="0">
+              <OnlineDyeSeparationDetectorList/>
+              <OnlineDyeSeparationChannelList/>
+            </OnlineDyeSeparation>
+          </ATLConfocalSettingDefinition>
+        </LDM_Block>
+      </LDM_Block_Sequence_Block>
+    </LDM_Block_Sequence_Block_List>
+  </LDM_Block_Sequence>
+</Configuration>

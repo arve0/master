@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Warning: this comment is an OME-XML metadata block, which contains crucial dimensional parameters and other important metadata. Please edit cautiously (if at all), and back up the original data before doing so. For more information, see the OME-TIFF web site: http://loci.wisc.edu/ome/ome-tiff.html. -->
+<OME xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-09" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-09" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09" xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-09 http://www.openmicroscopy.org/Schemas/OME/2008-09/ome.xsd http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09 http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09/BinaryFile.xsd http://www.openmicroscopy.org/Schemas/CA/2008-09 http://www.openmicroscopy.org/Schemas/CA/2008-09/CA.xsd http://www.openmicroscopy.org/Schemas/SPW/2008-09 http://www.openmicroscopy.org/Schemas/SPW/2008-09/SPW.xsd http://www.openmicroscopy.org/Schemas/STD/2008-09 http://www.openmicroscopy.org/Schemas/STD/2008-09/STD.xsd" UUID="urn:uuid:b0f2f849-ccd8-11e4-83e4-bcf685d7650c">
+    <Experiment Type="Other" ID="Experiment:0">
+        <Description>Project</Description>
+        <ExperimenterRef ID="Experimenter:0"/>
+    </Experiment>
+    <Experimenter ID="Experimenter:0">
+        <FirstName>Frank</FirstName>
+        <LastName>Sieckmann</LastName>
+        <Email>Frank.Sieckmann@leica-microsystems.com</Email>
+        <Institution>Leica Microsystems CMS GmbH</Institution>
+        <OMEName>Frank</OMEName>
+        <GroupRef ID="Group:0"/>
+    </Experimenter>
+    <Group ID="Group:0" Name="MatrixScreener Group">
+        <Leader ID="Experimenter:0"/>
+        <Contact ID="Experimenter:0"/>
+    </Group>
+    <Instrument ID="Instrument:0">
+        <Microscope Manufacturer="Leica Microsystems" Model="DMI6000B-CS" SerialNumber="8100000303" Type="Upright"/>
+        <Detector ID="Detector:1002" Manufacturer="Leica Microsystems" Gain="0.29999237048905201E3" Offset="0.0" Zoom="0.100000000000000E1" Type="PMT"/>
+        <Objective ID="Objective:11506511" Manufacturer="Leica Microsystems" Model="HC PL APO    " SerialNumber="11506511">
+            <Correction>Unknown</Correction>
+            <Immersion>Other</Immersion>
+            <LensNA>0.40000000000000E0</LensNA>
+            <NominalMagnification>10</NominalMagnification>
+        </Objective>
+    </Instrument>
+    <Image ID="Image:0" Name="D:\MatrixScreenerImages\\3.3.0_9757\experiment--2015_03_17_18_58_37\slide--S00\chamber--U00--V00\field--X19--Y11\image--L0000--S00--U00--V00--J08--E00--O00--X19--Y11--T0000--Z00--C00.ome.tif" DefaultPixels="Pixels:0" AcquiredPixels="Pixels:0">
+        <CreationDate>2015-03-17T19:06:19.161</CreationDate>
+        <ExperimenterRef ID="Experimenter:0"/>
+        <Description>D:\MatrixScreenerImages\\3.3.0_9757\experiment--2015_03_17_18_58_37\slide--S00\chamber--U00--V00\field--X19--Y11\image--L0000--S00--U00--V00--J08--E00--O00--X19--Y11--T0000--Z00--C00.ome.tif</Description>
+        <ExperimentRef ID="Experiment:0"/>
+        <GroupRef ID="Group:0"/>
+        <InstrumentRef ID="Instrument:0"/>
+        <ObjectiveRef RefractiveIndex="0.100000000000000E1" ID="Objective:11506511"/>
+        <LogicalChannel ID="LogicalChannel:0" Name="" SamplesPerPixel="1" PinholeSize="0.5302061775E-4" PhotometricInterpretation="ColorMap" Mode="Other">
+            <DetectorRef ID="Detector:1002" Gain="0.29999237048905201E3" Offset="0.0" ReadOutRate="0.15360000000000000000E6"/>
+            <ChannelComponent Pixels="Pixels:0" Index="0"/>
+        </LogicalChannel>
+        <Pixels DimensionOrder="XYZCT" PixelType="uint8" BigEndian="false" SizeX="256" SizeY="256" SizeZ="1" SizeC="1" SizeT="1" PhysicalSizeX="0.455882352941176E1" PhysicalSizeY="0.455882352941176E1" PhysicalSizeZ="0.0" TimeIncrement="0.0" ID="urn:lsid:loci.wisc.edu:Pixels:ows581">
+            <TiffData FirstC="0" FirstZ="0">
+                <UUID FileName="image--L0000--S00--U00--V00--J08--E00--O00--X19--Y11--T0000--Z00--C00.ome.tif">urn:uuid:b0f2f849-ccd8-11e4-83e4-bcf685d7650c</UUID>
+            </TiffData>
+            <Plane TheZ="0" TheT="0" TheC="0">
+                <StagePosition PositionX="0.8106099853581E-1" PositionY="0.4451699869166E-1" PositionZ="-0.23842E-9"/>
+            </Plane>
+        </Pixels>
+    </Image>
+    <SemanticTypeDefinitions xmlns="http://www.openmicroscopy.org/Schemas/STD/2008-09">
+        <SemanticType xmlns="http://www.openmicroscopy.org/Schemas/STD/2008-09" AppliesTo="I" Name="OriginalMetadata">
+            <Label xmlns="http://www.openmicroscopy.org/Schemas/STD/2008-09"/>
+            <Element xmlns="http://www.openmicroscopy.org/Schemas/STD/2008-09" DBLocation="ORIGINAL_METADATA.NAME" DataType="string" Name="Name"/>
+            <Element xmlns="http://www.openmicroscopy.org/Schemas/STD/2008-09" DBLocation="ORIGINAL_METADATA.VALUE" DataType="string" Name="Value"/>
+        </SemanticType>
+    </SemanticTypeDefinitions>
+    <CustomAttributes xmlns="http://www.openmicroscopy.org/Schemas/CA/2008-09">
+<!-- No CustomAttributes added because "<CustomAttributes>NONE</CustomAttributes>" was set in LIF2OME.xml. --> 
+</CustomAttributes>
+<StructuredAnnotations xmlns="http://www.openmicroscopy.org/Schemas/SA/2008-09"/>
+</OME>
