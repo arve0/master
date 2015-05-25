@@ -2,6 +2,9 @@
 eqPrefix: 'equation'
 figPrefix: 'figure'
 tblPrefix: 'table'
+lstPrefic: 'code block'
+codeBlockCaptions: true
+titleDelimiter: '-'
 bibliography: bibliography.bib
 csl: american-medical-association.csl
 ---
@@ -107,10 +110,11 @@ LAS X is the software that contols the Leica SP8 microscope. LAS X comes with an
 
 
 ### CAM
-In addition to controlling the microscope with the graphical user interface, a function called *Computer Assisted Microscopy* (CAM) can be turned on. CAM is a socket interface, meaning one send bytes over a network interface. This is very similar to how one can write bytes to a file, but in addition the socket interface can respond and send bytes back. The network interface runs on TCP port 8895 and one may communicate locally or over TCP/IP network. A set of 44 commands are available, but only three of them are intresting for the purpose of controlling scans; `load`, `autofocusscan` and `startscan`. More details on the interface can be read in the manual [@frank_sieckmann_cam_2013] or by studying the source code of the python package `leicacam` [@arve_seljebu_arve0/leicacam_2015]. Code listing \ref{code:leicacam} show how one can communicate with the microscope in python.
+In addition to controlling the microscope with the graphical user interface, a function called *Computer Assisted Microscopy* (CAM) can be turned on. CAM is a socket interface, meaning one send bytes over a network interface. This is very similar to how one can write bytes to a file, but in addition the socket interface can respond and send bytes back. The network interface runs on TCP port 8895 and one may communicate locally or over TCP/IP network. A set of 44 commands are available, but only three of them are intresting for the purpose of controlling scans; ``load``, ``autofocusscan`` and ``startscan``. More details on the interface can be read in the manual [@frank_sieckmann_cam_2013] or by studying the source code of the python package ``leicacam`` [@arve_seljebu_arve0/leicacam_2015]. Code block \ref{lst:leicacam} show how one can communicate with the microscope in python.
 
+Listing: Communicating with the Leica SP8 microscope using the python package leicacam.
 
-``` {caption="Communicating with the Leica SP8 microscope using the python package leicacam." label=code:leicacam language=Python}
+``` {#lst:leicacam .python}
 from leicacam import CAM
 
 # connect to localhost:8895
@@ -121,20 +125,19 @@ cam.load_template('leicaautomator')
 
 # start the autofocus scan defined in 'leicaautomator' template
 cam.autofocus_scan()
-
 # start the scan job
 cam.start_scan()
-
 # read filename in response from microscope when images are scanned
 relpath = cam.wait_for('relpath')
 ```
 
+
 ### XML
 Extensible Markup Language is a declarative language which most high level programming languages speak, which makes it suitable for computer program communication. A XML-file contain a single root and tree structure with parent and children nodes. Any position in the tree can be specified with an *XPath*. Code listing \ref{code:xml} show a typical structure of a XML-file.
 
+Listing: Illustration of a typical XML-tree structure.
 
-
-``` {caption="Illustration of a typical XML-tree structure." label=code:xml .xml}
+``` {#lst:xml .xml}
 <?xml version="1.0"?>
 <root>
     <parent>
@@ -148,9 +151,11 @@ Extensible Markup Language is a declarative language which most high level progr
 </root>
 ```
 
-The XML-file might be nested with several childen and parents, but code listing \ref{code:xml} holds for illustration purposes. XPath for the first child in parent will be `./parent/child[@attribute="val1"]`. Here `.` is the root, `/` defines path (or nesting if you like) and `[@attribute="val"]` defines that the attribute named `attr` should be of value `val1`. This XPath will find only the first child of the first parent, but if other childs with same path also had an attribute named `attr` with the value `val1`, the XPath would have found them also. E.g. `./parent/child` will find all children. Code listing \ref{code:pythonxml} show how one would read properties in the XML-file from code listing \ref{code:xml}.
+The XML-file might be nested with several childen and parents, but code listing \ref{code:xml} holds for illustration purposes. XPath for the first child in parent will be ``./parent/child[@attribute="val1"]``. Here ``.`` is the root, ``/`` defines path (or nesting if you like) and ``[@attribute="val"]`` defines that the attribute named ``attr`` should be of value ``val1``. This XPath will find only the first child of the first parent, but if other childs with same path also had an attribute named ``attr`` with the value ``val1``, the XPath would have found them also. E.g. ``./parent/child`` will find all children. Code listing \ref{code:pythonxml} show how one would read properties in the XML-file from code listing \ref{code:xml}.
 
-``` {caption="Accessing XML properties with the python build-in module xml.etree." label=code:pythonxml .python}
+Listing: Accessing XML properties with the python build-in module xml.etree.
+
+``` {#lst:pythonxml .python}
 import xml.etree.ElementTree as ET
 
 tree = ET.parse('/path/to/file.xml')
@@ -229,7 +234,9 @@ Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500 $\
 
 The uneven illumination in the experimental setup is illustrated in [@fig:illumination](a). By assuming the intensity variation in all pixels are following the slope of the background, equalization was done by dividing each row in the image by the normalized intensity profile of the background.
 
-``` {caption="Equalizing an image" label=code:equalize .python}
+Listing: Equalizing an image
+
+``` {#lst:equalize .python}
 equalized = img.astype(np.float)        # assure datatype have real division ability
 equalized -= images_minimum             # normalize
 equalized /= images_maximum - images_minimum
@@ -251,7 +258,9 @@ The effect on pixel values can be seen in [@fig:illumination_intensities] (b) an
 
 Due to little signal in areas between samples, automatic stitching with correlation methods are prone to fail. To remedy this, the same overlap was chosen when stitching the overview image. Using the same overlap in this context gives reliable stitching with negligible errors. The overlap is chosen by calculating all overlaps with phase correlation and taking the median. The stitching was put in a python package and can be used as shown in code listing \ref{code:stitch}.
 
-``` {caption="Stitching images with the python package *microscopestitching*." label=code:stitch .python}
+Listing: Stitching images with the python package *microscopestitching*.
+
+``` {#lst:stitch .python}
 from microscopestitching import stitch
 from glob import glob
 
@@ -271,7 +280,9 @@ stitched_image = stitch(images)
 
 As seen in [@fig:stitching](b), the samples at the edge are darker than the samples in the center. To improve this intensity variation, the overview image is filtered with a local bilateral population filter. The filter counts number of neighbour pixels that are outside a specified range. The effect of the filter is less computational demanding and somewhat similar to an entropy filter. Areas with low signal variation (the background) give low values and areas with high signal variation (the samples) give high values. To reduce noise after the bilateral population filter, a mean filter was applied. The size of structure elements was 9x9 pixels for both filters. Figure [@fig:segmentation](a), (b) and (c) show how the segmentation is affected by the filters. Code for reproducing the steps are in code listing \ref{code:segmentation}.
 
-``` {caption="Filter and segment an image with local bilateral population and Otsu thresholding." label=code:segmentation .python}
+Listing: Filter and segment an image with local bilateral population and Otsu thresholding.
+
+``` {#lst:segmentation .python}
 from skimage.morphology import square
 from skimage.filters import threshold_otsu
 from leicaautomator.filters import mean, pop_bilateral
@@ -289,7 +300,7 @@ After segmentation, regions was sorted by their area size and only the largest r
 ![(a) Sorted region areas. Area size drops dramatically around region 125 according to number of samples on slide. (b) Regions sorted by position. There is a gap between the positions when row and columns are increasing. (c) X distance to previous region when regions are sorted by x-position. 14 peaks indicate that the image contain 15 columns. Note that x-axes in (a), (b) and (c) doesn't correspond, as the graphs are not sorted by the same attribute.](figures/regions_area_and_position.png) {#fig:regions}
 
 
-``` {caption="" label=code:regions .python}
+``` {#lst:regions .python}
 from skimage.measure import label, regionprops
 
 labels = label(segmented, background=0) # background=0: exclude background
@@ -347,7 +358,9 @@ $$ f_x = \lceil \frac{\Delta X}{\Delta X_{field}} \rceil. $$ {#eq:enabledfields}
 #### Scanning each region
 To avoid unnecessary long stage movements between rows or columns, regions was looped through in a zick-zack pattern, given by their row and column position. For each region the scanning template was edited, the template was loaded and the scan was started through CAM. Single templates was used due to a Leica LAS software limitation; scanning templates with irregular spaced wells can not be loaded. Code listing \ref{code:automatedscan} illustrates the process.
 
-``` {caption="Scanning" label=code:automatedscan .python}
+Listing: Automated scanning of regions with CAM.
+
+``` {#lst:automatedscan .python}
 from leicascanningtemplate import ScanningTemplate
 from leicaautomator import zick_zack_sort
 from leicacam import CAM
@@ -403,7 +416,9 @@ Slide maps, seen in [@fig:slidemap], and patient database was given by St. Olavs
 
 Every pasient id from the slide map was then saved to a stata database along with its slide number, row and column. Code listing \ref{code:correlate} show how the clinical data was correlated with samples.
 
-``` {caption="Get patient outcome of sample on TP-1 row 3 column 5." label=code:correlate .python}
+Listing: Get patient outcome of sample on TP-1 row 3 column 5.
+
+``` {#lst:correlate .python}
 import pandas as pd
 
 # read databases
@@ -578,16 +593,16 @@ TP22, row  7, col  3 - id 728, wrong TP_nr in db: 22.0 != 15.0
 TP10, row  8, col  6 - there should be 3 samples: ['507-1', '507-2']
 TP10, row 12, col  6 - there should be 3 samples: ['525-2', '525-3']
 TP11, row 11, col  6 - there should be 3 samples: ['566-1', '566-2']
- TP3, row  1, col  3 - pasient id did not increment: ['68-1', '68-2', '68-3']
-                                                   < ['102b-1', '102b-2', '102b-3']
- TP4, row  1, col  3 - pasient id did not increment: ['162a-1', '162a-2', '162a-3']
-                                                   < ['163-1', '163-2', '163-3']
- TP6, row  1, col  3 - pasient id did not increment: ['209-1', '209-2', '209-3']
-                                                   < ['268-1', '268-2', '268-3']
-TP11, row  6, col  3 - pasient id did not increment: ['549-1', '549-2', '549-3']
-                                                   < ['552-1', '552-2', '552-3']
-TP22, row  2, col  6 - pasient id did not increment: ['130-1', '130-2', '130-3']
-                                                   < ['3067-1', '3067-2', '3067-3']
+ TP3, row  1, col  3 - pasient id did not increment: ['68-1', '68-2', '68-3'] <
+                                                     ['102b-1', '102b-2', '102b-3']
+ TP4, row  1, col  3 - pasient id did not increment: ['162a-1', '162a-2', '162a-3'] <
+                                                     ['163-1', '163-2', '163-3']
+ TP6, row  1, col  3 - pasient id did not increment: ['209-1', '209-2', '209-3'] <
+                                                     ['268-1', '268-2', '268-3']
+TP11, row  6, col  3 - pasient id did not increment: ['549-1', '549-2', '549-3'] <
+                                                     ['552-1', '552-2', '552-3']
+TP22, row  2, col  6 - pasient id did not increment: ['130-1', '130-2', '130-3'] <
+                                                     ['3067-1', '3067-2', '3067-3']
 ```
 
 
