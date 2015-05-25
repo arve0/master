@@ -1,8 +1,16 @@
---- eqPrefix: 'equation' figPrefix: 'figure' tblPrefix: 'table' lstPrefic:
-'code block' codeBlockCaptions: true titleDelimiter: '-' bibliography:
-bibliography.bib csl: american-medical-association.csl ---
+---
+eqnPrefix: 'equation'
+figPrefix: 'figure'
+tblPrefix: 'table'
+lstPrefic: 'code block'
+codeBlockCaptions: true
+titleDelimiter: '-'
+bibliography: bibliography.bib
+csl: american-medical-association.csl
+---
 
-# Preface {.unnumbered} Five years at NTNU have been a rollercoaster ride.
+# Preface {.unnumbered}
+Five years at NTNU have been a rollercoaster ride.
 Uphills at times, but also a great deal of fun. I'm grateful for the number of
 marvellous people I have met, the flexibility the student life brings, all the
 fun with the student society Spanskrøret and not to forget all the things I've
@@ -28,11 +36,12 @@ The cheesy quote is..
 > - William Gibson
 
 
-\clearpage \tableofcontents
+\clearpage
+\tableofcontents
 
 
-# Abstract {.unnumbered} What to communicate: goal, overview of experiences
-made, results
+# Abstract {.unnumbered}
+> What to communicate: goal, overview of experiences made, results
 
 St. Olavs hospital has supplied a dataset of 2703 tissue samples at the tumor
 peripheral from $\approx$ 900 patients. NTNU want to examine all tissue samples
@@ -72,7 +81,7 @@ The conclusions are:
 
 # Introduction
 
-What to communicate: motivation, brief summary of chapters
+> What to communicate: motivation, brief summary of chapters
 
 With a population just above 5 million
 [@statistisk_sentralbyra_folkemengde_2015], three thousand women are diagnosed
@@ -95,8 +104,8 @@ cancer tissue, the work of this master is relevant for other studies too.
 
 
 ![Tissue micro array of breast tissue at perifer of tumor. Three test samples
-are beside the array of 14x9 samples to avoid mix up of patients when rotating
-the slide.](figures/tma.png) {#fig:tma}
+  are beside the array of 14x9 samples to avoid mix up of patients when rotating
+  the slide.](figures/tma.png) {#fig:tma}
 
 
 The tissue micro array shown in [@fig:tma] is $\approx$ 24x15 mm in size. Using
@@ -145,25 +154,26 @@ have been omitted, all source code is avaialable at github
 
 # Theory
 
-What to communicate: theory and details that are not obvious for understanding
-the rest of the text
+> What to communicate: theory and details that are not obvious for understanding
+> the rest of the text
 
 > ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå
 > det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og
 > innholdet er mer klart.)
 
 
-## Image Processing The term image in this contex a two dimentional array of
-values, where each position in the array is called a pixel. Resolution is the
-number of pixels an image holds. E.g. a resolution of 1024x1024 is an image
-with 1024 pixels in both x- and y-direction, totalling \num{1e6} pixels. Each
-pixel represent a physical position of the specimen, where the value is the
-amount of light measured from the detector when scanning the specimen surface
-with a light source. The physical size of the pixel will depend on sampling
-rate. All images in this thesis are 8 bit grayscale images, meaning that each
-pixel can hold $2^8=256$ values. In an ideal experiment a pixel value of zero
-denote zero detected light and 255 is the maximum, but this is an
-simplification as noise will be measured too.
+## Image Processing
+The term image in this contex a two dimentional array of values, where each
+position in the array is called a pixel. Resolution is the number of pixels an
+image holds. E.g. a resolution of 1024x1024 is an image with 1024 pixels in
+both x- and y-direction, totalling \num{1e6} pixels. Each pixel represent a
+physical position of the specimen, where the value is the amount of light
+measured from the detector when scanning the specimen surface with a light
+source. The physical size of the pixel will depend on sampling rate. All images
+in this thesis are 8 bit grayscale images, meaning that each pixel can hold
+$2^8=256$ values. In an ideal experiment a pixel value of zero denote zero
+detected light and 255 is the maximum, but this is an simplification as noise
+will be measured too.
 
 $f(x, y)$ denotes the intesity of pixel at position $(x, y)$, where $(0, 0)$ is
 the top left of the image, positive x-direction going left and positive
@@ -172,12 +182,12 @@ respectively x- and y-direction. A subscript of the image name is used if
 several images are discussed, e.g. $m_f$ is the number of x-pixels of image
 $f$.
 
-### Image registration Image registration is the process of putting images into
-the same coordinate system. In this context the sources are images from
-different microscope stage coordinates. One way of finding how images are
-displaces is by using correlation. Correlation is defined as the following: If
-we have an window image $w$ of size $m_w \times n_w$, the correlation of $w$
-and $f$ is
+### Image registration
+Image registration is the process of putting images into the same coordinate
+system. In this context the sources are images from different microscope stage
+coordinates. One way of finding how images are displaces is by using
+correlation. Correlation is defined as the following: If we have an window
+image $w$ of size $m_w \times n_w$, the correlation of $w$ and $f$ is
 
 $$ w(x,y) \openbigstar f(x,y) = \sum\limits_{s=-a}^a \sum\limits_{t=-b}^b
 w(s,t) f(x+s, y+t). $$ {#eq:correlation}
@@ -194,8 +204,9 @@ $$  \gamma(x,y) = \frac{ \sum\limits_s \sum\limits_t [ w(s,t) - \bar w ]
 
 In the normalized cross correlation, the window is often called a *template*
 and the process of correlation is called *template matching*. The maximum
-peak(s) in $\gamma(x,y)$ will be where the template has the best match
-[@gonzales_digital_2007].
+peak(s) in $\gamma(x,y)$ will be where the template has the best match, which
+may be in several positions if several equal matches are made
+[@gonzalez_digital_2007].
 
 If the image $f$ and the template $w$ are large images, the calculation of
 [@eq:normalized_correlation] is quite computational costly, 
@@ -221,21 +232,22 @@ $$ f(x,y) g(x,y) \Leftrightarrow F(u,v) \bigstar G(u,v) $$
 - scikit-image, utils.ipynb, defaults in code blocks
 
 
-## Scanning microscope Figure \ref{fig:epi} illustrate the internal workings of
-a Leica SP8 scanning microscope which have an epi-illumination setup.
-Epi-illumination is when the detectors (26) and light source (1, 3, 5, 7) are
-on the same side of the objective (18). But as seen, the epi-setup also allows
-for external detectors (19). By scanning one means that the light source is
-focused to a specific part of the specimen and scanned line by line in a raster
-pattern. While the laser are scanned over the surface, a detector measure light
-in samples and each measured sample will be saved to an image pixel. The
-scanning is done by a oscillation mirror (14). The term non descanned detector
-indicate that the light does not travel by the scanning mirror before reaching
-the detector. In SP8 (17) and (19) are non descanned detectors, where (17)
-measure reflected light and (19) measure transmitted light.
+## Scanning microscope
+Figure \ref{fig:epi} illustrate the internal workings of a Leica SP8 scanning
+microscope which have an epi-illumination setup.  Epi-illumination is when the
+detectors (26) and light source (1, 3, 5, 7) are on the same side of the
+objective (18). But as seen, the epi-setup also allows for external detectors
+(19). By scanning one means that the light source is focused to a specific part
+of the specimen and scanned line by line in a raster pattern. While the laser
+are scanned over the surface, a detector measure light in samples and each
+measured sample will be saved to an image pixel. The scanning is done by a
+oscillation mirror (14). The term non descanned detector indicate that the
+light does not travel by the scanning mirror before reaching the detector. In
+SP8 (17) and (19) are non descanned detectors, where (17) measure reflected
+light and (19) measure transmitted light.
 
 ![Internals of a Leica SP8 microscope. Picture from Leica SP8 brochure
-[@leica_microsystems_cms_gmbh_leica_2014].](figures/epi.jpg) {#fig:epi}
+  [@leica_microsystems_cms_gmbh_leica_2014].](figures/epi.jpg) {#fig:epi}
 
 The view field of a microscope is the physical size of viewable area. The view
 field depends on the magnification of the objective and the scanner zoom.
@@ -370,13 +382,14 @@ in the image to convert it to text.
 
 # Method
 
-What to communicate: experimental setup to reproduce results, description of
-process, brief software listings to show usage of software modules
+> What to communicate: experimental setup to reproduce results, description of
+> process, brief software listings to show usage of software modules
 
-## Microscope The images has been taken with a Leica SP8 microscope using LAS X
-software version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was
-in use, a pulsing Coherent laser and a continious LASOS argon laser. Full
-specifications of lasers are in [@tbl:lasers].
+## Microscope
+The images has been taken with a Leica SP8 microscope using LAS X software
+version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a
+pulsing Coherent laser and a continious LASOS argon laser. Full specifications
+of lasers are in [@tbl:lasers].
 
 +----------+--------------------+--------------------------------------------+
 | Brand    | Model              | Specifications                             |
@@ -426,27 +439,29 @@ specimens are not detected. Row and column position of the regions are
 calculated by sorting them by their position in the image. A more detailed
 description follows.
 
-### Overview images Overview images was taken with an technique similar to
-bright-field microscopy except that the light source is a scanning laser. The
-laser in use was the argon laser in [@tbl:lasers] with 514 nm emission line,
-output power set to 2.48% and intensity to 0.10. Forward light was imaged using
-a 0.55 NA air collector with the non descanned detector having the 525/50 nm
-bandpass filter. Aperture and detector gain was adjusted so that the histogram
-of intensities was in the center of the total range without getting peaks at
-minimum and maximum values.
+### Overview images
+Overview images was taken with an technique similar to bright-field microscopy
+except that the light source is a scanning laser. The laser in use was the
+argon laser in [@tbl:lasers] with 514 nm emission line, output power set to
+2.48% and intensity to 0.10. Forward light was imaged using a 0.55 NA air
+collector with the non descanned detector having the 525/50 nm bandpass filter.
+Aperture and detector gain was adjusted so that the histogram of intensities
+was in the center of the total range without getting peaks at minimum and
+maximum values.
 
 Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500
 $\mu$m (read more about resolution and image size in the discussion). After
 images is scanned, they are rotated 270 degrees, as Leica LAS store
 *.tif*-images with axes swapped in regards to the stage axes.
 
-#### Uneven illumination ![(a) Image of glass slide only and no tissue for
-illustrating the uneven illumination. Dots are impurities on the glass slide.
-(b) Original image with part of speciment. The white line is the row with least
-variance used for equalization. (c) Equalized version of (b). Note that (a),
-(b) and (c) are displaying values from 130 to 230 to highlight the intensity
-variation, colorbar is shown to the
-right.](figures/uneven_illumination_images.png) {#fig:illumination}
+#### Uneven illumination
+![(a) Image of glass slide only and no tissue for illustrating the uneven
+  illumination. Dots are impurities on the glass slide.  (b) Original image with
+  part of speciment. The white line is the row with least variance used for
+  equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are
+  displaying values from 130 to 230 to highlight the intensity variation,
+  colorbar is shown to the right.](figures/uneven_illumination_images.png)
+  {#fig:illumination}
 
 The uneven illumination in the experimental setup is illustrated in
 [@fig:illumination](a). By assuming the intensity variation in all pixels are
@@ -485,25 +500,26 @@ by fitting the two dimentional background to a surface, then divide the image
 by this intensity surface profile.
 
 ![(a) Intensities for the line with least variance of [@fig:illumination](b).
-The curve is fitted to a second degree polynom to supress noise. (b)
-Intensities for image in [@fig:illumination](b). Each dot represents a pixel.
-(c) Intensities for the equalized image in [@fig:illumination](c). Each dot
-represents a pixel. Note that the intensities is both spread across the whole
-intensity range (0-255) and the skewness is fairly straightened
-out.](figures/uneven_illumination_intensities.png)
-{#fig:illumination_intensities}
+  The curve is fitted to a second degree polynom to supress noise. (b)
+  Intensities for image in [@fig:illumination](b). Each dot represents a pixel.
+  (c) Intensities for the equalized image in [@fig:illumination](c). Each dot
+  represents a pixel. Note that the intensities is both spread across the whole
+  intensity range (0-255) and the skewness is fairly straightened
+  out.](figures/uneven_illumination_intensities.png)
+  {#fig:illumination_intensities}
 
-#### Stitching ![Stitch of three images with scanning pattern rotated compared
-to stage movement. Calculating stage position by y-equivalent to [@eq:loc] will
-fail, giving a systematic error in the
-y-position.](figures/stitch_rotation.png) {#fig:stitchrotation}
+#### Stitching
+![Stitch of three images with scanning pattern rotated compared to stage
+  movement. Calculating stage position by y-equivalent to [@eq:loc] will fail,
+  giving a systematic error in the y-position.](figures/stitch_rotation.png)
+  {#fig:stitchrotation}
 
 
 ![(a) Unreliable automatic stitching with Fiji, the image translation
-calculated by phase correlation is chosen without adhering to displacement
-constraints. (b) Using same overlap for all images gives negliable errors, here
-using the python package
-*microscopestitching*.](figures/stitching_comparison.png) {#fig:stitching}
+  calculated by phase correlation is chosen without adhering to displacement
+  constraints. (b) Using same overlap for all images gives negliable errors, here
+  using the python package
+  *microscopestitching*.](figures/stitching_comparison.png) {#fig:stitching}
 
 Due to little signal in areas between samples, automatic stitching with
 correlation methods are prone to fail. To remedy this, the same overlap was
@@ -530,13 +546,13 @@ for i, file in enumerate(files):
 stitched_image = stitch(images)
 ```
 
-#### Segmentation ![Otsu thresholding of [@fig:stitching](b). (a) Otsu
-thresholding applied without any filters. Picks out dark areas, but disjointed,
-especially for brighter sample spots in bottom left. (b) Thresholding after a
-local bilateral population filter. Quite noisy in the background. (c)
-Thresholding after local bilateral population and local mean filter. Background
-noise is gone and sample spots are coherent.](figures/segmentation.png)
-{#fig:segmentation}
+#### Segmentation
+![Otsu thresholding of [@fig:stitching](b). (a) Otsu thresholding applied
+  without any filters. Picks out dark areas, but disjointed, especially for
+  brighter sample spots in bottom left. (b) Thresholding after a local bilateral
+  population filter. Quite noisy in the background. (c) Thresholding after local
+  bilateral population and local mean filter. Background noise is gone and sample
+  spots are coherent.](figures/segmentation.png) {#fig:segmentation}
 
 As seen in [@fig:stitching](b), the samples at the edge are darker than the
 samples in the center. To improve this intensity variation, the overview image
@@ -575,12 +591,12 @@ code listing \ref{code:regions} and [@fig:regions] illustrate typical area size
 (a), position (b) and position derivative (c).
 
 ![(a) Sorted region areas. Area size drops dramatically around region 125
-according to number of samples on slide. (b) Regions sorted by position. There
-is a gap between the positions when row and columns are increasing. (c) X
-distance to previous region when regions are sorted by x-position. 14 peaks
-indicate that the image contain 15 columns. Note that x-axes in (a), (b) and
-(c) doesn't correspond, as the graphs are not sorted by the same
-attribute.](figures/regions_area_and_position.png) {#fig:regions}
+  according to number of samples on slide. (b) Regions sorted by position. There
+  is a gap between the positions when row and columns are increasing. (c) X
+  distance to previous region when regions are sorted by x-position. 14 peaks
+  indicate that the image contain 15 columns. Note that x-axes in (a), (b) and
+  (c) doesn't correspond, as the graphs are not sorted by the same
+  attribute.](figures/regions_area_and_position.png) {#fig:regions}
 
 
 ``` {#lst:regions .python}
@@ -613,8 +629,8 @@ segmentation and regions can be moved, deleted or added with mouse clicks. The
 interface is shown in [@fig:leicaautomator].
 
 ![The process of segmentation in a graphical user interface. Regions 4,2, 11,7
-and 14,1 might be adjusted by the user, all other regions are detected fairly
-well.](figures/leicaautomator.png) {#fig:leicaautomator}
+  and 14,1 might be adjusted by the user, all other regions are detected fairly
+  well.](figures/leicaautomator.png) {#fig:leicaautomator}
 
 #### Calculate stage position from pixel position
 
@@ -717,17 +733,19 @@ A resolution of 1024x1024 pixels with 8 bit image depth was used. Frequency of
 scanning mirror was set to 600 lines/second.
 
 
-## Alignment of z-plane The samples in [@fig:tma] are 5 \si{\micro\metre} thick
-and keeping the sample plane at same distance from .  ![Sample holder with
-adjustment of z-plane. ](figures/stage_insert.png)
+## Alignment of z-plane
+The samples in [@fig:tma] are 5 \si{\micro\metre} thick and keeping the sample
+plane at same distance from . 
+
+![Sample holder with adjustment of z-plane.](figures/stage_insert.png)
 
 ## Correlating images with patient data
 
 ![Top of slide map TP-1. Ids are not incrementing systematically and need to be
-registered to correlate samples to respective patients. Ids are inside circles
-and hard to read with OCR. First part of id is same as `ID_deltaker` in patient
-database, second number is sample number. There should be three samples for
-each patient.](figures/slidemap.png) {#fig:slidemap}
+  registered to correlate samples to respective patients. Ids are inside circles
+  and hard to read with OCR. First part of id is same as `ID_deltaker` in patient
+  database, second number is sample number. There should be three samples for
+  each patient.](figures/slidemap.png) {#fig:slidemap}
 
 Slide maps, seen in [@fig:slidemap], and patient database was given by St.
 Olavs. As the slide maps contained circles, slide maps were filtered to remove
@@ -735,8 +753,7 @@ all but text before it was read with OCR. The OCR text output was checked for
 errors programatically (id should be of correct format, id should increment,
 patients should be registered with correct slide in database column `TP_nr`,
 each patient should have three samples). OCR errors was fixed manually and
-other errors was recorded (see section [Slide map errors](#slidemaperrors) in
-the appendix).
+other errors was recorded (see section [Slide map errors] in the appendix).
 
 Every pasient id from the slide map was then saved to a stata database along
 with its slide number, row and column. Code listing \ref{code:correlate} show
@@ -770,7 +787,8 @@ outcome = clinical_data[condition]['GRAD']
 ```
 
 
-## Technical details ### Hardware aspects
+## Technical details
+### Hardware aspects
 - z-plane off by several hundreds of micrometer
   - piezo-holder tilted
   - slides not necessarily straight, coverslip placement
@@ -801,8 +819,8 @@ outcome = clinical_data[condition]['GRAD']
 
 
 
-### Leica software details The microscope software in use was Leica LAS X
-version TODO.
+### Leica software details
+The microscope software in use was Leica LAS X version TODO.
 
 - loading template with variable positioned wells not working
   - offset first well will offset all wells
@@ -864,7 +882,7 @@ Utilities (not specific thesis):
 
 
 # Result
-What to communicate: achievements and show-stopper/hard limitations
+> What to communicate: achievements and show-stopper/hard limitations
 
 ## Segmentation
 ![Comparison of thresholding](figures/thresholding.png)
@@ -876,21 +894,23 @@ What to communicate: achievements and show-stopper/hard limitations
 
 
 # Discussion
-What to communicate: discuss results, limitations, possibilities for
-improvement
+> What to communicate: discuss results, limitations, possibilities for
+> improvement
 
 > ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er
 > begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
 
 
 
-# Conclusion What to communicate: brief summary of the result and discussion,
-advice for further work
+# Conclusion
+> What to communicate: brief summary of the result and discussion,
+> advice for further work
 
 > ML: Automatic imaging and segmentation of TMA has been
 > demonstrated)...and....
 
-# Appendix Leica LAS design:
+# Appendix
+Leica LAS design:
 - user should be mainly in LAS - automating on the side as a supplement
   - load before CAM can be used
   - does not load all settings from XML
