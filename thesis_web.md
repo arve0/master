@@ -154,15 +154,15 @@ have been omitted, all source code is avaialable at github
 
 # Theory
 
-> What to communicate: theory and details that are not obvious for understanding
-> the rest of the text
+> What to communicate: theory and details that are not obvious for
+> understanding the rest of the text
 
 > ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå
 > det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og
 > innholdet er mer klart.)
 
 
-## Image Processing
+## Image processing
 The term image in this contex a two dimentional array of values, where each
 position in the array is called a pixel. Resolution is the number of pixels an
 image holds. E.g. a resolution of 1024x1024 is an image with 1024 pixels in
@@ -197,17 +197,18 @@ Assuming the window size is odd, $a = (m_w-1)/2$ and $b(n_w-1)/2$
 and $f$, one usually use the normalized correlation
 
 $$  \gamma(x,y) =
-        \frac{
-            \sum\limits_s \sum\limits_t [ w(s,t) - \bar w ]
-            \sum\limits_s \sum\limits_t [ f(x+s, y+t) - \bar f(x+s, y+t) ]
-        }{
-            \left\{
-                \sum\limits_s \sum\limits_t
-                    \left[ w(s,t) - \bar w \right]^2
-                \sum\limits_s \sum\limits_t
-                    \left[ f(x+s, y+t) - \bar f(x+s, y+t) \right]^2
-            \right\}^\frac{1}{2}
-        }. $$ {#eq:normalized_correlation}
+    \frac{
+        \sum\limits_s \sum\limits_t
+            [ w(s,t) - \bar w ]
+        \sum\limits_s \sum\limits_t
+            [ f(x+s, y+t) - \bar f(x+s, y+t) ]
+    }{ \left\{
+        \sum\limits_s \sum\limits_t
+            \left[ w(s,t) - \bar w \right]^2
+        \sum\limits_s \sum\limits_t
+            \left[ f(x+s, y+t) - \bar f(x+s, y+t) \right]^2
+       \right\}^\frac{1}{2}
+    }. $$ {#eq:normalized_correlation}
 
 In the normalized cross correlation, the window is often called a *template*
 and the process of correlation is called *template matching*. The maximum
@@ -216,26 +217,46 @@ may be in several positions if several matches are made. By padding $f(x,y)$
 before correlating one can also match at the border of $f(x,y)$
 [@gonzalez_digital_2007].
 
-If $f$ and $w$ are large images, calculation of [@eq:normalized_correlation]
-is quite computational costly. To reduce the calculation one might use the 2-D
+If $f$ and $w$ are large images, calculation of [@eq:normalized_correlation] is
+quite computational costly. To reduce the calculation one might use the 2-D
 discrete Fourier transform (DFT). The DFT $F(u,v)$ of an image $f(x,y)$ is
 computed by
 
-$$ F(u,v) = \sum\limits_{x=0}^{m-1} \sum\limits_{y=0}^{n-1} \frac{f(x,y)}{\sqrt{mn}} e^{-2 \pi j
-(ux/m + vy/n)}. $$ {#eq:dft}
+$$ F(u,v) =
+    \mathfrak{F} \left\{ f(x,y) \right\} =
+    \sum\limits_{x=0}^{m-1}
+    \sum\limits_{y=0}^{n-1}
+        f(x,y)
+        e^{ -i2 \pi (ux/m + vy/n) }
+    . $$ {#eq:dft}
 
-Here F(u,v) is the frequency domain. The DFT has the intresting property of the
-correlation theorem which states
+Here $F(u,v)$ is the frequency domain image and $\mathfrak{F}$ is the notation
+for a Fourier transform of $f(x,y)$.
 
-$$ f(x,y) \openbigstar g(x,y) \Leftrightarrow F^*(u,v) G(u,v). $$
-{#eq:convolution_theorem}
+Similar the inverse Fourier is defined as
 
-Here $F^*(u,v)$ denotes the complex conjugate of $F(u,v)$. $\Leftrightarrow$
-means that the operation of correlating in the real domain is equivalent to
-multiplying in the frequency domain.
+$$ f(x,y) =
+    \mathfrak{F}^{-1} \left\{ f(x,y) \right\} =
+    \frac{1}{mn}
+    \sum\limits_{u=0}^{m-1}
+    \sum\limits_{v=0}^{n-1}
+        F(u,v)
+        e^{ i2 \pi (ux/m + vy/n) }
+    . $$ {#eq:idft}
 
+Luckily the sums of [@eq:dft and @eq:idft] are seperatable, and sums can be
+done in rows and columns yielding the fast Fourier transform which reduces the
+calculation complexity from $\mathfrak{O}(mn)$ to $\mathfrak{O}(m+n)$
+[@gonzalez_digital_2007].
 
-- scikit-image, utils.ipynb, defaults in code blocks
+DFT has the intresting property that a multiplication in the frequency domain
+with one of the images complex conjugated is equivalent as a correlation in the
+real domain. The correlation theorem states
+
+$$ f(x,y) \openbigstar g(x,y) =
+    \mathcal{F} \left\{ F^*(u,v) G(u,v) \right\}. $$ {#eq:correlation_theorem}
+
+Here $F^*(u,v)$ denotes the complex conjugate of $F(u,v)$.
 
 
 ## Scanning microscope
