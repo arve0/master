@@ -196,37 +196,43 @@ Assuming the window size is odd, $a = (m_w-1)/2$ and $b(n_w-1)/2$
 [@gonzalez_digital_2007]. As [@eq:correlation] is sensitive to intensity in $w$
 and $f$, one usually use the normalized correlation
 
-$$  \gamma(x,y) = \frac{ \sum\limits_s \sum\limits_t [ w(s,t) - \bar w ]
-\sum\limits_s \sum\limits_t [ f(x+s, y+t) - \bar f(x+s, y+t) ] }{ \left\{
-\sum\limits_s \sum\limits_t \left[ w(s,t) - \bar w \right]^2 \sum\limits_s
-\sum\limits_t \left[ f(x+s, y+t) - \bar f(x+s, y+t) \right]^2
-\right\}^\frac{1}{2} }. $$ {#eq:normalized_correlation}
+$$  \gamma(x,y) =
+        \frac{
+            \sum\limits_s \sum\limits_t [ w(s,t) - \bar w ]
+            \sum\limits_s \sum\limits_t [ f(x+s, y+t) - \bar f(x+s, y+t) ]
+        }{
+            \left\{
+                \sum\limits_s \sum\limits_t
+                    \left[ w(s,t) - \bar w \right]^2
+                \sum\limits_s \sum\limits_t
+                    \left[ f(x+s, y+t) - \bar f(x+s, y+t) \right]^2
+            \right\}^\frac{1}{2}
+        }. $$ {#eq:normalized_correlation}
 
 In the normalized cross correlation, the window is often called a *template*
 and the process of correlation is called *template matching*. The maximum
 peak(s) in $\gamma(x,y)$ will be where the template has the best match, which
-may be in several positions if several equal matches are made
+may be in several positions if several matches are made. By padding $f(x,y)$
+before correlating one can also match at the border of $f(x,y)$
 [@gonzalez_digital_2007].
 
-If the image $f$ and the template $w$ are large images, the calculation of
-[@eq:normalized_correlation] is quite computational costly, 
+If $f$ and $w$ are large images, calculation of [@eq:normalized_correlation]
+is quite computational costly. To reduce the calculation one might use the 2-D
+discrete Fourier transform (DFT). The DFT $F(u,v)$ of an image $f(x,y)$ is
+computed by
 
+$$ F(u,v) = \sum\limits_{x=0}^{m-1} \sum\limits_{y=0}^{n-1} \frac{f(x,y)}{\sqrt{mn}} e^{-2 \pi j
+(ux/m + vy/n)}. $$ {#eq:dft}
 
-A 2D discrete Fourier transform (DFT) of an image yields the frequencies of the
-image. The DFT is defined by
+Here F(u,v) is the frequency domain. The DFT has the intresting property of the
+correlation theorem which states
 
-$$ F(u,v) = \sum\limits_{x=0}^{M-1} \sum\limits_{y=0}^{N-1} f(x,y) e^{-2 \pi j
-(ux/M + vy/N)}. $$ {#eq:dft}
-
-An intresting property of DFT is the 2-D convolution theorem which states
-
-$$ f(x,y) \bigstar g(x,y) \Leftrightarrow F(u,v) G(u,v) $$
+$$ f(x,y) \openbigstar g(x,y) \Leftrightarrow F^*(u,v) G(u,v). $$
 {#eq:convolution_theorem}
 
-and 
-
-$$ f(x,y) g(x,y) \Leftrightarrow F(u,v) \bigstar G(u,v) $$
-{#eq:convolution_theorem}
+Here $F^*(u,v)$ denotes the complex conjugate of $F(u,v)$. $\Leftrightarrow$
+means that the operation of correlating in the real domain is equivalent to
+multiplying in the frequency domain.
 
 
 - scikit-image, utils.ipynb, defaults in code blocks
