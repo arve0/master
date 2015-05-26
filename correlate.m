@@ -1,25 +1,38 @@
-f = rand(3, 3);
-g = rand(3, 3);
+s = 3;
+pad = floor(s/2);
 
-f_dft = fft2(f);
-g_dft = fft2(g);
+f = rand(s, s);
+g = rand(s, s);
 
-% pad, xcorr2 does not have mode=wrap in matlab
-sf = size(f); % keep sizes before padding
+% for debugging
+%f = ones(s,s);
+%g = ones(s,s);
 
-f = vertcat(f,f,f);
-f = horzcat(f,f,f);
+f_padded = padarray(f, [pad pad]);
+g_padded = padarray(g, [pad pad]);
 
-% calc boundaries
-i =  2*sf(1,1) + 1;
-ii = i+sf(1,1) - 1;
-j = 2*sf(1,2) + 1;
-jj = j + sf(1,2) - 1;
+F = fft2(f_padded);
+G = fft2(g_padded);
 
-c = xcorr2(f, g);
-c = c(i:ii, j:jj) % clip away correlation outside img
+c = xcorr2(f, g)
+ph_c = ifft2(conj(F) .* G);
 
-ph_c = ifft2(conj(f_dft) * g_dft)
+% shift in real domain - why?
+ph_c = fftshift(ph_c);
 
-diff = c - real(ph_c)
-diff_abs = c - abs(ph_c) % this should be the same as line above (j approx 0)
+% invert axes - why?
+ph_c = ph_c(end:-1:1, end:-1:1)
+
+(c - ph_c) < 1e-12
+
+
+% check convolution too
+cv = conv2(f,g)
+% one liner
+ph_cv = fftshift(ifft2(F .* G))
+% here we get center of cv to top left - why?
+ph_cv = ph_cv(1:s, 1:s);
+cv = cv(pad+1:s+pad, pad+1:s+pad);
+
+(cv - ph_cv) < 1e-12
+
