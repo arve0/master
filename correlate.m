@@ -24,3 +24,13 @@ ph_c = fftshift(ph_c);
 ph_c = ph_c(end:-1:1, end:-1:1)
 
 abs(c - ph_c) < 1e-12
+
+
+% check convolution too
+cv = conv2(f,g)
+% one liner
+ph_cv = fftshift(ifft2(F .* G));
+% circular shift by one in both x and y - why?
+ph_cv = circshift(ph_cv,[1 1])
+
+(cv - ph_cv) < 1e-12
