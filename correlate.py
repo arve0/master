@@ -1,18 +1,48 @@
+from numpy import ones, pad
 from numpy.random import rand
-from numpy.fft import fft2, ifft2
+from numpy.fft import fft2, ifft2, fftshift
 from scipy.ndimage import correlate
 
-f = rand(3, 3)
-g = rand(3, 3)
+size = (7,)
+dims = 2
+padding = size[0]//2
 
-f_dft = fft2(f)
-g_dft = fft2(g)
+# for debugging
+def twenty(arr):
+    "prints int(20*arr)"
+    print((20*arr.real).astype(int))
 
-c = correlate(f, g, mode="wrap")
-ph_c = ifft2(f_dft.conj() * g_dft)
+#f = ones(size*dims)
+#g = ones(size*dims)
+
+f = rand(*(size*dims))
+g = rand(*(size*dims))
+
+
+# cross correlation is defined with zero padding!
+c = correlate(f, g, mode="constant")
+
+# zero pad to keep frequency information on edge
+f_padded = pad(f, padding, mode="constant")
+g_padded = pad(g, padding, mode="constant")
+
+# phase correlation
+F = fft2(f_padded)
+G = fft2(g_padded)
+FG = F.conj() * G
+ph_c = ifft2(FG)
+
+# why do we need to shift?
+ph_c = fftshift(ph_c)
+
+# clip back to original size
+ph_c = ph_c[padding:-padding, padding:-padding]
+
+# why?
+ph_c = ph_c[::-1, ::-1]
+
+twenty(ph_c)
+twenty(c)
 
 diff = c - ph_c.real
-diff_abs = c - abs(ph_c) # this should be the same as line above (j approx 0)
-
-print(diff)
-print(diff_abs)
+print(diff < 1e-12)
