@@ -44,5 +44,5 @@ ph_c = ph_c[::-1, ::-1]
 twenty(ph_c)
 twenty(c)
 
-diff = c - ph_c.real
+diff = abs(c - ph_c.real)
 print(diff < 1e-12)
