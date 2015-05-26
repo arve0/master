@@ -1,4 +1,4 @@
-s = 3;
+s = 5;
 pad = floor(s/2);
 
 f = rand(s, s);
@@ -23,16 +23,4 @@ ph_c = fftshift(ph_c);
 % invert axes - why?
 ph_c = ph_c(end:-1:1, end:-1:1)
 
-(c - ph_c) < 1e-12
-
-
-% check convolution too
-cv = conv2(f,g)
-% one liner
-ph_cv = fftshift(ifft2(F .* G))
-% here we get center of cv to top left - why?
-ph_cv = ph_cv(1:s, 1:s);
-cv = cv(pad+1:s+pad, pad+1:s+pad);
-
-(cv - ph_cv) < 1e-12
-
+abs(c - ph_c) < 1e-12
