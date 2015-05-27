@@ -18,7 +18,7 @@ latex:
 	pandoc thesis.md $(PANDOC_SETTINGS) -o thesis.tex
 
 texpdf: thesis_web.tex
-	pdflatex -shell-escape thesis_web.tex
+	pdflatex -interaction=batchmode thesis_web.tex
 	open thesis_web.pdf
 
 
