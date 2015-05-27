@@ -33,4 +33,4 @@ ph_cv = fftshift(ifft2(F .* G));
 % circular shift by one in both x and y - why?
 ph_cv = circshift(ph_cv,[1 1])
 
-(cv - ph_cv) < 1e-12
+abs(cv - ph_cv) < 1e-12
