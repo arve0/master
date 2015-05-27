@@ -2,9 +2,9 @@
 eqnPrefix: 'equation'
 figPrefix: 'figure'
 tblPrefix: 'table'
-lstPrefic: 'code block'
+lstPrefix: 'code block'
+listingTitle: 'Code block'
 codeBlockCaptions: true
-titleDelimiter: '-'
 bibliography: bibliography.bib
 csl: american-medical-association.csl
 ---
@@ -142,10 +142,16 @@ limitations stumbled upon.
 All source code in the thesis will be in the programming language python
 [@python_software_foundation_official_2015]. The reader does not need to be
 proficient in python programming, but acquaintance with the syntax is assumed.
-Code listings will be used to clarify how problems have been solved or
+Code blocks will be used to clarify how problems have been solved or
 algorithms have been implemented. Details not essential to the problem at hand
-have been omitted, all source code is avaialable at github
-[@seljebu_arve0_2015].
+have been omitted to keep focus on the essential parts. As total amount of
+source code are above thousand lines it's not included in the appendix,
+but rather available at github [@seljebu_arve0_2015] with full history.
+
+As this thesis mainly consists of work on creating automated microscope
+scanning, the method is also the result of the thesis. Therefore a result
+chapter is not included, but a brief description of the result is in the
+beginning of the method chapter.
 
 > ML: En hoveddel i arbeidet har vært automatiseringen av TMA. Skrive noe om
 > TMA og hvorfor automatisert analyse er nødvendig...skal lede opp til en
@@ -160,7 +166,8 @@ have been omitted, all source code is avaialable at github
 > ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå
 > det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og
 > innholdet er mer klart.)
-
+## Tissue micro arrays
+[@kononen_tissue_1998]
 
 ## Image processing
 The term image in this contex a two dimentional array of values, where each
@@ -192,7 +199,7 @@ image $w$ of size $m_w \times n_w$, the correlation of $w$ and $f$ is
 $$ w(x,y) \openbigstar f(x,y) = \sum\limits_{s=-a}^a \sum\limits_{t=-b}^b
 w(s,t) f(x+s, y+t). $$ {#eq:correlation}
 
-Assuming the window size is odd, $a = (m_w-1)/2$ and $b(n_w-1)/2$
+Assuming the window size is odd, $a = (m_w-1)/2$ and $b = (n_w-1)/2$
 [@gonzalez_digital_2007]. As [@eq:correlation] is sensitive to intensity in $w$
 and $f$, one usually use the normalized correlation
 
@@ -209,6 +216,9 @@ $$  \gamma(x,y) =
             \left[ f(x+s, y+t) - \bar f(x+s, y+t) \right]^2
        \right\}^\frac{1}{2}
     }. $$ {#eq:normalized_correlation}
+
+> Kanskje ta bort dette, jeg bruker stort sett bare phase correlation, likevel
+> om jeg har prøvd template matching.
 
 In the normalized cross correlation, the window is often called a *template*
 and the process of correlation is called *template matching*. The maximum
@@ -230,8 +240,9 @@ $$ F(u,v) =
         e^{ -i2 \pi (ux/m + vy/n) }
     . $$ {#eq:dft}
 
-Here $F(u,v)$ is the frequency domain image and $\mathfrak{F}$ is the notation
-for a Fourier transform of $f(x,y)$.
+Here $F(u,v)$ is the frequency domain image and
+$\mathfrak{F}\left\{f(x,y)\right\}$ is the notation for a Fourier transform of
+$f(x,y)$.
 
 Similar the inverse Fourier is defined as
 
@@ -246,7 +257,7 @@ $$ f(x,y) =
 
 Luckily the sums of [@eq:dft and @eq:idft] are seperatable, and sums can be
 done in rows and columns yielding the fast Fourier transform which reduces the
-calculation complexity from $\mathfrak{O}(mn)$ to $\mathfrak{O}(m+n)$
+$O(mn)$ calculation complexity to $O(m \log{m} + n \log{n})$
 [@gonzalez_digital_2007].
 
 DFT has the intresting property that a multiplication in the frequency domain
@@ -254,13 +265,23 @@ with one of the images complex conjugated is equivalent as a correlation in the
 real domain. The correlation theorem states
 
 $$ f(x,y) \openbigstar g(x,y) =
-    \mathcal{F} \left\{ F^*(u,v) G(u,v) \right\}. $$ {#eq:correlation_theorem}
+    \mathfrak{F}^{-1} \left\{ F^*(u,v) G(u,v) \right\}. $$ {#eq:correlation_theorem}
 
 Here $F^*(u,v)$ denotes the complex conjugate of $F(u,v)$.
 
 
+### Sliding window filters
+Sliding window filters are similar to correlation filters in the sense that
+they look at neighbouring pixels of a center pixel. The window will be all
+pixels sourrounding the center pixel defined by the size of the window. A
+histogram of the values in the window are updated instead of doing computation
+directly with the values. The histogram is efficient updated by removing the
+values going out of the window and adding the values comming into the window
+when moving to the next pixel. Sliding window filters are also called rank
+filters.
+
 ## Scanning microscope
-Figure \ref{fig:epi} illustrate the internal workings of a Leica SP8 scanning
+[@Fig:epi] illustrate the internal workings of a Leica SP8 scanning
 microscope which have an epi-illumination setup.  Epi-illumination is when the
 detectors (26) and light source (1, 3, 5, 7) are on the same side of the
 objective (18). But as seen, the epi-setup also allows for external detectors
@@ -294,6 +315,7 @@ it from lower case $x$ which denote image pixel position.
 
 ## Software
 
+
 ### Leica LAS X
 LAS X is the software that contols the Leica SP8 microscope. LAS X comes with
 an function called *Matrix Screener*, which allows the user to define
@@ -312,10 +334,10 @@ similar to how one can write bytes to a file, but in addition the socket
 interface can respond and send bytes back. The network interface runs on TCP
 port 8895 and one may communicate locally or over TCP/IP network. A set of 44
 commands are available, but only three of them are intresting for the purpose
-of controlling scans; ``load``, ``autofocusscan`` and ``startscan``. More
+of controlling scans; `load`, `autofocusscan` and `startscan`. More
 details on the interface can be read in the manual [@frank_sieckmann_cam_2013]
-or by studying the source code of the python package ``leicacam``
-[@arve_seljebu_arve0/leicacam_2015]. Code block \ref{lst:leicacam} show how one
+or by studying the source code of the python package `leicacam``
+[@arve_seljebu_arve0/leicacam_2015]. [@Lst:leicacam] show how one
 can communicate with the microscope in python.
 
 Listing: Communicating with the Leica SP8 microscope using the python package
@@ -326,10 +348,8 @@ from leicacam import CAM
 
 # connect to localhost:8895
 cam = CAM()
-
 # load a template named leicaautomator
 cam.load_template('leicaautomator')
-
 # start the autofocus scan defined in 'leicaautomator' template
 cam.autofocus_scan()
 # start the scan job
@@ -344,7 +364,7 @@ Extensible Markup Language is a declarative language which most high level
 programming languages speak, which makes it suitable for computer program
 communication. A XML-file contain a single root and tree structure with parent
 and children nodes. Any position in the tree can be specified with an *XPath*.
-Code listing \ref{code:xml} show a typical structure of a XML-file.
+[@Lst:xml] show a typical structure of a XML-file.
 
 Listing: Illustration of a typical XML-tree structure.
 
@@ -362,16 +382,16 @@ Listing: Illustration of a typical XML-tree structure.
 </root>
 ```
 
-The XML-file might be nested with several childen and parents, but code listing
-\ref{code:xml} holds for illustration purposes. XPath for the first child in
-parent will be ``./parent/child[@attribute="val1"]``. Here ``.`` is the root,
-``/`` defines path (or nesting if you like) and ``[@attribute="val"]`` defines
-that the attribute named ``attr`` should be of value ``val1``. This XPath will
+The XML-file might be nested with several childen and parents, but code blocks 
+[@lst:xml] holds for illustration purposes. XPath for the first child in
+parent will be `./parent/child[@attribute="val1"]`. Here `.` is the root,
+`/` defines path (or nesting if you like) and `[@attribute="val"]` defines
+that the attribute named `attr` should be of value `val1`. This XPath will
 find only the first child of the first parent, but if other childs with same
-path also had an attribute named ``attr`` with the value ``val1``, the XPath
-would have found them also. E.g. ``./parent/child`` will find all children.
-Code listing \ref{code:pythonxml} show how one would read properties in the
-XML-file from code listing \ref{code:xml}.
+path also had an attribute named `attr` with the value `val1`, the XPath
+would have found them also. E.g. `./parent/child` will find all children.
+[@Lst:pythonxml] show how one would read properties in the
+XML-file from [@lst:xml].
 
 Listing: Accessing XML properties with the python build-in module xml.etree.
 
@@ -405,15 +425,17 @@ Optical character recognition (OCR) is recognition of characters in an image.
 OCR internals are not discussed, but it basically works by looking at patterns
 in the image to convert it to text.
 
+> keep, remove or expand?
 
 
-# Method
+
+# Methods
 
 > What to communicate: experimental setup to reproduce results, description of
-> process, brief software listings to show usage of software modules
+> process, brief code block to show usage of software modules
 
 ## Microscope
-The images has been taken with a Leica SP8 microscope using LAS X software
+The images were collected with a Leica SP8 microscope using LAS X software
 version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a
 pulsing Coherent laser and a continious LASOS argon laser. Full specifications
 of lasers are in [@tbl:lasers].
@@ -442,6 +464,33 @@ filters of 525/50 nm and 445/20 nm. Two of the descanned detectors are behind
 the objective and two on opposite side of the objective behind a collector,
 which makes it possible to measure both backward and forward light.
 
+### SHG images
+SHG images was taken with a 25x/0.95 NA water objective. The pulsed infrared
+laser was set to 890 nm, intensity 20%, gain 40%, offset 80% and electro-optic
+modulator (EOM) on. Forward light was measured with non descanned PMT sensor
+behind a 0.9 NA air collector. Band pass filter in front of the detector was
+445/20 nm and gain of detector was adjusted so that signal spanned the whole
+intensity range. Aperture was set to 24 (maximum).
+
+A resolution of 1024x1024 pixels with 8 bit image depth was used. Frequency of
+scanning mirror was set to 600 lines/second.
+
+### Overview images
+Overview images was taken with an technique similar to bright-field microscopy
+except that the light source is a scanning laser. A 10x air objective was used,
+the lasers in use were the
+argon laser in [@tbl:lasers] with 514 nm emission line, output power set to
+2.48% and intensity to 0.10. Forward light was imaged using a 0.55 NA air
+collector with the non descanned detector having the 525/50 nm bandpass filter.
+Aperture and detector gain was adjusted so that the histogram of intensities
+was in the center of the total range without getting peaks at minimum and
+maximum values.
+
+Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500
+$\mu$m (read more about resolution and image size in the discussion). After
+images is scanned, they are rotated 270 degrees, as Leica LAS store
+*.tif*-images with axes swapped in regards to the stage axes.
+
 
 ## Automated scanning
 
@@ -456,7 +505,7 @@ overview image. The process consists roughly of the steps:
 - Allow user to confirm or adjust the segmentation
 - Scan each region
 
-Overview images was taken with a 10x air objective, equalized and stitched. The
+After overview images was taken, they were equalized and stitched. The
 equalization step corrects uneven illumination and increases contrast for
 viewing purposes. To improve robustness of segmentation, a local bilateral
 population filter was applied to the stitched image before it is thresholded.
@@ -466,26 +515,11 @@ specimens are not detected. Row and column position of the regions are
 calculated by sorting them by their position in the image. A more detailed
 description follows.
 
-### Overview images
-Overview images was taken with an technique similar to bright-field microscopy
-except that the light source is a scanning laser. The laser in use was the
-argon laser in [@tbl:lasers] with 514 nm emission line, output power set to
-2.48% and intensity to 0.10. Forward light was imaged using a 0.55 NA air
-collector with the non descanned detector having the 525/50 nm bandpass filter.
-Aperture and detector gain was adjusted so that the histogram of intensities
-was in the center of the total range without getting peaks at minimum and
-maximum values.
-
-Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500
-$\mu$m (read more about resolution and image size in the discussion). After
-images is scanned, they are rotated 270 degrees, as Leica LAS store
-*.tif*-images with axes swapped in regards to the stage axes.
-
 #### Uneven illumination
-![(a) Image of glass slide only and no tissue for illustrating the uneven
-  illumination. Dots are impurities on the glass slide.  (b) Original image with
+![**(a)** Image of glass slide only and no tissue for illustrating the uneven
+  illumination. Dots are impurities on the glass slide.  **(b)** Original image with
   part of speciment. The white line is the row with least variance used for
-  equalization. (c) Equalized version of (b). Note that (a), (b) and (c) are
+  equalization. **(c)** Equalized version of (b). Note that (a), (b) and (c) are
   displaying values from 130 to 230 to highlight the intensity variation,
   colorbar is shown to the right.](figures/uneven_illumination_images.png)
   {#fig:illumination}
@@ -505,7 +539,7 @@ equalized /= intensity_profile          # equalize
 equalized[equalized > 1] = 1            # clip values
 ```
 
-As seen in code listing \ref{code:equalize} the image is first normalized.
+As seen in [@lst:equalize] the image is first normalized.
 `images_minimum` and `images_maximum` is found by selecting the median of
 respectively minimum and maximum intensity of all images. By taking the median
 of all images one avoids outliers and gets the same normalization for all
@@ -526,10 +560,10 @@ profile. For more complex intensity variations, similiar approach can be done
 by fitting the two dimentional background to a surface, then divide the image
 by this intensity surface profile.
 
-![(a) Intensities for the line with least variance of [@fig:illumination](b).
-  The curve is fitted to a second degree polynom to supress noise. (b)
+![**(a)** Intensities for the line with least variance of [@fig:illumination](b).
+  The curve is fitted to a second degree polynom to supress noise. **(b)**
   Intensities for image in [@fig:illumination](b). Each dot represents a pixel.
-  (c) Intensities for the equalized image in [@fig:illumination](c). Each dot
+  **(c)** Intensities for the equalized image in [@fig:illumination](c). Each dot
   represents a pixel. Note that the intensities is both spread across the whole
   intensity range (0-255) and the skewness is fairly straightened
   out.](figures/uneven_illumination_intensities.png)
@@ -537,14 +571,14 @@ by this intensity surface profile.
 
 #### Stitching
 ![Stitch of three images with scanning pattern rotated compared to stage
-  movement. Calculating stage position by y-equivalent to [@eq:loc] will fail,
+  movement. Calculating stage position by y-equivalent to [@eq:pos] will fail,
   giving a systematic error in the y-position.](figures/stitch_rotation.png)
   {#fig:stitchrotation}
 
 
-![(a) Unreliable automatic stitching with Fiji, the image translation
+![**(a)** Unreliable automatic stitching with Fiji, the image translation
   calculated by phase correlation is chosen without adhering to displacement
-  constraints. (b) Using same overlap for all images gives negliable errors, here
+  constraints. **(b)** Using same overlap for all images gives negliable errors, here
   using the python package
   *microscopestitching*.](figures/stitching_comparison.png) {#fig:stitching}
 
@@ -553,8 +587,7 @@ correlation methods are prone to fail. To remedy this, the same overlap was
 chosen when stitching the overview image. Using the same overlap in this
 context gives reliable stitching with negligible errors. The overlap is chosen
 by calculating all overlaps with phase correlation and taking the median. The
-stitching was put in a python package and can be used as shown in code listing
-\ref{code:stitch}.
+stitching was put in a python package and can be used as shown in [@lst:stitch].
 
 Listing: Stitching images with the python package *microscopestitching*.
 
@@ -574,25 +607,30 @@ stitched_image = stitch(images)
 ```
 
 #### Segmentation
-![Otsu thresholding of [@fig:stitching](b). (a) Otsu thresholding applied
+![Otsu thresholding of [@fig:stitching](b). **(a)** Otsu thresholding applied
   without any filters. Picks out dark areas, but disjointed, especially for
-  brighter sample spots in bottom left. (b) Thresholding after a local bilateral
-  population filter. Quite noisy in the background. (c) Thresholding after local
+  brighter sample spots in bottom left. **(b)** Thresholding after a local bilateral
+  population filter. Quite noisy in the background. **(c)** Thresholding after local
   bilateral population and local mean filter. Background noise is gone and sample
   spots are coherent.](figures/segmentation.png) {#fig:segmentation}
 
 As seen in [@fig:stitching](b), the samples at the edge are darker than the
 samples in the center. To improve this intensity variation, the overview image
-is filtered with a local bilateral population filter. The filter counts number
-of neighbour pixels that are outside a specified range. The effect of the
-filter is less computational demanding and somewhat similar to an entropy
+is filtered with a local (reverse) bilateral population filter. Reverse in this sense means that the filter counts number
+of neighbouring pixels that are outside a specified range. The effect of the
+filter is a less computational demanding and somewhat similar to an entropy
 filter. Areas with low signal variation (the background) give low values and
-areas with high signal variation (the samples) give high values. To reduce
+areas with high signal variation (the samples) give high values.
+
+``` {#lst:bilateral .python}
+
+```
+
+To reduce
 noise after the bilateral population filter, a mean filter was applied. The
-size of structure elements was 9x9 pixels for both filters. Figure
-[@fig:segmentation](a), (b) and (c) show how the segmentation is affected by
-the filters. Code for reproducing the steps are in code listing
-\ref{code:segmentation}.
+size of structure elements was 9x9 pixels for both filters.
+[@Fig:segmentation](a), (b) and (c) show how the segmentation is affected by
+the filters. Code for reproducing the steps are in [@lst:segmentation].
 
 Listing: Filter and segment an image with local bilateral population and Otsu
 thresholding.
@@ -614,16 +652,17 @@ After segmentation, regions was sorted by their area size and only the largest
 regions are kept. Row and column was calculated by sorting regions by position,
 measuring the distance between them and increment row or column number when
 there is a peak in the distance to previous region. The code can be seen in
-code listing \ref{code:regions} and [@fig:regions] illustrate typical area size
+[@lst:regions] and [@fig:regions] illustrate typical area size
 (a), position (b) and position derivative (c).
 
-![(a) Sorted region areas. Area size drops dramatically around region 125
-  according to number of samples on slide. (b) Regions sorted by position. There
-  is a gap between the positions when row and columns are increasing. (c) X
-  distance to previous region when regions are sorted by x-position. 14 peaks
-  indicate that the image contain 15 columns. Note that x-axes in (a), (b) and
-  (c) doesn't correspond, as the graphs are not sorted by the same
-  attribute.](figures/regions_area_and_position.png) {#fig:regions}
+![**(a)** Sorted region areas. Area size drops dramatically around region 125
+  according to number of samples on slide. Plot does not have corresponding
+  x-axis with (b) and (c), as regions are sorted by size. **(b)** Regions
+  sorted by position.  The two plots do no share the same x-axis. There is a
+  gap between the positions when row and columns are increasing. **(c)** X
+  distance to previous region when regions are sorted by x-position. Same
+  x-axis as in (b) for the x-position plot. 14 peaks indicate that the image
+  contain 15 columns.](figures/regions_area_and_position.png) {#fig:regions}
 
 
 ``` {#lst:regions .python}
@@ -671,12 +710,13 @@ in meters read from the overview scanning template in the experiment
 `./ScanningTemplate/Properties/ScanFieldStageDistanceX`. Left most left pixel
 was calculated by
 
-$$ X_{start} = X_{center} - \frac{S_x \cdot x_{resolution}}{2}. $$ {#eq:firstx}
+$$ X_{start} = X_{center} - \frac{m}{2} \cdot x_{resolution}. $$ {#eq:firstx}
 
-In [@eq:firstx] $X_{center}$ and $S_x$ is respectively the stage position and
-number of pixels in the top left image of the overview scan. $X_{center}$ was
-read from the overview scanning template at XPath
-`./ScanFieldArray/ScanFieldData[@WellX="1"][@WellY="1"][@FieldX="1"][@FieldY="1"]/FieldXCoordinate`.
+In [@eq:firstx] $X_{center}$ is the stage position and $m$ is number of pixels
+in the image from the overview scan. $X_{center}$ was read from the overview
+scanning template at XPath
+`./ScanFieldArray/ScanFieldData[@WellX="1"][@WellY="1"][@FieldX="1"][@FieldY="1"]`
+`/FieldXCoordinate`.
 The stage x-coordinate for any pixel was then calculated by
 
 $$ X = X_{start} + x \cdot x_{resolution}. $$ {#eq:pos}
@@ -706,7 +746,7 @@ looped through in a zick-zack pattern, given by their row and column position.
 For each region the scanning template was edited, the template was loaded and
 the scan was started through CAM. Single templates was used due to a Leica LAS
 software limitation; scanning templates with irregular spaced wells can not be
-loaded. Code listing \ref{code:automatedscan} illustrates the process.
+loaded. [@Lst:automatedscan] illustrates the process.
 
 Listing: Automated scanning of regions with CAM.
 
@@ -748,16 +788,6 @@ for n, region in enumerate(regions):
 ```
 
 
-### SHG images
-SHG images was taken with a 25x/0.95 NA water objective. The pulsed infrared
-laser was set to 890 nm, intensity 20%, gain 40%, offset 80% and electro-optic
-modulator (EOM) on. Forward light was measured with non descanned PMT sensor
-behind a 0.9 NA air collector. Band pass filter in front of the detector was
-445/20 nm and gain of detector was adjusted so that signal spanned the whole
-intensity range. Aperture was set to 24 (maximum).
-
-A resolution of 1024x1024 pixels with 8 bit image depth was used. Frequency of
-scanning mirror was set to 600 lines/second.
 
 
 ## Alignment of z-plane
@@ -783,7 +813,7 @@ each patient should have three samples). OCR errors was fixed manually and
 other errors was recorded (see section [Slide map errors] in the appendix).
 
 Every pasient id from the slide map was then saved to a stata database along
-with its slide number, row and column. Code listing \ref{code:correlate} show
+with its slide number, row and column. [@Lst:correlate] show
 how the clinical data was correlated with samples.
 
 Listing: Get patient outcome of sample on TP-1 row 3 column 5.
@@ -814,111 +844,6 @@ outcome = clinical_data[condition]['GRAD']
 ```
 
 
-## Technical details
-### Hardware aspects
-- z-plane off by several hundreds of micrometer
-  - piezo-holder tilted
-  - slides not necessarily straight, coverslip placement
-  - too much tilt: out of focus in one image
-  - tolerated tilt and software autofocus: stitching when edge not from same
-    physical area (especially thick samples)
-- signal variations and chosen optimum
-  - collector 0.55 vs 0.9 when overview vs SHG
-  - aperture not adjustable from software, resets when using occular
-  - hard to get same conditions every time (might move to discussion: suggest
-    using test sample routine along with image analysis)
-- rotation scanning mirror
-  - stitch
-  - finding angle with image registration / phase correlation
-- edge of image, intensity variation
-  - zoom
-  - correction for overview vs SHG
-- HyD shutdown too much light
-  - HyD behind mirror might get less light, but still good signal
-  - pinhole adjustment for HyD behind mirror to avoid bright spots?
-- reported resolution from LAS not same as stage movement
-  - use image registration to calculate px-resolution
-  - calibration of measurement-equiptment
-  - what measurement to trust
-- outage and service
-  - logging, feedback and communication between researchers
-  - service contracts
-
-
-
-### Leica software details
-The microscope software in use was Leica LAS X version TODO.
-
-- loading template with variable positioned wells not working
-  - offset first well will offset all wells
-  - Properties/XStartPosition not used
-  - no "template-type" property
-  - must be loaded in GUI first time
-    - through CAM opens GUI dialog "Import?"
-- CAM only available after manually loading a template in GUI
-  - GUI automation
-- loading modified template with same name
-- loading templates automatic goes to position and changes objective
-  - crashes possible
-  - trouble if using imersion objective
-- switching between AF / job in GUI will automatically switch objective without
-  warning
-  - trouble if using imersion objective
-- mix of 0-indexed and 1-index variables
-  - files 0 indexed
-  - cam 1 indexed
-  - xml 1 indexed (TODO: verify)
-- GUI hangs if socket is not read
-- loading template should omit .xml from filename
-  - saving template should not
-  - not noted in documentation
-  - "templ.xml.xml not found"
-- save template does not update with latest changes in GUI
-- XML does not read when missing return char "\r"
-  - not in XML specification
-- z-position in template not read
-- z-position from CAM sometimes gives "0" instead of real position
-- adjusting x/y-coordinate on USB-control panel moves stage to zero or max
-  position
-
-### Software development
-- Separate of concerns
-  - modules and code reuse
-  - publication of software packages and python ecosystem
-- leicacam: talking with microscope
-- leicascanningtemplate: modify templates
-- leicaexperiment: read, stitch, ome.tif experiments
-- microscopestitching: reliable stitching with phase corralation (remove
-  outliers vs median)
-- leicaautomator: find regions to scan, unifies all of the above
-- python cross platform and compilation
-  - heavy c/c++ dependency
-  - miniconda
-  - wheel packages
-
-Utilities (not specific thesis):
-- fijibin: automate fiji/imagej from python
-- ipynbcompress: compress images in ipython notebooks
-
-
-> ML: Kan også skrive om spesifikke aspekter ved mikroskopsystemet som har
-> muliggjort/begrenset/forhindret løsningene. All programvare som er utviklet
-> bør omtales her, eventuelt med mer detaljer i et appendiks)
-
-
-
-
-# Result
-> What to communicate: achievements and show-stopper/hard limitations
-
-## Segmentation
-![Comparison of thresholding](figures/thresholding.png)
-
-> ML: Resultat så langt: Kontroll via Python, segmentering, z-correction
-
-
-
-
 
 # Discussion
 > What to communicate: discuss results, limitations, possibilities for
@@ -926,6 +851,94 @@ Utilities (not specific thesis):
 
 > ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er
 > begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
+
+## Automated scanning
+The reason for automating the scanning is to steer clear from error prone work.
+Glass slides with TMA samples can contain up to 1000 samples for each glass
+slide[@kononen_tissue_1998], and helping the microscope operator and researcher
+organize the work is vital. The glass slides in discussion here holds 14
+columns of specimen, which is 60 non-overlapping images with a 25x objective.
+The operator of the microscope will have to always be aware of his position in
+the array. A movement of 1.7 \si{\milli\metre} will shift columns by one, which
+describes the accuruancy required.
+
+Though the complexity can become much for a human to handle, the situation
+is not terrible. The tissue is somewhat aranged, tools in microscope software
+exists for scanning large structures, specimen are rounded making them easy to
+spot. In addition, the specimen have quite equal properties like shape and
+size, making automated detection with image processing a low hanging fruit.
+
+Using the matrix screener of Leica LAS, a normal TMA scan would roughly contain
+the steps:
+
+1. Count number of rows and columns.
+2. Align TMA in microscope.
+3. Measure average inter sample displacement.
+4. Measure maximum specimen size.
+5. Define an experiment holding the correct number of rows, columns,
+   displacement between samples and sample size.
+6. Identify inter sample offsets.
+7. Potetially disable fields with smaller size than the largest.
+8. Identify and rule out missing samples.
+9. Create predictive focus map or make sure positions for autofocus are in
+   regions with signal (e.g. specimen should be included in the autofocus
+   image).
+10. Scan.
+
+An error in some of the steps above can potentially disrupt steps further down
+the line. In example, with inaccuriancy in average displacement between samples 
+one might have to adjust the offset of many if not all wells, accidentally
+bumping the sample holder could impose restart of the procedure, and so on. The
+procedure was tested out and step 6 was the most labor intensive, browsing
+through 126 samples aligning them. An alignment of one sample took about 40
+seconds, giving 1.5 hours of intensive 
+
+A simple means to avoid some of the steps in the intricate procedure above is
+using a single scan containing the whole matrix area. The procedure then
+simplifies to:
+
+1. Align TMA in microscope.
+2. Find outer boundaries.
+3. Create predictive focus map or select more or less regular spaced intervals
+   with specimens to do autofocus.
+4. Scan.
+5. Separate specimen and assign row and column to them.
+
+Compared to the first procedure listed, this procedure have the advantage of
+being less labor intensive. But manually browsing through \SI{24}{\milli\metre}
+$\cdot$ \SI{15}{\milli\metre}  / $(\SI{400}{\micro\metre})^2$ = 2250 images may
+be a daunting task without a specialized tool. Several hundred images will also
+be empty images.
+
+The main concern with this method was focus. A few scans which yielded
+out of focus parts confirmed the concern. To overcome this one can define an
+autofocus more often or even at every specimen. This implies manual
+labor browsing around the TMA selecting the places to autofocus or finding them
+in an automatic way.
+
+As the goal was to reduce manual labor, selecting 
+
+find the specimen areas
+manually or with an overview image. As 
+
+
+scan is also vulnerable to
+errors in autofocus causing parts of scan to come out of focus. Additionally
+the scan will consist of several hundred empty images.
+
+The 
+
+The developed approach described in the [method chapter](#method) remedies the
+draw backs of scanning the whole slide in one scan and doesn't add any
+considerable amount of work. The procedure is reduced to:
+
+1. Align TMA in microscope.
+2. Take overview image.
+3. Let software find specimen up front.
+4. Scan.
+
+The result is images easily separated by their row and column. The advanteages
+to 
 
 
 
@@ -937,8 +950,22 @@ Utilities (not specific thesis):
 > demonstrated)...and....
 
 # Appendix
+
+### Python packages
+Any python package mentioned in the code blocks is install-able through pip. In
+example `leicacam` can be installed by typing `pip install leicacam` in a
+terminal on a computer that have `pip`[@python_packaging_authority_user_2015]
+and the required compilers if the package contain compiled languages.
+
+A lot of scientific python packages have algorithms implemented in compiled
+languages as Fortran and C. By using a Python distribution like Anaconda 
+one avoids installing compilers and can install pre built packages directly.
+
+
 Leica LAS design:
-- user should be mainly in LAS - automating on the side as a supplement
+
+- user should be mainly in LAS
+  - automating on the side as a supplement
   - load before CAM can be used
   - does not load all settings from XML
 
