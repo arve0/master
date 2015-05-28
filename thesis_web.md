@@ -22,7 +22,9 @@ knownledge every day, even at time when their students seems unmotivated.
 The last year I have been warmly included in Magnus Borstad Lilledahl's
 research group, with Andreas Finnøy, Elisabeth Inge Romijn and Rajesh Kumar.
 It's been educational to work with them and exciting to get an insight in how
-they perform their research. Thank you!
+they perform their work. Anna Bofin and Monica J. Engstrøm at St. Olavs has
+also been very welcoming, showing me patterns in specimen and provided the
+data set to my gratefulness. Thank you all!
 
 I would also like to thank my family, who always have been supportive for the
 choices I've made.
@@ -48,7 +50,7 @@ peripheral from $\approx$ 900 patients. NTNU want to examine all tissue samples
 with image processing to see if second harmonic generation microscope images of
 tissue can help classify cancer type (I, II, III) or in other words, cancer
 aggresiveness. This thesis documents a method which automates the microscope
-imaging of these tissue micro arrays (TMA) and show how images can be
+imaging of these tissue microarrays (TMA) and show how images can be
 structured and correlated to clinical data.
 
 Automated microscope scanning is in principle straight forward, but the
@@ -70,7 +72,7 @@ will be on TMA and the experimental setup with a Leica SP8 microscope.
 
 The conclusions are:
 
-- Large area scans should adjust speciment plane to be at even distance to the
+- Large area scans should adjust specimen plane to be at even distance to the
   objective to be time effective and avoid out of focus images.
 - Using heuristics/constraints improves the reliability to automatic stitching
   algorithms, failing gracefully on images with little entropy in overlap.
@@ -97,9 +99,9 @@ thesis seeks to make it possible to expand the study from 37 subjects to the
 whole dataset available of $\approx$ 900 subjects.
 
 The means to achieve the expanded dataset is automating the microscope imaging,
-with main focus on automated scanning of tissue micro arrays. Tissue micro
+with main focus on automated scanning of tissue microarrays. Tissue micro
 arrays are glass slides with samples arranged in a matrix pattern seen in
-[@fig:tma]. As tissue micro arrays is standard procedure, not unique to breast
+[@fig:tma]. As tissue microarrays is standard procedure, not unique to breast
 cancer tissue, the work of this master is relevant for other studies too.
 
 
@@ -128,7 +130,7 @@ The thesis are written with focus on two parts, namely automating the
 collection of images and correlating samples to clinical data. How this can be
 used in supervised machine learning will be briefly mentioned in the end. In
 total the method described should enable researchers to run experiments on
-large datasets of tissue micro arrays in a structured and determined manner.
+large datasets of tissue microarrays in a structured and determined manner.
 
 A reader of this text should be familiar with general physics. Matters that are
 specific to scanning microscopy and image processing will be described in the
@@ -139,35 +141,96 @@ The result section will mark out leverages gained with automated scanning, and
 the discussion holds details on choices made when developing the method and
 limitations stumbled upon.
 
-All source code in the thesis will be in the programming language python
+All source code in the thesis will be in the programming language Python
 [@python_software_foundation_official_2015]. The reader does not need to be
-proficient in python programming, but acquaintance with the syntax is assumed.
+proficient in Python programming, but acquaintance with the syntax is assumed.
 Code blocks will be used to clarify how problems have been solved or
 algorithms have been implemented. Details not essential to the problem at hand
 have been omitted to keep focus on the essential parts. As total amount of
-source code are above thousand lines it's not included in the appendix,
-but rather available at github [@seljebu_arve0_2015] with full history.
+source code are above thousand lines it's not included in the appendix
+but rather available at github [@seljebu_arve0_2015] with full history. A brief
+description on installation of the software is included in the
+[appendix](#python-software).
 
 As this thesis mainly consists of work on creating automated microscope
 scanning, the method is also the result of the thesis. Therefore a result
 chapter is not included, but a brief description of the result is in the
 beginning of the method chapter.
 
-> ML: En hoveddel i arbeidet har vært automatiseringen av TMA. Skrive noe om
-> TMA og hvorfor automatisert analyse er nødvendig...skal lede opp til en
-> beskrivelse av de tekniske utfordringene som er løst.
-
 
 # Theory
 
-> What to communicate: theory and details that are not obvious for
-> understanding the rest of the text
+## Tissue microarrays
+A tissue microarray is a collection of specimens aranged in a matrix pattern.
+The specimens are typically sliced with microtome from a paraffin block
+containing cylinders of tissue in rows and columns. Cylinders for the paraffin
+block are typically picked out by a pathologist who evaluate the histology of a
+larger tissue sample.
 
-> ML: I denne delen bør man primært ha med teori som er nødvendig for å forstå
-> det som kommer i metodedelen. Altså ikke skriv for mye her før strukturen og
-> innholdet er mer klart.)
-## Tissue micro arrays
-[@kononen_tissue_1998]
+The thickness of slices are in the magnitude of \SI{1}{\micro\metre}, which
+gives efficient use of tissue samples in the sense that several hundreds of
+TMAs can be made from a block containing cylinders of \SI{1}{mm}
+[@kononen_tissue_1998].
+
+
+## Scanning microscope
+[@Fig:epi] illustrate the internal workings of a Leica SP8 scanning microscope
+which have an epi-illumination setup.  Epi-illumination is when the detectors
+(26) and light source (1, 3, 5, 7) are on the same side of the objective (18).
+But as seen, the epi-setup also allows for external detectors (19), which were
+the ones in use. By scanning one means that the light source is focused to a
+specific part of the specimen and scanned line by line in a raster pattern.
+While the laser are scanned over the surface, a detector measure light in
+samples and each measured sample will be saved to an image pixel. The scanning
+is done by a oscillation mirror (14). The term non descanned detector indicate
+that the light does not travel by the scanning mirror before reaching the
+detector. In SP8 (17) and (19) are non descanned detectors, where (17) measure
+reflected light and (19) measure transmitted light. In [@fig:epi] the
+condensor, which gathers light for the non-descanned detector, is not
+illustrated, but it should be between the glass slide and the non-descanned
+detector (19).
+
+![Internals of a Leica SP8 microscope. Picture from Leica SP8 brochure
+  [@leica_microsystems_cms_gmbh_leica_2014].](figures/epi.jpg) {#fig:epi}
+
+The view field of a microscope is the physical area which fits inside one
+image. The view field depends on the magnification of the objective and the
+scanner zoom.  Scanner zoom is when the scanner is set to oscillate with less
+amplitude while still sampling at the same rate. As field of view is at the
+magnitude of \SI{1e-4}{\metre}, specimen must be moved around to image a larger
+area. The device that moves the specimen is called a stage. Here stage
+position, or specimen position if you like, is denoted with a upper case $X$ to
+distinguish it from lower case $x$ which denote image pixel position.
+
+The resolution of a conventional light microscope is given by the objective
+and/or condenser numerical apterture (NA) [@murphy_fundamentals_2013]:
+
+$$ d = \frac{
+        1.22 \lambda
+    }{
+        NA_{condenser} + NA_{objective}
+    }. $$ {#eq:microscope_resolution}
+
+Here $d$ is the minimum separable spatial distance defined by the Rayleigh
+criterion, $\lambda$ is the wavelength of the light and $NA$ is the numerical
+apterture.
+
+A dichroic mirror, or also called a dichromatic beamsplitter, is a filter which
+is putted into the laser beam at \ang{45} angle to split light of different
+wavelengths. The filter has a sharp transition between reflecting and
+transmitting light for a given wavelength, resulting in short wavelengths being
+mirrored \ang{90} and high wavelengths pass through[@murphy_fundamentals_2013].
+This is useful when having several detectors which should detect different
+wavelengths.
+
+Second harmonic generation (SHG) is a nonlinear scattering process of two
+photons with the same wavelengths. The process is an interaction where the
+photons is transformed to a single emitted photon of half the wavelength. The
+process is dependent on orientation of electric dipoles in the specimen and
+aligned assemblies of asymetric molecules usually provides the proper
+conditions. Collagen tissue does hold the proper conditions for SHG-imaging
+[@murphy_fundamentals_2013].
+
 
 ## Image processing
 The term image in this contex a two dimentional array of values, where each
@@ -280,41 +343,8 @@ values going out of the window and adding the values comming into the window
 when moving to the next pixel. Sliding window filters are also called rank
 filters.
 
-## Scanning microscope
-[@Fig:epi] illustrate the internal workings of a Leica SP8 scanning
-microscope which have an epi-illumination setup.  Epi-illumination is when the
-detectors (26) and light source (1, 3, 5, 7) are on the same side of the
-objective (18). But as seen, the epi-setup also allows for external detectors
-(19). By scanning one means that the light source is focused to a specific part
-of the specimen and scanned line by line in a raster pattern. While the laser
-are scanned over the surface, a detector measure light in samples and each
-measured sample will be saved to an image pixel. The scanning is done by a
-oscillation mirror (14). The term non descanned detector indicate that the
-light does not travel by the scanning mirror before reaching the detector. In
-SP8 (17) and (19) are non descanned detectors, where (17) measure reflected
-light and (19) measure transmitted light.
-
-![Internals of a Leica SP8 microscope. Picture from Leica SP8 brochure
-  [@leica_microsystems_cms_gmbh_leica_2014].](figures/epi.jpg) {#fig:epi}
-
-The view field of a microscope is the physical size of viewable area. The view
-field depends on the magnification of the objective and the scanner zoom.
-Scanner zoom is when the scanner is set to oscillate with less amplitude while
-still sampling at the same rate. As field of view is at the magnitude of
-\SI{1e-4}{\metre}, specimen must be moved around to image a larger area. The
-device that moves the specimen is called a stage. The stage position, or
-specimen position if you like, is denoted with a upper case $X$ to distinguish
-it from lower case $x$ which denote image pixel position.
-
-## Nonlinear light interaction
-
-- focal volume
-
-
-
 
 ## Software
-
 
 ### Leica LAS X
 LAS X is the software that contols the Leica SP8 microscope. LAS X comes with
@@ -336,11 +366,11 @@ port 8895 and one may communicate locally or over TCP/IP network. A set of 44
 commands are available, but only three of them are intresting for the purpose
 of controlling scans; `load`, `autofocusscan` and `startscan`. More
 details on the interface can be read in the manual [@frank_sieckmann_cam_2013]
-or by studying the source code of the python package `leicacam``
+or by studying the source code of the Python package `leicacam``
 [@arve_seljebu_arve0/leicacam_2015]. [@Lst:leicacam] show how one
-can communicate with the microscope in python.
+can communicate with the microscope in Python.
 
-Listing: Communicating with the Leica SP8 microscope using the python package
+Listing: Communicating with the Leica SP8 microscope using the Python package
 leicacam.
 
 ``` {#lst:leicacam .python}
@@ -393,7 +423,7 @@ would have found them also. E.g. `./parent/child` will find all children.
 [@Lst:pythonxml] show how one would read properties in the
 XML-file from [@lst:xml].
 
-Listing: Accessing XML properties with the python build-in module xml.etree.
+Listing: Accessing XML properties with the Python build-in module xml.etree.
 
 ``` {#lst:pythonxml .python}
 import xml.etree.ElementTree as ET
@@ -518,7 +548,7 @@ description follows.
 #### Uneven illumination
 ![**(a)** Image of glass slide only and no tissue for illustrating the uneven
   illumination. Dots are impurities on the glass slide.  **(b)** Original image with
-  part of speciment. The white line is the row with least variance used for
+  part of specimen. The white line is the row with least variance used for
   equalization. **(c)** Equalized version of (b). Note that (a), (b) and (c) are
   displaying values from 130 to 230 to highlight the intensity variation,
   colorbar is shown to the right.](figures/uneven_illumination_images_web.jpg)
@@ -579,7 +609,7 @@ by this intensity surface profile.
 ![**(a)** Unreliable automatic stitching with Fiji, the image translation
   calculated by phase correlation is chosen without adhering to displacement
   constraints. **(b)** Using same overlap for all images gives negliable errors, here
-  using the python package
+  using the Python package
   *microscopestitching*.](figures/stitching_comparison_web.jpg) {#fig:stitching}
 
 Due to little signal in areas between samples, automatic stitching with
@@ -587,9 +617,9 @@ correlation methods are prone to fail. To remedy this, the same overlap was
 chosen when stitching the overview image. Using the same overlap in this
 context gives reliable stitching with negligible errors. The overlap is chosen
 by calculating all overlaps with phase correlation and taking the median. The
-stitching was put in a python package and can be used as shown in [@lst:stitch].
+stitching was put in a Python package and can be used as shown in [@lst:stitch].
 
-Listing: Stitching images with the python package *microscopestitching*.
+Listing: Stitching images with the Python package *microscopestitching*.
 
 ``` {#lst:stitch .python}
 from microscopestitching import stitch
@@ -689,7 +719,7 @@ for direction in 'yx':                  # same algorithm for row and columns
         previous = region
 ```
 
-The whole process of segmentation was done interactive as part of the python
+The whole process of segmentation was done interactive as part of the Python
 package *leicaautomator*, where settings can be adjusted to improve
 segmentation and regions can be moved, deleted or added with mouse clicks. The
 interface is shown in [@fig:leicaautomator].
@@ -702,7 +732,7 @@ interface is shown in [@fig:leicaautomator].
 
 After regions was localized, pixel-size in meters was calculated by
 
-$$ x_{resolution} = \frac{\Delta x}{\Delta X}. $$ {#eq:resolution}
+$$ x_{resolution} = \frac{\Delta x}{\Delta X}. $$ {#eq:pixel_resolution}
 
 Here $\Delta x$ is displacement in pixels and $\Delta X$ is stage displacement
 in meters read from the overview scanning template in the experiment
@@ -852,46 +882,50 @@ outcome = clinical_data[condition]['GRAD']
 > ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er
 > begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
 
-## Automated scanning
-The reason for automating the scanning is to steer clear from error prone work.
-Glass slides with TMA samples can contain up to 1000 samples for each glass
-slide[@kononen_tissue_1998], and helping the microscope operator and researcher
-organize the work is vital. The glass slides in discussion here holds 14
-columns of specimen, which is 60 non-overlapping images with a 25x objective.
-The operator of the microscope will have to always be aware of his position in
-the array. A movement of 1.7 \si{\milli\metre} will shift columns by one, which
-describes the accuruancy required.
+## Scanning
+The motivation for automating the microscope scanning process is to help the
+user of the microscope to achieve his goals with less mental overhead, so the
+user can use the effort on research instead of repetitive trivial labor.  TMA
+samples can contain up to 1000 samples for each glass
+slide[@kononen_tissue_1998], and helping with organizing the work is vital. The
+glass slides in discussion here holds 14 columns of specimen, which is 60
+non-overlapping images with a 25x objective.  This means that an operator of
+the microscope must keep track of the current stage position in the array with
+limited field of view.
 
-Though the complexity can become much for a human to handle, the situation
-is not terrible. The tissue is somewhat aranged, tools in microscope software
-exists for scanning large structures, specimen are rounded making them easy to
-spot. In addition, the specimen have quite equal properties like shape and
-size, making automated detection with image processing a low hanging fruit.
+Though the complexity can be handled by a human, the process of manually
+scanning TMA consist of a lot error prone work. As tissue is somewhat aranged,
+specimen have features which are easy to extract and are suitable for
+discimination, tools in microscope software exists for scanning large
+structures, creating automated microscope scanning with image processing
+becomes a low hanging fruit.
 
-Using the matrix screener of Leica LAS, a normal TMA scan would roughly contain
-the steps:
+To illustrate the pros of using the method described in this thesis, lets
+compare it to the manual approach. By using LAS X matrix screener, the
+procedure will be fairly structured. The manual labor in the scanning would
+roughly consist of:
 
 1. Count number of rows and columns.
 2. Align TMA in microscope.
 3. Measure average inter sample displacement.
-4. Measure maximum specimen size.
+4. Find the maximum sized specimen and measure it's size.
 5. Define an experiment holding the correct number of rows, columns,
    displacement between samples and sample size.
-6. Identify inter sample offsets.
-7. Potetially disable fields with smaller size than the largest.
-8. Identify and rule out missing samples.
-9. Create predictive focus map or make sure positions for autofocus are in
-   regions with signal (e.g. specimen should be included in the autofocus
-   image).
+6. Update inter sample offsets one by one.
+7. Potetially disable fields on specimen with smaller size than the largest.
+8. Potentially identify and rule out missing samples.
+9. Make sure autofocus positions will hold signal (e.g. specimen should be
+   in the autofocus image).
 10. Scan.
 
-An error in some of the steps above can potentially disrupt steps further down
-the line. In example, with inaccuriancy in average displacement between samples 
-one might have to adjust the offset of many if not all wells, accidentally
-bumping the sample holder could impose restart of the procedure, and so on. The
-procedure was tested out and step 6 was the most labor intensive, browsing
+The procedure was tested out and step 6 was the most labor intensive, browsing
 through 126 samples aligning them. An alignment of one sample took about 40
-seconds, giving 1.5 hours of intensive 
+seconds, giving 1.5 hours of intensive click-and-adjust. Also, an error in some
+of the steps can potentially disrupt steps further down the line, making the
+procedure even more labor intensive. In example, inaccuriancy in average
+displacement between samples will lead to displacement adjustment of many
+wells, accidentally bumping the sample holder could impose restart of the
+procedure, and so on.
 
 A simple means to avoid some of the steps in the intricate procedure above is
 using a single scan containing the whole matrix area. The procedure then
@@ -902,43 +936,62 @@ simplifies to:
 3. Create predictive focus map or select more or less regular spaced intervals
    with specimens to do autofocus.
 4. Scan.
-5. Separate specimen and assign row and column to them.
+5. Separate specimen in images and assign row and column to them.
 
 Compared to the first procedure listed, this procedure have the advantage of
-being less labor intensive. But manually browsing through \SI{24}{\milli\metre}
-$\cdot$ \SI{15}{\milli\metre}  / $(\SI{400}{\micro\metre})^2$ = 2250 images may
-be a daunting task without a specialized tool. Several hundred images will also
-be empty images.
+being less labor intensive when on the microscope, but manually browsing
+through \SI{24}{\milli\metre} $\cdot$ \SI{15}{\milli\metre}  /
+$(\SI{400}{\micro\metre})^2$ = 2250 images may be a daunting task without a
+specialized tool.
 
-The main concern with this method was focus. A few scans which yielded
-out of focus parts confirmed the concern. To overcome this one can define an
-autofocus more often or even at every specimen. This implies manual
-labor browsing around the TMA selecting the places to autofocus or finding them
-in an automatic way.
+The main concern with the last procedure was focus and a couple of scans
+confirmed the concern by having out of focus portions. The out of focus can be
+of several reasons, e.g.  inter specimen z-displacement or temperature changes
+moving the specimens in z-direction. As the autofocus in LAS X runs before the
+scan, the only way to tackle temperature changes is by chopping up the scan in
+several chunks. As the goal was to reduce manual labor, doing this as a part of
+the procedure was not considered viable.
 
-As the goal was to reduce manual labor, selecting 
-
-find the specimen areas
-manually or with an overview image. As 
-
-
-scan is also vulnerable to
-errors in autofocus causing parts of scan to come out of focus. Additionally
-the scan will consist of several hundred empty images.
-
-The 
-
-The developed approach described in the [method chapter](#method) remedies the
-draw backs of scanning the whole slide in one scan and doesn't add any
-considerable amount of work. The procedure is reduced to:
+In other words, the most likely way to get desired result is by using the first
+procedure listed. So most part of the procedure was automated and the method
+described is therefore a combination of the two procedures above. Several of
+the steps remain the same but automated, so the procedure for the user of the
+microscope reduces to:
 
 1. Align TMA in microscope.
-2. Take overview image.
-3. Let software find specimen up front.
+2. Find outer boundaries for overview scan.
+3. Verify that the algorithms have picked out the specimens.
+  - If not, the user may adjust filter settings or directly edit the detected
+    regions.
 4. Scan.
 
-The result is images easily separated by their row and column. The advanteages
-to 
+This was considered to meet the goals; reduce mental overhead when collecting
+images from TMA glass slides.
+
+
+## Stitching
+
+
+## Segmentation
+
+
+##
+
+
+## Stable stage insert
+ A movement of 1.7 \si{\milli\metre} will shift columns by one, which
+describes the accuruancy required.
+
+
+
+
+
+## Leica LAS design
+
+- user should be mainly in LAS
+  - automating on the side as a supplement
+  - load before CAM can be used
+  - does not load all settings from XML
 
 
 
@@ -951,23 +1004,26 @@ to
 
 # Appendix
 
-### Python packages
-Any python package mentioned in the code blocks is install-able through pip. In
-example `leicacam` can be installed by typing `pip install leicacam` in a
-terminal on a computer that have `pip`[@python_packaging_authority_user_2015]
-and the required compilers if the package contain compiled languages.
+## Python software
+The software in this thesis is written in Python due to Python's cross-platform
+support, simple syntax and vast scientific ecosystem. With Python one gets free
+access to a lot of scientific software libraries of high quality and top-level
+support through channels like github. As source code for most libraries are
+available, stepping into the nitty-gritty details can give insight in
+algorithms and be very educational.
 
-A lot of scientific python packages have algorithms implemented in compiled
-languages as Fortran and C. By using a Python distribution like Anaconda 
-one avoids installing compilers and can install pre built packages directly.
+Any Python package mentioned in the code blocks is install-able through pip. In
+example `leicacam` can be installed by opening a terminal and type `pip install
+leicacam`. The computer must have `pip`[@python_packaging_authority_user_2015]
+and the required compilers if the package depends on compiling code. This is
+true for most of the software, it depends on fast algorithms implemented in
+compiled languages like C and Fortran.
 
-
-Leica LAS design:
-
-- user should be mainly in LAS
-  - automating on the side as a supplement
-  - load before CAM can be used
-  - does not load all settings from XML
+Compiling the huge scientific libraries like numpy and scipy can take a while,
+so it's recommended to use a Python distribution like Anaconda
+[@continuum_analytics_anaconda_????]. Anaconda pre-ships with the most common
+scientific libraries and it also contains the package manager `conda` which have
+pre-compiled packages available for most operating systems.
 
 
 ## Slide map errors {#slidemaperrors}
@@ -995,7 +1051,7 @@ TP22, row  7, col  3 - id 728, wrong TP_nr in db: 22.0 != 15.0
  TP3, row  9, col  6 - TP_nr not registered in db for ID_deltaker 140
  TP5, row  9, col  9 - TP_nr not registered in db for ID_deltaker 251
  TP9, row 10, col  9 - there should be 3 samples: ['467a-1']
- TP9, row 11, col  3 - there should be 3 samples: ['467b-1', '467b-2']
+ TP9, row 11, col  3 - there should be 3 samples: ['467b-1', '467b-2'])
  TP9, row 12, col  6 - there should be 3 samples: ['471a-1', '471a-2']
  TP9, row 12, col  9 - there should be 3 samples: ['471b-1']
 TP10, row  8, col  6 - there should be 3 samples: ['507-1', '507-2']
