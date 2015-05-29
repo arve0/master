@@ -32,14 +32,6 @@ choices I've made.
 Lastly, the greatest thanks go to my life companion Yngvild, it wouldn't have
 been the same without you.
 
-\ 
-
-\ 
-
-\ 
-
-The cheesy quote is..
-
 > *The future is already here, it's just not very evenly distributed.*
 > - William Gibson
 
@@ -236,7 +228,7 @@ conditions. Collagen tissue does hold the proper conditions for SHG-imaging
 As the probability for SHG is extremely low, enormouse amount if light is
 necessary to generate it. This fact is a benefit for scanning microscope that
 only the focal point is able to produce SHG, with the consequences that a
-sensors can be simpler, e.g. non-descanned, as light will always originate from
+sensors can be simpler, e.g., non-descanned, as light will always originate from
 where the laser is pointed to.
 
 > SHG necessary?
@@ -245,7 +237,7 @@ where the laser is pointed to.
 ## Image processing
 The term image in this contex a two dimentional array of values, where each
 position in the array is called a pixel. Resolution is the number of pixels an
-image holds. E.g. a resolution of 1024x1024 is an image with 1024 pixels in
+image holds. E.g., a resolution of 1024x1024 is an image with 1024 pixels in
 both x- and y-direction, totalling \num{1e6} pixels. Each pixel represent a
 physical position of the specimen, where the value is the amount of light
 measured from the detector when scanning the specimen surface with a light
@@ -259,7 +251,7 @@ $f(x, y)$ denotes the intesity of pixel at position $(x, y)$, where $(0, 0)$ is
 the top left of the image, positive x-direction going left and positive
 y-direction going down. $m \times n$ will denote the number of pixels in in
 respectively x- and y-direction. A subscript of the image name is used if
-several images are discussed, e.g. $m_f$ is the number of x-pixels of image
+several images are discussed, e.g., $m_f$ is the number of x-pixels of image
 $f$.
 
 ### Image registration
@@ -430,7 +422,7 @@ parent will be `./parent/child[@attribute="val1"]`. Here `.` is the root,
 that the attribute named `attr` should be of value `val1`. This XPath will
 find only the first child of the first parent, but if other childs with same
 path also had an attribute named `attr` with the value `val1`, the XPath
-would have found them also. E.g. `./parent/child` will find all children.
+would have found them also. E.g., `./parent/child` will find all children.
 [@Lst:pythonxml] show how one would read properties in the
 XML-file from [@lst:xml].
 
@@ -639,7 +631,8 @@ result of a shifted stitch seen in [@fig:rotation].
          therefor be one pixel above the first image. In (b) relative scanning
          pattern rotation is counter clockwise, giving the second image below
          the first image. A calculating of stage position by y-equivalent to
-         equation \ref{eq:pos} will give a systematic error in the y-position.}
+         equation \ref{eq:stage_position} will give a systematic error in the
+         y-position.}
 \label{fig:rotation}
 \end{figure}
  
@@ -808,7 +801,7 @@ scanning template at XPath
 `/FieldXCoordinate`.
 The stage x-coordinate for any pixel was then calculated by
 
-$$ X = X_{start} + x \cdot x_{resolution}. $$ {#eq:pos}
+$$ X = X_{start} + x \cdot x_{resolution}. $$ {#eq:stage_position}
 
 To be able to scan regions of different shape and size, a bounding box for the
 region was used to calculate the scanning area. Moving the stage to the
@@ -816,6 +809,8 @@ boundary position will center the boundary in the image, and therefor start
 position of first image is calculated by
 
 $$ X_{start} = X + \frac{\Delta X_{job}}{2}. $$ {#eq:xstart}
+
+TODO: make clearer, rename X_start
 
 Here, $\Delta X_{job}$ is stage displacement between images in the job scanning
 template. $X_{start}$ will have an error of
@@ -988,7 +983,7 @@ roughly consist of:
 6. Update inter sample offsets one by one.
 7. Potetially disable fields on specimen spots with smaller size than the largest.
 8. Potentially identify and rule out missing samples.
-9. Make sure autofocus positions will hold signal (e.g. specimen spot should be
+9. Make sure autofocus positions will hold signal (e.g., specimen spot should be
    in the autofocus image).
 10. Scan.
 
@@ -1020,7 +1015,7 @@ specialized tool.
 
 The main concern with the last procedure was focus and a couple of scans
 confirmed the concern by having out of focus portions. The out of focus can be
-of several reasons, e.g.  inter specimen z-displacement or temperature changes
+of several reasons, e.g.,  inter specimen z-displacement or temperature changes
 moving the specimens in z-direction. As the autofocus in LAS X runs before the
 scan, the only way to tackle temperature changes is by chopping up the scan in
 several chunks. As the goal was to reduce manual labor, doing this as a part of
@@ -1041,6 +1036,24 @@ microscope reduces to:
 
 This was considered to meet the goals; reduce mental overhead when collecting
 images from TMA glass slides.
+
+## Rotation
+LAS X comes with a interactive graphical user interface for calibrating the
+scanning rotation. When using the function a live image is shown, a line is
+drawn in the middle of the image and one can adjust the rotation while moving
+the stage. A reference point should then follow the line if the scanning mirror
+and stage holds the same coordinate system. The user himself have to find the
+rotation in a inductive manner by counting pixels or measuring how far the
+reference point moves away from the line when moving the stage. Accuriancy will
+depend on how easily the reference point is distinguished from the rest of the
+image and how thoroughly the user is with his measurements.
+
+The more quantitative manner described in the [rotation section of the
+method](#rotation)
+
+
+
+
 
 
 ## Images and stitching
@@ -1072,20 +1085,35 @@ images.
 First approach on stitching was to use existing stitching software, in specific
 the *Grid/Collection stitching*-plugin of Fiji [@_fiji_2015]. The plugins finds
 displacements between images by using phase correlation, and it works fairly
-well except for the lack of control when phase correlation fails. The
-failing of the phase correlation is mainly due to little entropy in the seam
-between images. It can be seen in [@fig:stitching (a)], where the failed row
-have to much overlap. In the failed row there is a clean cut in the sense that
-the overlap between the images contain background only and no specimen. A
-background surface is quite even and will give a flat correlation in contrast
-to the wanted peak which express a match is found. In other words, the
-overlap between the two rows contain little information to correlate and the
-match fails.
+well except for the lack of control when phase correlation fails. The failing
+of the phase correlation is mainly due to little entropy in the seam between
+images. It can be seen in [@fig:stitching (a)], where the failed row have to
+much overlap. The failed row is a clean cut in the sense that the overlap
+between the images contain background only and no specimen. A background
+surface is quite even and will give a flat correlation in contrast to the
+wanted peak which express a match is found. In other words, the overlap between
+the images contain too little information for correlation and the match fails.
 
-chosen when stitching the overview image. Using the same overlap in this
-context gives reliable stitching with negligible errors. The overlap is chosen
-by calculating all overlaps with phase correlation and taking the median. The
-stitching was put in a Python package and can be used as shown in [@lst:stitch].
+In addition to failures of phase correlation, we would also like to constrain
+stitch between two images to be in one dimension only. This is due to the
+systematic error which may occur if coordinate system of stage and scanning
+pattern is not the same. E.g., consider two side by side images as in
+[@fig:rotation]. We know that the stage translation is only in x-direction, but
+the phase correlation tells us otherwise. As we want to register images into
+the stage coordinate system, rotation of scanning mirror is adjusted, but some
+minor rotation may still be experienced. This might be due stage inaccuriancy,
+unlinearities in scanning pattern or wrong match from the phase correlation.
+Whatever the cause, offsetting images in dimension only gives at worst an error
+in $X$ in the end of every stitch, but in case of offsetting in bot dimensions
+gives at worst a growing error. A way to overcome the error is by calculating
+$X$ from the nearest image metadata, but this was not looked into.
+
+Taking away outliers in the registered translation of [@fig:stitching (b)] gave
+standard deviation of 2.5 pixels, which in the context of overview images gives
+enough precission for defining the SHG scan job.
+
+The stitching algorithm can be used with the python package
+`microscopestitching` [@seljebu_microscopestitching_2015], [@lst:microscopestitching] show an example of how to use it.
 
 Listing: Stitching images with the Python package *microscopestitching*.
 
@@ -1104,39 +1132,10 @@ for i, file in enumerate(files):
 stitched_image = stitch(images)
 ```
 
-The
-ungraceful failing of the Fiji stitching plugin
-was a major drawback, as the automatic scan relies on finding specimen spots in
-the overview image.
 
 
 
- LAS X comes
-with a function for this, which draws a line in the image and lets the user
-adjust the rotation while moving the stage coordinates. A reference point
-should then follow the line if the scanning mirror and stage holds the same
-coordinate system. The user himself have to find the rotation in a inductive
-way by counting pixels or measuring how far the reference point moves away from
-the line.
-
-
-A more robust
-
-It would be possible to get all specimen spots in 
-The TMAs available for this thesis was not neatly aranged. This along with
-
-
-have room for $\approx$ 350 \si{\micro\metre} uncertainty in specimen placement
-in the array. This 
-
-When taking the overview images it's hard to make every image contain
-a complete specimen spot
-
-
-
-
-
-
+## leicaexperiment
 The `.tif` images are stored in a folder tree with folder for *every* field.
 For a complete tissue microarray that is a couple of thousand folders, which 
 easily becomes unmanageable if browsing directly. To improve the situation,
@@ -1148,13 +1147,6 @@ This means that they have to be combined in some manner,
 
 
 
-- observed intensity decline in seam
-- ome tif output
-- imagej constraints not working
-- beside -10, 1, above -10, +2
-  - inaccurate stage
-  - fail to register correct translation
-  - little signal
 
 
 
