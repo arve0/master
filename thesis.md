@@ -32,6 +32,12 @@ choices I've made.
 Lastly, the greatest thanks go to my life companion Yngvild, it wouldn't have
 been the same without you.
 
+\ 
+
+\ 
+
+\ 
+
 The cheesy quote is..
 
 > *The future is already here, it's just not very evenly distributed.*
@@ -159,13 +165,14 @@ beginning of the method chapter.
 A tissue microarray is a collection of specimens aranged in a matrix pattern.
 The specimens are typically sliced with microtome from a paraffin block
 containing cylinders of tissue in rows and columns. Cylinders for the paraffin
-block are typically picked out by a pathologist who evaluate the histology of a
-larger tissue sample.
+block are often picked out by a pathologist who evaluate the histology of a
+larger tissue sample and choose appropriate locations.
 
 The thickness of slices are in the magnitude of \SI{1}{\micro\metre}, which
 gives efficient use of tissue samples in the sense that several hundreds of
-TMAs can be made from a block containing cylinders of \SI{1}{mm}
-[@kononen_tissue_1998].
+TMAs can be made from a block containing cylinders of height \SI{1}{mm}
+[@kononen_tissue_1998]. In this text specimen spot will refer to a single
+sample in the array.
 
 
 ## Scanning microscope
@@ -225,6 +232,14 @@ process is dependent on orientation of electric dipoles in the specimen and
 aligned assemblies of asymetric molecules usually provides the proper
 conditions. Collagen tissue does hold the proper conditions for SHG-imaging
 [@murphy_fundamentals_2013].
+
+As the probability for SHG is extremely low, enormouse amount if light is
+necessary to generate it. This fact is a benefit for scanning microscope that
+only the focal point is able to produce SHG, with the consequences that a
+sensors can be simpler, e.g. non-descanned, as light will always originate from
+where the laser is pointed to.
+
+> SHG necessary?
 
 
 ## Image processing
@@ -313,19 +328,20 @@ $$ f(x,y) =
         e^{ i2 \pi (ux/m + vy/n) }
     . $$ {#eq:idft}
 
-Luckily the sums of [@eq:dft and @eq:idft] are seperatable, and sums can be
-done in rows and columns yielding the fast Fourier transform which reduces the
-$O(mn)$ calculation complexity to $O(m \log{m} + n \log{n})$
+Luckily the sums of [@eq:dft and @eq:idft] are seperatable and can be done
+separately in rows and columns, yielding the fast Fourier transform which
+reduces the calculation complexity from $O(mn)$ to $O(m \log{m} + n \log{n})$
 [@gonzalez_digital_2007].
 
-DFT has the intresting property that a multiplication in the frequency domain
-with one of the images complex conjugated is equivalent as a correlation in the
-real domain. The correlation theorem states
+DFT has the intresting property that a element wise multiplication in the
+frequency domain with one of the images complex conjugated is equivalent as a
+correlation in the real domain. The correlation theorem states
 
 $$ f(x,y) \openbigstar g(x,y) =
     \mathfrak{F}^{-1} \left\{ F^*(u,v) G(u,v) \right\}. $$ {#eq:correlation_theorem}
 
-Here $F^*(u,v)$ denotes the complex conjugate of $F(u,v)$.
+Here it's assumed that images are zero padded and $F^*(u,v)$ denotes the
+complex conjugate of $F(u,v)$.
 
 
 ### Sliding window filters
@@ -337,6 +353,10 @@ directly with the values. The histogram is efficient updated by removing the
 values going out of the window and adding the values comming into the window
 when moving to the next pixel. Sliding window filters are also called rank
 filters.
+
+> Might remove if it's not naturally to mention that the population bilateral
+> filter is implemented in `leicaautomator` as compiled python (faster than
+> existing filters in scientific packages).
 
 
 ## Software
@@ -371,16 +391,12 @@ leicacam.
 ``` {#lst:leicacam .python}
 from leicacam import CAM
 
-# connect to localhost:8895
-cam = CAM()
-# load a template named leicaautomator
-cam.load_template('leicaautomator')
-# start the autofocus scan defined in 'leicaautomator' template
-cam.autofocus_scan()
-# start the scan job
-cam.start_scan()
-# read filename in response from microscope when images are scanned
-relpath = cam.wait_for('relpath')
+cam = CAM()                       # connect to localhost:8895
+cam.load_template('leicaautomator') # load a template named leicaautomator
+cam.autofocus_scan()              # start autofocusing
+cam.start_scan()                  # start scan job
+relpath = cam.wait_for('relpath') # response from microscope with filename
+cam.wait_for('inf', 'scanfinished') # wait until scan is done
 ```
 
 
@@ -423,13 +439,11 @@ Listing: Accessing XML properties with the Python build-in module xml.etree.
 ``` {#lst:pythonxml .python}
 import xml.etree.ElementTree as ET
 
-tree = ET.parse('/path/to/file.xml')
-
-first_child = tree.find('./parent/child')
-first_child.attrib['attr'] == "val1" # True
-
-all_children = tree.findall('./parent/child')
-len(all_children) == 4 # True
+tree = ET.parse('/path/to/file.xml')          # read xml
+first_child = tree.find('./parent/child')     # find one element
+first_child.attrib['attr'] == "val1"          # check attribute value
+all_children = tree.findall('./parent/child') # find all elements
+len(all_children)                             # number of elements found
 ```
 
 ### Scanning Template
@@ -456,9 +470,6 @@ in the image to convert it to text.
 
 # Methods
 
-> What to communicate: experimental setup to reproduce results, description of
-> process, brief code block to show usage of software modules
-
 ## Microscope
 The images were collected with a Leica SP8 microscope using LAS X software
 version 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers was in use, a
@@ -471,7 +482,7 @@ of lasers are in [@tbl:lasers].
 | Coherent | Chameleon Vision-S | Modelocked Ti:Sapphire,                    |
 |          |                    | wavelengths 690-1050 nm,                   |
 |          |                    | 2500 mW,                                   |
-|          |                    | 80 MHz pulsing,                            |
+|          |                    | 80 MHz pulsed,                            |
 |          |                    | $\approx$ 75 ps pulse width                |
 +----------+--------------------+--------------------------------------------+
 | LASOS    | LGK 7872 ML05      | Argon Continious wave,                     |
@@ -481,13 +492,45 @@ of lasers are in [@tbl:lasers].
 
 : Lasers {#tbl:lasers}
 
-The SP8 microscope has an inverted epi-setup, with four descanned detectors and
-four non descanned detectors. The descanned detectors use a prism along with
-adjustable mirrors so that specific wavelengths can be picked out in the
-signal, ranging from TODO. The descanned detectors was used with band pass
-filters of 525/50 nm and 445/20 nm. Two of the descanned detectors are behind
-the objective and two on opposite side of the objective behind a collector,
-which makes it possible to measure both backward and forward light.
+Transmitted light was measured with non-descanned detectors. The non-descanned
+detectors was used with dichrioc mirror of 495 nm and band pass filters of
+525/50 nm and 445/20 nm. Rotation of scanning mirror was set to \ang{1.7} to
+align scanning coordinate sytem with stage coordinate system (read more in
+[Stitching](#stitching)).
+
+Images was exported as `.tif` and then compressed to lossless `.png`
+[@duce_portable_2003] to reduce storage space. The images was also rotated
+\ang{270}, as LAS X store `.tif`-images with axes swapped in regards to the
+stage axes. The procedure is listed in [@lst:rotate_images].
+
+
+``` {#lst:rotate_images .python}
+from leicaexperiment import Experiment
+from PIL import Image
+
+experiment = Experiment('path/to/experiment')
+experiment.compress(delete_tif=True) # lossless PNG compression
+
+for filename in experiment.images:
+    img = Image(filename)
+    img = img.rotate(270)            # image axes same as stage axes
+    img.save(filename)
+```
+
+
+### Overview images
+Overview images was taken with an technique similar to bright-field microscopy
+except that the light source is a scanning laser. A 10x air objective was used,
+the lasers in use were the argon laser in [@tbl:lasers] with 514 nm emission
+line, output power set to 2.48% and intensity to 0.10. Forward light was imaged
+using a 0.55 NA air condenser with the non descanned detector having 525/50 ])
+bandpass filter. Aperture and detector gain was adjusted so that the histogram
+of intensities was in the center of the total range without getting peaks at
+minimum and maximum values.
+
+Zoom 0.75 and 512x512 pixels with 8 bit depth was chosen, which gives images of
+$\approx$ \SI{1500}{\micro\metre} and resolution of $\approx$
+\SI{3}{\micro\metre}.
 
 ### SHG images
 SHG images was taken with a 25x/0.95 NA water objective. The pulsed infrared
@@ -500,29 +543,10 @@ intensity range. Aperture was set to 24 (maximum).
 A resolution of 1024x1024 pixels with 8 bit image depth was used. Frequency of
 scanning mirror was set to 600 lines/second.
 
-### Overview images
-Overview images was taken with an technique similar to bright-field microscopy
-except that the light source is a scanning laser. A 10x air objective was used,
-the lasers in use were the
-argon laser in [@tbl:lasers] with 514 nm emission line, output power set to
-2.48% and intensity to 0.10. Forward light was imaged using a 0.55 NA air
-collector with the non descanned detector having the 525/50 nm bandpass filter.
-Aperture and detector gain was adjusted so that the histogram of intensities
-was in the center of the total range without getting peaks at minimum and
-maximum values.
-
-Zoom 0.75 and 512x512 pixels was chosen, which gives images of $\approx$ 1500
-$\mu$m (read more about resolution and image size in the discussion). After
-images is scanned, they are rotated 270 degrees, as Leica LAS store
-*.tif*-images with axes swapped in regards to the stage axes.
-
 
 ## Automated scanning
-
-Communicate: the procedure of automatic scanning
-
 The automated scanning aims to lift the burden of manually labor and prevent
-errors in the imaging process by finding regions with the specimens in an
+errors in the imaging process by finding regions with the specimen spots in an
 overview image. The process consists roughly of the steps:
 
 - Take an overview image with low magnification
@@ -536,14 +560,14 @@ viewing purposes. To improve robustness of segmentation, a local bilateral
 population filter was applied to the stitched image before it is thresholded.
 Each separate region in the segmentation are sorted by their area size, small
 regions are excluded and the user can exclude or add regions if some of the
-specimens are not detected. Row and column position of the regions are
+specimen spots are not detected. Row and column position of the regions are
 calculated by sorting them by their position in the image. A more detailed
 description follows.
 
 #### Uneven illumination
 ![**(a)** Image of glass slide only and no tissue for illustrating the uneven
   illumination. Dots are impurities on the glass slide.  **(b)** Original image with
-  part of specimen. The white line is the row with least variance used for
+  part of specimen spot. The white line is the row with least variance used for
   equalization. **(c)** Equalized version of (b). Note that (a), (b) and (c) are
   displaying values from 130 to 230 to highlight the intensity variation,
   colorbar is shown to the right.](figures/uneven_illumination_images.png)
@@ -594,42 +618,82 @@ by this intensity surface profile.
   out.](figures/uneven_illumination_intensities.png)
   {#fig:illumination_intensities}
 
+#### Rotation
+To get good stitches the microscope scanning mirror and the stage should share
+the same coordinate system. It's not uncommon that it does not, giving the
+result of a shifted stitch seen in [@fig:rotation].
+
+\begin{figure}
+\subfloat[Illustration of rotated scanning mirror coordinate system.]{
+    \includegraphics[width=0.45\textwidth]{figures/rotation_illustration.pdf}
+
+}
+\subfloat[Best stitch of two images when stage and scanning mirror does not
+          hold the same coordinate system.]{
+    \includegraphics[width=0.45\textwidth]{figures/rotation_stitch.png}
+
+}
+\caption{Illustrations and stitch of two images with scanning pattern rotated
+         compared to stage movement. In (a) the first row of the first image
+         lines up with second row in second image. The second image should
+         therefor be one pixel above the first image. In (b) relative scanning
+         pattern rotation is counter clockwise, giving the second image below
+         the first image. A calculating of stage position by y-equivalent to
+         equation \ref{eq:pos} will give a systematic error in the y-position.}
+\label{fig:rotation}
+\end{figure}
+ 
+Relative rotation between coordinate system was measured by taking two images,
+finding their displacement with phase correlation and calculating the angle by
+
+$$ \theta = \tan \frac{ \Delta y }{ \Delta x }. $$ {#eq:rotation}
+
+Here $\Delta y$ and $\Delta x$ is the displacement in pixels between images.
+To align the coordinate systems, scanning rotation was set to $-\theta$ in 
+LAS X.
+
+
 #### Stitching
-![Stitch of three images with scanning pattern rotated compared to stage
-  movement. Calculating stage position by y-equivalent to [@eq:pos] will fail,
-  giving a systematic error in the y-position.](figures/stitch_rotation.png)
-  {#fig:stitchrotation}
+![**(a)** Unreliable stitching with Fiji, the image translation calculated by
+  phase correlation is chosen without adhering to displacement constraints.
+  **(b)** Using same overlap for all images gives negliable errors, here using
+  the Python package `microscopestitching`.
+  ](figures/stitching_comparison.png) {#fig:stitching}
 
+Stitching was done by phase correlating all neighbor images, calculating the
+median translation and using this median translation between all images. This
+was done as correlation between two images with little entropy in the seam are
+prone to fail. More details on this matter are in the
+[discussion](#images-and-stitching). [@Lst:stitch_algorithm] show the basics of
+the procedure on a row of images for sake of simplicity.
 
-![**(a)** Unreliable automatic stitching with Fiji, the image translation
-  calculated by phase correlation is chosen without adhering to displacement
-  constraints. **(b)** Using same overlap for all images gives negliable errors, here
-  using the Python package
-  *microscopestitching*.](figures/stitching_comparison.png) {#fig:stitching}
+``` {#lst:stitch_algorithm .python}
+from skimage.feature import register_translation
+import numpy as np
 
-Due to little signal in areas between samples, automatic stitching with
-correlation methods are prone to fail. To remedy this, the same overlap was
-chosen when stitching the overview image. Using the same overlap in this
-context gives reliable stitching with negligible errors. The overlap is chosen
-by calculating all overlaps with phase correlation and taking the median. The
-stitching was put in a Python package and can be used as shown in [@lst:stitch].
+# find all neighbor translations
+translations = []
+prev = row_of_imgs[0]                    # row_of_imgs: list of 2d arrays
+for img in row_of_imgs[1:]:              # exclude first image
+    translation, error, phasediff = register_translation(prev, img)
+    translations.append(translation)     # add translation to the list
+    prev = img                           # reference to previous image
+translations = np.array(translations)    # allow for slice notation
+offset_y = np.median(translations[:,0])
+offset_x = np.median(translations[:,1])
+assert offset_x == 0, "x-offset should be zero, " + \\
+                      "adjust the scanning mirror rotation"
 
-Listing: Stitching images with the Python package *microscopestitching*.
-
-``` {#lst:stitch .python}
-from microscopestitching import stitch
-from glob import glob
-
-files = glob('path/to/images/*')
-images = []
-for i, file in enumerate(files):
-    # rectangle of 4 rows and len(files)//4 columns
-    row = i % 4
-    column = i // 4
-    images.append((file, row, column))
-
-stitched_image = stitch(images)
+# combine into one big image
+y, x = img.shape        # assume all images are of same size
+n = len(row_of_images) 
+total_height = n*y - offset_y*(n-1)
+stitched_img = np.zeros((total_height, x))
+for i, img in enumerate(row_of_images):
+    y_start = i*y - i*offset_y
+    stitched_img[y_start:y_start+y, :] = img
 ```
+
 
 #### Segmentation
 ![Otsu thresholding of [@fig:stitching](b). **(a)** Otsu thresholding applied
@@ -651,9 +715,8 @@ areas with high signal variation (the samples) give high values.
 
 ```
 
-To reduce
-noise after the bilateral population filter, a mean filter was applied. The
-size of structure elements was 9x9 pixels for both filters.
+To reduce noise after the bilateral population filter, a mean filter was
+applied. The size of structure elements was 9x9 pixels for both filters.
 [@Fig:segmentation](a), (b) and (c) show how the segmentation is affected by
 the filters. Code for reproducing the steps are in [@lst:segmentation].
 
@@ -689,6 +752,7 @@ there is a peak in the distance to previous region. The code can be seen in
   x-axis as in (b) for the x-position plot. 14 peaks indicate that the image
   contain 15 columns.](figures/regions_area_and_position.png) {#fig:regions}
 
+Listing: Pick out largest regions and calculate row and column position.
 
 ``` {#lst:regions .python}
 from skimage.measure import label, regionprops
@@ -752,6 +816,8 @@ boundary position will center the boundary in the image, and therefor start
 position of first image is calculated by
 
 $$ X_{start} = X + \frac{\Delta X_{job}}{2}. $$ {#eq:xstart}
+
+TODO: make clearer, rename X_start
 
 Here, $\Delta X_{job}$ is stage displacement between images in the job scanning
 template. $X_{start}$ will have an error of
@@ -818,8 +884,23 @@ for n, region in enumerate(regions):
 ## Alignment of z-plane
 The samples in [@fig:tma] are 5 \si{\micro\metre} thick and keeping the sample
 plane at same distance from . 
+ A movement of 1.7 \si{\milli\metre} will shift columns by one, which
+describes the accuruancy required.
 
-![Sample holder with adjustment of z-plane.](figures/stage_insert.png)
+
+\begin{figure}
+\subfloat[Sample holder with adjustment of z-plane.]{
+    \includegraphics[width=0.45\textwidth]{figures/stage_insert.png}
+}
+\quad
+\subfloat[Tilted z-plane of sample seen from the side. Black lines indicate two
+          images and the objective focus for those.]{
+    \includegraphics[width=0.45\textwidth]{figures/tilted_sample.pdf}
+}
+\caption{}
+\label{}
+\end{figure}
+
 
 ## Correlating images with patient data
 
@@ -883,14 +964,14 @@ user of the microscope to achieve his goals with less mental overhead, so the
 user can use the effort on research instead of repetitive trivial labor.  TMA
 samples can contain up to 1000 samples for each glass
 slide[@kononen_tissue_1998], and helping with organizing the work is vital. The
-glass slides in discussion here holds 14 columns of specimen, which is 60
+glass slides in discussion here holds 14 columns of specimen spots, which is 60
 non-overlapping images with a 25x objective.  This means that an operator of
 the microscope must keep track of the current stage position in the array with
 limited field of view.
 
 Though the complexity can be handled by a human, the process of manually
 scanning TMA consist of a lot error prone work. As tissue is somewhat aranged,
-specimen have features which are easy to extract and are suitable for
+specimen spots have features which are easy to extract and are suitable for
 discimination, tools in microscope software exists for scanning large
 structures, creating automated microscope scanning with image processing
 becomes a low hanging fruit.
@@ -903,13 +984,13 @@ roughly consist of:
 1. Count number of rows and columns.
 2. Align TMA in microscope.
 3. Measure average inter sample displacement.
-4. Find the maximum sized specimen and measure it's size.
+4. Find the maximum sized specimen spot and measure it's size.
 5. Define an experiment holding the correct number of rows, columns,
    displacement between samples and sample size.
 6. Update inter sample offsets one by one.
-7. Potetially disable fields on specimen with smaller size than the largest.
+7. Potetially disable fields on specimen spots with smaller size than the largest.
 8. Potentially identify and rule out missing samples.
-9. Make sure autofocus positions will hold signal (e.g. specimen should be
+9. Make sure autofocus positions will hold signal (e.g. specimen spot should be
    in the autofocus image).
 10. Scan.
 
@@ -928,10 +1009,10 @@ simplifies to:
 
 1. Align TMA in microscope.
 2. Find outer boundaries.
-3. Create predictive focus map or select more or less regular spaced intervals
-   with specimens to do autofocus.
+3. Create predictive focus map or define autofocus for more or less regular
+   spaced intervals containing a specimen spot.
 4. Scan.
-5. Separate specimen in images and assign row and column to them.
+5. Separate specimen spots in images and assign row and column to them.
 
 Compared to the first procedure listed, this procedure have the advantage of
 being less labor intensive when on the microscope, but manually browsing
@@ -955,7 +1036,7 @@ microscope reduces to:
 
 1. Align TMA in microscope.
 2. Find outer boundaries for overview scan.
-3. Verify that the algorithms have picked out the specimens.
+3. Verify that the algorithms have picked out the specimen spots.
   - If not, the user may adjust filter settings or directly edit the detected
     regions.
 4. Scan.
@@ -964,7 +1045,123 @@ This was considered to meet the goals; reduce mental overhead when collecting
 images from TMA glass slides.
 
 
-## Stitching
+## Images and stitching
+The LAS X matrix screener has two options for storing images, in `.tif` or
+`.lif`-format (Leica image format). `.tif` exporting has the advantage that
+it's fully controllable trough the CAM interface, as LAS X will report
+filenames of images when scanning. `.tif` is also an ISO standard 
+[@iso_tag_2004] which most image programs can open. In contrast, with the
+`.lif`-format the user have to save the images manually in the graphical user
+interface and the format is not a wide adopted standard. Based on the pros of
+openness and automatization `.tif` was chosen. None of the formats are readily
+putted together.
+
+With 10x objective and 0.75 zoom, maximum field of view is equal to 1550
+\si{\micro\metre}. Average specimen spot diameter was $\approx$ 1200
+\si{\micro\metre}. These two facts would allow for imaging specimen spots
+into separate images if they were neatly arranged. This was not found out to be
+true for our dataset, and it would also burden the user of the microscope to
+measure and define a scan with correct inter specimen displacement. A more
+robust way is therefor to combine all images into one.
+
+Combining images can be done in interactive manner, where a program loads
+images as one "moves" around. But creating this abstraction would demand for a
+way other programs can "talk" to the abstract image object containing all
+images. Therefor a simpler approach was taken, stitching all images into one
+large image. This allows for any program that can open `.png` to work with the
+images.
+
+First approach on stitching was to use existing stitching software, in specific
+the *Grid/Collection stitching*-plugin of Fiji [@_fiji_2015]. The plugins finds
+displacements between images by using phase correlation, and it works fairly
+well except for the lack of control when phase correlation fails. The failing
+of the phase correlation is mainly due to little entropy in the seam between
+images. It can be seen in [@fig:stitching (a)], where the failed row have to
+much overlap. The failed row is a clean cut in the sense that the overlap
+between the images contain background only and no specimen. A background
+surface is quite even and will give a flat correlation in contrast to the
+wanted peak which express a match is found. In other words, the overlap between
+the images contain too little information for correlation and the match fails.
+
+In addition, as we want to calculate stage position from the stitched image
+with [@eq:]
+
+There is two ways to overcome failing 
+
+chosen when stitching the overview image. Using the same overlap in this
+context gives reliable stitching with negligible errors. The overlap is chosen
+by calculating all overlaps with phase correlation and taking the median. The
+stitching was put in a Python package and can be used as shown in [@lst:stitch].
+
+Listing: Stitching images with the Python package *microscopestitching*.
+
+``` {#lst:microscopestitching .python}
+from microscopestitching import stitch
+from glob import glob
+
+files = glob('path/to/images/*')
+images = []
+for i, file in enumerate(files):
+    # rectangle of 4 rows and len(files)//4 columns
+    row = i % 4
+    column = i // 4
+    images.append((file, row, column))
+
+stitched_image = stitch(images)
+```
+
+The
+ungraceful failing of the Fiji stitching plugin
+was a major drawback, as the automatic scan relies on finding specimen spots in
+the overview image.
+
+
+
+ LAS X comes
+with a function for this, which draws a line in the image and lets the user
+adjust the rotation while moving the stage coordinates. A reference point
+should then follow the line if the scanning mirror and stage holds the same
+coordinate system. The user himself have to find the rotation in a inductive
+way by counting pixels or measuring how far the reference point moves away from
+the line.
+
+
+A more robust
+
+It would be possible to get all specimen spots in 
+The TMAs available for this thesis was not neatly aranged. This along with
+
+
+have room for $\approx$ 350 \si{\micro\metre} uncertainty in specimen placement
+in the array. This 
+
+When taking the overview images it's hard to make every image contain
+a complete specimen spot
+
+
+
+
+
+
+The `.tif` images are stored in a folder tree with folder for *every* field.
+For a complete tissue microarray that is a couple of thousand folders, which 
+easily becomes unmanageable if browsing directly. To improve the situation,
+files were stitched together such
+manage, one can use the python package `leicaexperiment` to work with files.
+This means that they have to be combined in some manner, 
+
+
+
+
+
+- observed intensity decline in seam
+- ome tif output
+- imagej constraints not working
+- beside -10, 1, above -10, +2
+  - inaccurate stage
+  - fail to register correct translation
+  - little signal
+
 
 
 ## Segmentation
@@ -974,8 +1171,6 @@ images from TMA glass slides.
 
 
 ## Stable stage insert
- A movement of 1.7 \si{\milli\metre} will shift columns by one, which
-describes the accuruancy required.
 
 
 
