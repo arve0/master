@@ -402,7 +402,7 @@ interface can respond and send bytes back. The network interface runs on TCP
 port 8895 and one may communicate locally or over TCP/IP network. A set of 44
 commands are available, but only three of them are intresting for the purpose
 of controlling scans; load, autofocusscan and startscan. More details on
-the interface can be read in the manual [@frank_sieckmann_cam_2013] or by
+the interface can be read in the manual [@sieckmann_cam_2013] or by
 studying the source code of the Python package leicacam
 [@seljebu_leicacam_2015]. Code block \ref{lst:leicacam} show how one can
 communicate with the microscope in Python.
@@ -843,10 +843,10 @@ total filter time of 20 seconds with `skimage.filters.rank.pop_bilateral` on a
 single core of a Intel i3 2.3 GHz CPU. As the process of segmentation was
 implemented as an interactive graphical user interface, filter time of 20
 seconds was considered unresponsive. To approve responsiveness, the filter was
-therefor implemented as a sliding window filter in Python and compiled with
-numba [@continuum_analytics_numba_2015]. The numba compiled filter took 4.5
-seconds on a single core of a Intel i3 2.3 GHz CPU. As the microscope computer
-was equipped with 16 CPU cores, the filtering was parallized with dask
+implemented as a sliding window filter in Python and compiled with numba
+[@continuum_analytics_numba_2015]. The numba compiled filter took 4.5 seconds
+on a single core of a Intel i3 2.3 GHz CPU. As the microscope computer was
+equipped with 16 CPU cores, the filtering was parallized with dask
 [@continuum_analytics_dask_2015], giving filtering in real time.
 
 Assuming one has an algorithm that updates the local histogram based on a
