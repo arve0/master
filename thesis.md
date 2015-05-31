@@ -715,6 +715,7 @@ result of a jagged stitch seen in [@fig:rotation].
     \includegraphics[width=0.45\textwidth]{figures/rotation_illustration.pdf}
 
 }
+\quad
 \subfloat[Best stitch of two images when stage and scanning mirror does not
           hold the same coordinate system.]{
     \includegraphics[width=0.45\textwidth]{figures/rotation_stitch.png}
@@ -831,10 +832,10 @@ the image can be correlated to clinical data.
   ](figures/segmentation.png) {#fig:segmentation}
 
 As briefly mentioned, the goal of filtering the overview image is to improve
-discrimination between areas with background and specimen so they can be
-distinguished. A filter that have appropriate properties is a population
+discrimination between areas with background and specimen so specimen spots can
+be distinguished. A filter that have appropriate properties is a population
 bilateral filter, which counts number of pixels in the neighborhood of the
-center pixel that are within a specified range relative to the center
+center pixel that is within a specified intensity range relative to the center
 pixel intensity.
 
 The stitched overview image was $5122 \times 8810 = 45$ Megapixels, giving
@@ -979,55 +980,85 @@ deleting, moving or adding regions. The interface is show in
 
 
 ### Step 3: Scanning each specimen spot
-- Calculating stage pos from segm img
-- communicating with microscope
+From step 2 we have a list of regions and their pixel position in the stiched
+overview image. Last step is to calculate the stage position to the regions and
+scan the regions by communicating with the microscope.
 
 
 #### Calculate stage position from pixel position
+To convert pixel position to stage position one need a reference point and the
+pixel resolution. For simplicity, the procedure for calculating stage
+coordinate is shown for x-coordinate only, as the calculations for y-coordinate
+is fully equivalent. Pixel resolution was calculated by
 
-After regions was localized, pixel-size in meters was calculated by
+$$ x_{resolution} = \frac{\Delta x}{\Delta X}. $$ {#eq:pixel-resolution}
 
-$$ x_{resolution} = \frac{\Delta x}{\Delta X}. $$ {#eq:pixel_resolution}
+Here $\Delta x$ is displacement in pixels from the stitch in step 1, and
+$\Delta X$ is stage displacement in meters read from XPath
+`./ScanningTemplate/Properties/ScanFieldStageDistanceX` in the overview
+scanning template in the experiment folder
+(AdditionalData/{ScanningTemplate}overview.xml).
 
-Here $\Delta x$ is displacement in pixels and $\Delta X$ is stage displacement
-in meters read from the overview scanning template in the experiment
-`AdditionalData/{ScanningTemplate}overview.xml` at XPath
-`./ScanningTemplate/Properties/ScanFieldStageDistanceX`. Left most left pixel
-was calculated by
+Keeping stage position constant when zooming, either by changing objective or
+decreasing amplitude of scanning mirror oscillation, will yield the same
+physical position in center of view field. This means that image stage position 
+reported by the microscope is the center pixel. One can use the center of the
+first image as the reference point, but using pixel (0,0) is simpler as one
+can find out where the center pixel is one time, then later forget about it.
 
-$$ X_{start} = X_{center} - \frac{m}{2} \cdot x_{resolution}. $$ {#eq:firstx}
+In other words, the reference point for x-position is at $f(0,y)$, the left
+most pixel. This reference point was calculated by
 
-In [@eq:firstx] $X_{center}$ is the stage position and $m$ is number of pixels
-in the image from the overview scan. $X_{center}$ was read from the overview
-scanning template at XPath
+$$ X_{ref} = X_{center} - \frac{m}{2} \cdot x_{resolution}. $$ {#eq:x-reference}
+
+In [@eq:x-reference] $X_{center}$ is the stage position for the top left image,
+$m$ is the number of pixels in the image and $x_{resolution}$ is from
+[@eq:pixel-resolution]. $X_{center}$ was read from XPath
 `./ScanFieldArray/ScanFieldData[@WellX="1"][@WellY="1"][@FieldX="1"][@FieldY="1"]`
-`/FieldXCoordinate`.
-The stage x-coordinate for any pixel was then calculated by
+`/FieldXCoordinate` in the overview scanning template.
 
-$$ X = X_{start} + x \cdot x_{resolution}. $$ {#eq:stage_position}
+The stage x-coordinate for any pixel is then given by
 
-To be able to scan regions of different shape and size, a bounding box for the
-region was used to calculate the scanning area. Moving the stage to the
-boundary position will center the boundary in the image, and therefor start
-position of first image is calculated by
+$$ X = X_{ref} + x \cdot x_{resolution}. $$ {#eq:stage-position}
+
+Here $X$ is the stage x-coordinate, $X_{ref}$ is the reference point and
+$x_{resolution}$ is from [@eq:pixel-resolution].
+
+As moving to the position calculated from [@eq:stage-position] will center the
+location in the field of view, one need to reverse [@eq:x-reference] if one
+only want this position to be included in the image and not centered in the
+image. How much one need to add depends field of view in the scan job, given by
+the objective and the zoom defined. The start coordinate of the scan is
+therefor calculated by
 
 $$ X_{start} = X + \frac{\Delta X_{job}}{2}. $$ {#eq:xstart}
 
-TODO: make clearer, rename X_start
+Here $X_{start}$ is the x-coordinate for the first image, $X$ is calculated
+from the bounding box coordinate to the region in question, and $X_{job}$ is
+stage displacement between fields. Similar to [@eq:pixel-resolution], $X_{job}$
+was read from `./ScanningTemplate/Properties/ScanFieldStageDistanceX`, but in
+the job scanning template.
 
-Here, $\Delta X_{job}$ is stage displacement between images in the job scanning
-template. $X_{start}$ will have an error of
+Using the stage displacement gives an error in the calculation of $X_{start}$
+by
 
 $$ \epsilon = \frac{1}{2} (\Delta X_{job} - \Delta X_{img}), $$ {#eq:xerror}
 
-where $\Delta X_{img}$ is the total size of the scanned image. This was
-considered neglectible as $\Delta X_{job} \approx \Delta X_{img}$ and number of
-columns scanned was calculated by
+as stage displacement $X_{job}$ is not strictly equal to the field of view
+$X_{img}$ when images are scanned with overlap. This was considered neglectible
+as $\Delta X_{job} \approx \Delta X_{img}$ and number of scanned fields was
+calculated by
 
-$$ f_x = \lceil \frac{\Delta X}{\Delta X_{field}} \rceil. $$ {#eq:enabledfields}
+$$ F_x = \lceil \frac{\Delta X}{\Delta X_{job}} \rceil, $$ {#eq:enabledfields}
+
+which is a slight overestimate. In [@eq:enabledfields] $F_x$ is number of
+fields in x-direction, $\Delta X$ is size of region and $X_{job}$ is
+displacement between fields.
 
 
 #### Scanning each region
+
+
 To avoid unnecessary long stage movements between rows or columns, regions was
 looped through in a zick-zack pattern, given by their row and column position.
 For each region the scanning template was edited, the template was loaded and

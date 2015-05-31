@@ -110,8 +110,8 @@ cancer tissue, the work of this master is relevant for other studies too.
 
 
 The tissue micro array shown in [@fig:tma] is $\approx$ 24x15 mm in size. Using
-a moderate objective of 25x with 400 \si{\micro\metre} field of view, a single
-scan of the total dataset will be
+a moderate objective of 25x with $400 \times 400$ \si{\micro\metre} field of
+view, a single scan of the total dataset will be
 
 $$ \frac{24 \si{\milli\metre}}{400 \si{\micro\metre}} \cdot \frac{15
 \si{\milli\metre}}{400 \si{\micro\metre}} = 2250 \text{ images.} $$
@@ -151,11 +151,9 @@ but rather available at github [@seljebu_arve0_2015] with full history. A brief
 description on installation of the software is included in the
 [appendix](#python-software).
 
-As this thesis mainly consists of work on creating automated microscope
-scanning, the method is also the result of the thesis. Therefore a result
-chapter is not included, but a brief description of the result is in the
-beginning of the methods chapter.
-
+As this thesis mainly consists of work on developing automated microscope
+scanning, the method is also the result of the thesis and therefore a result
+chapter is not included.
 
 
 # Theory
@@ -253,7 +251,7 @@ where the laser is pointed to.
 
 
 ## Image processing
-The term image in this contex a two dimentional array of values, where each
+The term image in this contex is a two dimensional array of values, where each
 position in the array is called a pixel. Resolution is the number of pixels an
 image holds. E.g., a resolution of 1024x1024 is an image with 1024 pixels in
 both x- and y-direction, totalling \num{1e6} pixels. Each pixel represent a
@@ -281,25 +279,25 @@ pixels in the image.
 
 ### Otsu thresholding
 Otsu tresholding optimizes the between-class variance in terms of intensity
-values. The computation is done on the image histogram, giving the optimal
-threshold for separating intensity classes. The output is a boolean image where
-all pixels above the threshold is truthy and the rest of the pixels falsy,
-giving a segmented image.
+values [@gonzalez_digital_2007]. The computation is done on the image
+histogram, giving the optimal threshold for separating intensity classes. The
+output is a segmented binary image where all pixels above the threshold is
+truthy and the rest of the pixels falsy.
 
 
 ### Spatial image filters
 A spatial image filter consists of a center pixel, it's neighborhood defined by
-a structuring element and a operation. Structuring element is typically a
-rectangle, but can be of any shape. The operation can for example be
-calculating the mean of the neighborhood, assigning the mean value to the
-center pixel. Formally the spatial filter is defined as
+a structuring element and a operation [@gonzalez_digital_2007]. Structuring
+element is typically a rectangle, but can be of any shape. The operation can
+for example be calculating the mean of the neighborhood, assigning the mean
+value to the center pixel. Formally the spatial filter is defined as
 
 $$ g(x,y) = \sum\limits_{s=-a}^a \sum\limits_{t=-b}^b
                 w(s,t) f(x+s, y+t). $$ {#eq:spatial-filter}
 
 Here $g(,xy)$ is the result, $w(x,y)$ is the structuring element, $f(x,y)$ is
 the image the filter is performed on and assuming odd size of the structuring
-element, $a = (m_w-1)/2$ and $b = (n_w-1)/2$ [@gonzalez_digital_2007].
+element, $a = (m_w-1)/2$ and $b = (n_w-1)/2$.
 
 In the case of a mean filter with neighborhood or $3 \times 3$, $w(x,y)$ would
 consist of 3 rows and 3 columns with the value 1/9.
@@ -322,7 +320,7 @@ system. In this context the sources are images from different microscope stage
 coordinates. One way of finding how images are relatively displaced is by using
 cross-correlation. Cross-correlation two images is done by zero-padding one of
 the images and using the other image as structuring element. The
-cross-correlation $h(x,y)$ of $f(x,y)$ by $g(x,y)$ is defined as
+cross-correlating $f(x,y)$ by $g(x,y)$ is defined as
 
 $$ h(x,y) =  f(x,y) \openbigstar g(x,y) = \sum\limits_s \sum\limits_t
 g(s,t) f(x+s, y+t). $$ {#eq:cross-correlation}
@@ -333,14 +331,15 @@ a *template* and the process of cross-correlation is called *template
 matching*. The maximum peak(s) in $h(x,y)$ will be where the template has
 the best match, which may be in several positions if several matches are made.
 The cross-correlation will be dependent on intensity variations and requires
-the images to have signal. E.g., an even background will give equal match for
-the whole image [@gonzalez_digital_2007].
+the images to have high entropy to get clear matches. E.g., a strictly even
+background have low entropy and gives equal match for the whole image
+[@gonzalez_digital_2007].
 
-If $f$ and $w$ are large images, calculation of [@eq:cross-correlation] is
-quite computational costly. To reduce the calculation one might use the
-cross-correlation theorem which uses Fourier transform to reduce number of
-calculations. A 2D discrete Fourier transform (DFT) of an image $f(x,y)$ is
-computed by
+If $f(x,y)$ and $g(x,y)$ are large images, calculation of
+[@eq:cross-correlation] is computational costly. To reduce the calculation one
+might use the cross-correlation theorem which uses Fourier transform to reduce
+number of calculations. A 2D discrete Fourier transform (DFT) of an image
+$f(x,y)$ is computed by
 
 $$ F(u,v) =
     \mathfrak{F} \left\{ f(x,y) \right\} =
@@ -364,14 +363,13 @@ $$ f(x,y) =
         e^{ i2 \pi (ux/m + vy/n) }
     . $$ {#eq:idft}
 
-The sums of [@eq:dft and @eq:idft] are seperatable and can be done separately
-in rows and columns, yielding the fast Fourier transform which reduces the
-calculation complexity from $O(mn)$ to $O(m \log{m} + n \log{n})$
-[@gonzalez_digital_2007].
+The sums of [@eq:dft and @eq:idft] are independent and can be separated in rows
+and columns, yielding the fast Fourier transform which reduces the calculation
+complexity from $O(mn)$ to $O(m \log{m} + n \log{n})$ [@gonzalez_digital_2007].
 
-As mentioned, DFT has the property that a element wise multiplication in the
-frequency domain with one of the images complex conjugated is equivalent as a
-cross-correlation in the real domain. The cross-correlation theorem states
+As briefly mentioned, DFT has the property that a element wise multiplication
+in the frequency domain with one of the images complex conjugated is equivalent
+as a cross-correlation in the real domain. The cross-correlation theorem states
 
 $$ f(x,y) \openbigstar g(x,y) =
     \mathfrak{F}^{-1} \left\{ F^\ast(u,v) G(u,v) \right\}.
@@ -403,11 +401,11 @@ similar to how one can write bytes to a file, but in addition the socket
 interface can respond and send bytes back. The network interface runs on TCP
 port 8895 and one may communicate locally or over TCP/IP network. A set of 44
 commands are available, but only three of them are intresting for the purpose
-of controlling scans; `load`, `autofocusscan` and `startscan`. More
-details on the interface can be read in the manual [@frank_sieckmann_cam_2013]
-or by studying the source code of the Python package `leicacam``
-[@arve_seljebu_arve0/leicacam_2015]. [@Lst:leicacam] show how one
-can communicate with the microscope in Python.
+of controlling scans; load, autofocusscan and startscan. More details on
+the interface can be read in the manual [@frank_sieckmann_cam_2013] or by
+studying the source code of the Python package leicacam
+[@seljebu_leicacam_2015]. Code block \ref{lst:leicacam} show how one can
+communicate with the microscope in Python.
 
 Listing: Communicating with the Leica SP8 microscope using the Python package
 leicacam.
@@ -549,9 +547,9 @@ system (read more in [Stitching](#stitching)). Frequency of scanning mirror was
 set to 600 lines/second (maximum speed with 0.75 zoom).
 
 Images were saved as TIFF with 8 bit intensity depth and then converted to PNG
-to reduce storage space. The images were also rotated \ang{270}, as LAS store
-TIFF-images with axes swapped in regards to the stage axes. The procedure is
-listed in [@lst:rotate-images].
+to reduce storage space. The images were also rotated \ang{270}, as LAS stores
+the TIFF-images with axes swapped with regards to the stage axes. The procedure
+is listed in [@lst:rotate-images].
 
 Listing: Compress and rotate images.
 
@@ -572,22 +570,22 @@ for filename in experiment.images:
 ### Overview images
 Overview images were collected with a technique similar to bright-field
 microscopy except that the light source is a scanning laser. 10x air objective
-along with argon laser in [@tbl:lasers] with 514 nm emission line was used.
+along with argon laser in [@tbl:lasers], 514 nm emission line was used.
 Output power was set to 2.48% and intensity to 0.10. Forward light was imaged
-using 0.55 NA air condensor with the non-descanned PMT detector having 525/50 nm
+using 0.55 NA air condensor with non-descanned PMT detector and 525/50 nm
 bandpass filter.
 
-Aperture and detector gain was adjusted so that the histogram of intensities
-was in the center of the total range without getting peaks at minimum and
-maximum values. Zoom was set to 0.75 and image size 512x512, which gives images
-of $\approx$ \SI{1500}{\micro\metre} and resolution of $\approx$
-\SI{3}{\micro\metre}.
+The aperture of transmitted light and the detector gain was adjusted so
+that the histogram of intensities was in the center of the total range without
+getting peaks at minimum and maximum values. Zoom was set to 0.75 and image
+size 512x512, which gives images of $\approx 1500 \times
+\SI{1500}{\micro\metre}$ and resolution of $\approx \SI{3}{\micro\metre}$.
 
 ### SHG images
-SHG images was taken with a 25x/0.95 NA water objective. The pulsed infrared
+SHG images was collected with a 25x/0.95 NA water objective. The pulsed infrared
 laser was set to 890 nm, intensity 20%, gain 40%, offset 80% and electro-optic
 modulator on. 0.9 NA air condensor was used and forward light was measured with
-non-descanned PMT detector having a 445/20 nm bandpass filter. Gain of PMT
+non-descanned PMT detector using a 445/20 nm bandpass filter. Gain of PMT
 detector was adjusted so that signal spanned the whole intensity range.
 Aperture was set to 24 (maximum). Images of 1024x1024 pixels were saved.
 
@@ -644,8 +642,8 @@ solutions was found to be unreliable.
 
 #### Uneven illumination
 The uneven illumination in the experimental setup is illustrated in
-[@fig:illumination] (a). By assuming the intensity variation in all pixels is
-following the slope of the background, equalization can be done by dividing the
+[@fig:illumination] (a). By assuming the intensity variation in all the pixels
+follow the slope of the background, equalization can be done by dividing the
 image by the normalized intensity profile of the background. The procedure is
 listed in [@lst:equalize].
 
@@ -667,7 +665,7 @@ differences to normalization between images.
 
 `intensity_profile` is a curve fit for one of the background rows in a selected
 image. The row was found by calculating variance of all rows in the image and
-chosing the one with least variance. The user should verify that the row indeed
+choosing the one with least variance. The user should verify that the row indeed
 is a background row by plotting it or viewing the image.
 
 [@Fig:illumination](b) show the selected image and the row with least variance
@@ -693,7 +691,7 @@ and (c), where each dot represents a pixel value with increasing image
 x-position on the x-axis.
 
 ![**(a)** Intensities for the line with least variance of [@fig:illumination](b).
-  The curve is fitted to a second degree polynom to supress noise. **(b)**
+  The curve is fitted to a second degree polynomial to supress noise. **(b)**
   Intensities for image in [@fig:illumination](b). Each dot represents a pixel.
   **(c)** Intensities for the equalized image in [@fig:illumination](c). Each dot
   represents a pixel. Note that the intensities is both spread across the whole
@@ -701,9 +699,9 @@ x-position on the x-axis.
   out.](figures/uneven_illumination_intensities_web.jpg)
   {#fig:illumination_intensities}
 
-The intensity variation was here in one dimension only which allowed for the
-simpler divide by a row intensity profile. For more complex intensity
-variations, similiar approaches can be done by fitting the two dimentional
+Here the intensity variation was in one dimension only, which allowed for the
+simpler dividing by a row intensity profile. For more complex intensity
+variations, similiar approaches can be done by fitting the two dimensional
 background to a surface, then divide images by the surface intensity profile.
 
 
@@ -717,6 +715,7 @@ result of a jagged stitch seen in [@fig:rotation].
     \includegraphics[width=0.45\textwidth]{figures/rotation_illustration.pdf}
 
 }
+\quad
 \subfloat[Best stitch of two images when stage and scanning mirror does not
           hold the same coordinate system.]{
     \includegraphics[width=0.45\textwidth]{figures/rotation_stitch_web.jpg}
@@ -734,7 +733,7 @@ result of a jagged stitch seen in [@fig:rotation].
 \end{figure}
  
 Relative rotation between scanner raster pattern and stage coordinate system
-was measured by calculating displacement of two neighbor images with phase
+was measured by calculating displacement of two neighbor images using phase
 correlation. The rotation is then given by
 
 $$ \theta = \arctan \left( \frac{ \Delta y }{ \Delta x } \right). $$ {#eq:rotation}
@@ -768,9 +767,10 @@ performance in regards to precision for the Leica SP8 stage.
 The procedure of stitching consists of phase correlating all neighbor images,
 calculating the median translation and using this median translation for all
 images. The median is used as correlation between two images with little
-entropy in the seam are prone to fail. More details on this matter are in the
-[discussion](#images-and-stitching). Code block \ref{lst:stitch-algorithm} show
-the basics of the procedure on a row of images for sake of simplicity.
+entropy in the seam are prone to fail. More details on this matter are
+described in the [discussion](#images-and-stitching). Code block
+\ref{lst:stitch-algorithm} show the basics of the procedure on a row of images
+for sake of simplicity.
 
 Listing: Stitch row of images by using median translation from phase
          correlation.
@@ -808,11 +808,11 @@ After step 1 we have a large stitched overview image of specimen spots. We
 would now like to classify which parts of the image that are background and
 which parts hold the specimen spots. Looking at [@fig:stitching](b) the
 contrast in the center of the TMA is weaker than on the edges. To improve this,
-the crucial observation is that background signal tend to vary little, but
-specimen signal varies more. This fact makes it easier to discriminate specimen
-spots to background with filtering the image before segmenting it with Otsu.
+the crucial observation is that background signal tend to vary less than
+specimen signal. This fact makes it easier to discriminate specimen spots to
+background by filtering the image before segmenting it with Otsu.
 
-In addition, relying only on signal variation will give us a lot of small
+In addition, relying only on Otsu thresholding will give us a lot of small
 segments which are not specimen spots. To exclude these false positives, area
 of segments were used as a classification.
 
@@ -821,71 +821,93 @@ the image can be correlated to clinical data.
 
 
 #### Filter and segment the overview image
-![Otsu thresholding of [@fig:stitching](b).
+![Otsu thresholding of [@fig:stitching](b) zoomed into four specimen spots for
+  clarity.
   **(a)** Otsu thresholding applied without any filters. Picks out dark areas,
-  but disjointed, especially for brighter sample spots in bottom left.
+  but disjointed, especially for brighter areas in specimen spots.
   **(b)** Thresholding after a local bilateral population filter. Quite noisy
   in the background.
   **(c)** Thresholding after local bilateral population and local mean filter.
-  Background noise is gone and sample spots are coherent.
+  Background noise is gone and sample spots are continuous segmented.
   ](figures/segmentation_web.jpg) {#fig:segmentation}
 
-As seen in [@fig:stitching](b), the samples at the edge are darker than the
-samples in the center. To improve this intensity variation, the overview image
-is filtered with a local (reverse) bilateral population filter. Reverse in this sense means that the filter counts number
-of neighbouring pixels that are outside a specified range. The effect of the
-filter is a less computational demanding and somewhat similar to an entropy
-filter. Areas with low signal variation (the background) give low values and
-areas with high signal variation (the samples) give high values.
+As briefly mentioned, the goal of filtering the overview image is to improve
+discrimination between areas with background and specimen so specimen spots can
+be distinguished. A filter that have appropriate properties is a population
+bilateral filter, which counts number of pixels in the neighborhood of the
+center pixel that is within a specified intensity range relative to the center
+pixel intensity.
+
+The stitched overview image was $5122 \times 8810 = 45$ Megapixels, giving
+total filter time of 20 seconds with `skimage.filters.rank.pop_bilateral` on a
+single core of a Intel i3 2.3 GHz CPU. As the process of segmentation was
+implemented as an interactive graphical user interface, filter time of 20
+seconds was considered unresponsive. To approve responsiveness, the filter was
+therefor implemented as a sliding window filter in Python and compiled with
+numba [@continuum_analytics_numba_2015]. The numba compiled filter took 4.5
+seconds on a single core of a Intel i3 2.3 GHz CPU. As the microscope computer
+was equipped with 16 CPU cores, the filtering was parallized with dask
+[@continuum_analytics_dask_2015], giving filtering in real time.
+
+Assuming one has an algorithm that updates the local histogram based on a
+structuring element, the inner computation of a population bilateral filter is
+given in [@lst:pop-bilateral-kernel]. A full implementation of the filter can
+be seen in the filters submodule of leicaautomator [@seljebu_leicaautomator_2015].
+Values of `s0 = s1 =10` gave high discrimination of specimen and background on
+overview images collected with settings specified in the [microscope
+section](#microscope).
 
 
-``` {#lst:bilateral .python}
+``` {#lst:pop-bilateral-kernel .python}
+def pop_bilateral_inner_computation(histogram, val, s0, s1):
+    "Returns number of pixels that are within [val-s0, val+s0]."
+    count = 0
+    histogram_max = histogram.size
 
+    for bin in range(val-s0, val+s1+1):
+        if bin < 0 or bin >= histogram_max:  # do not try to count outside range
+            continue
+        count += hist[bin]                   # add counts in bin v
+    return count
 ```
 
 To reduce noise after the bilateral population filter, a mean filter was
-applied. The size of structure elements was 9x9 pixels for both filters.
+applied. The size of structure element was $9 \times 9$ pixels for both filters.
 [@Fig:segmentation](a), (b) and (c) show how the segmentation is affected by
-the filters. Code for reproducing the steps are in [@lst:segmentation].
+the filters. Code for reproducing the steps is in [@lst:segmentation].
 
 Listing: Filter and segment an image with local bilateral population and Otsu
 thresholding.
 
 ``` {#lst:segmentation .python}
-from skimage.morphology import square
+import numpy as np
 from skimage.filters import threshold_otsu
-from leicaautomator.filters import mean, pop_bilateral
+from skimage.util import apply_parallel  # available from v0.12
+from scipy.ndimage import uniform_filter
+from leicaautomator.filters import pop_bilateral
 
-selem = square(9)
-filtered = pop_bilateral(image, selem)
-filtered = mean(filtered, selem)
-
-threshold = threshold_otsu(filtered)
-segmented = filtered >= threshold # high values indicate signal
+selem = np.ones((9,9))                  # 9x9 structuring element
+filtered = apply_parallel(pop_bilateral, image, depth=4,
+                          extra_keywords={'selem': selem})  # apply filter on
+                                                            # all cpu cores
+filtered = apply_parallel(uniform_filter, image, depth=4,
+                          extra_keywords={'size': 9})       # mean filter
+threshold = threshold_otsu(filtered)    # get optimal threshold
+segmented = filtered >= threshold       # low values indicate specimen
 ```
 
 #### Excluding false positives in segmentation
-After segmentation, regions was sorted by their area size and only the largest
-regions are kept. [@Fig:regions](a) illustrate area sizes.
-
-The code can be seen in [@lst:exclude-small-regions]
-(a), position (b) and position derivative (c).
-
-![**(a)** Sorted region areas. Area size drops dramatically around region 125
-  according to number of samples on slide. Plot does not have corresponding
-  x-axis with (b) and (c), as regions are sorted by size.
-  **(b)** Regions sorted by position.  The two plots do no share the same
-  x-axis. There is a gap between the positions when row and columns are
-  increasing.
-  **(c)** X distance to previous region when regions are sorted by x-position.
-  Same x-axis as in (b) for the x-position plot. 14 peaks indicate that the
-  image contain 15 columns.
-  ](figures/regions_area_and_position_web.jpg) {#fig:regions}
+After segmentation we have a binary image as shown in [@fig:segmentation](c).
+The image contains several small dots that are not specimen spots. The dots can
+be removed by sorting all segment regions by area size, then excluding the
+smallest ones. [@Fig:regions](a) show segments sorted by falling area size.
+Code block \ref{lst:exclude-small-segments} illustrate how the small segments
+were excluded, keeping only the largest ones.
 
 
-Listing: Exclude small areas which are not specimen spots.
+Listing: Exclude small segments which are false positives.
 
-``` {#lst:exclude-small-regions .python}
+``` {#lst:exclude-small-segments .python}
 from skimage.measure import label, regionprops
 
 labels = label(segmented, background=0) # background=0: exclude background
@@ -897,89 +919,146 @@ if len(regions) > max_regions:
     regions = regions[:max_regions]     # only keep max_regions
 ```
 
-The whole process of segmentation was done interactive as part of the Python
-package *leicaautomator*, where settings can be adjusted to improve
-segmentation and regions can be moved, deleted or added with mouse clicks. The
-interface is shown in [@fig:leicaautomator].
-
-![The process of segmentation in a graphical user interface. Regions 4,2, 11,7
-  and 14,1 might be adjusted by the user, all other regions are detected fairly
-  well.](figures/leicaautomator_web.jpg) {#fig:leicaautomator}
-
 
 #### Calculating row and column position
-Row and column was calculated by sorting regions by position,
-measuring the distance between them and increment row or column number when
-there is a peak in the distance to previous region.
+![**(a)** Sorted region areas. Area size drops dramatically around region 125
+  comparable to the number of specimen spots on each slide which was $14 \cdot
+  9 = 126$. Plot does not have corresponding x-axis with (b) and (c), as
+  regions are sorted by size.
+  **(b)** Regions sorted by position.  The two plots do no share the same
+  x-axis. There is a gap between the positions when row and columns are
+  increasing.
+  **(c)** X distance to previous region when regions are sorted by x-position.
+  Same x-axis as in (b) for the x-position plot. 14 peaks indicate that the
+  image contain 15 columns.
+  ](figures/regions_area_and_position_web.jpg) {#fig:regions}
+
+As specimen spots are pretty well arranged in rows and columns, calculating
+the specimen row and column position will lift the burden of labeling the
+scanned specimen by the user.
+
+By looking at two fairly vertical columns of specimens, one can observe that
+the x-coordinate of specimens group around a mean x-coordinate and that there
+is a jump in x-coordinate when going to the next column of specimens (seen in
+[@fig:regions](b)). A derivative can be calculated by sorting the segmented
+regions by coordinate and subtract the current region's position to the previous
+region's position (seen in [@fig:regions](c)). The derivative can then be used
+to increment row or column when looping through the segmented regions and
+adding the row and column property to the region in question. The procedure is
+shown in [@lst:calc-row-col].
+
 
 Listing: Calculate row and column position to specimen spots.
 
-``` {#lst:calc-rowcol .python}
+``` {#lst:calc-row-col .python}
 for r in regions:
-    r.y, r.x, r.y_end, r.x_end = r.bbox # for convenience
+    r.y, r.x, r.y_end, r.x_end = r.bbox  # for notational convenience
 
-for direction in 'yx':                  # same algorithm for row and columns
+for direction in 'yx':                   # same algorithm for row and columns
     regions.sort(key=lambda r: getattr(r, direction))
 
     previous = regions[0]
-    for region in regions:              # calc distance to previous region
+    for region in regions:               # calc distance to previous region
         dx = getattr(region, direction) - getattr(previous, direction)
         setattr(region, 'd' + direction, dx)
         previous = region
 ```
 
 
+#### Interactive segmentation
+As experimental factors like detector gain, laser intensity, light
+absorption of specimen, etc. can give considerable variations in images, step 2
+was implemented as a interactive graphical user interface. The interface allows
+the user to adjust filter settings and verify which regions to scan by
+deleting, moving or adding regions. The interface is show in
+[@fig:leicaautomator].
+
+![The process of segmentation in a graphical user interface. Regions 4,2, 11,7
+  and 14,1 might be adjusted by the user, all other regions are detected fairly
+  well.](figures/leicaautomator_web.jpg) {#fig:leicaautomator}
+
+
 
 ### Step 3: Scanning each specimen spot
-- Calculating stage pos from segm img
-- communicating with microscope
+From step 2 we have a list of regions and their pixel position in the stiched
+overview image. Last step is to calculate the stage position to the regions and
+scan the regions by communicating with the microscope.
 
 
 #### Calculate stage position from pixel position
+To convert pixel position to stage position one need a reference point and the
+pixel resolution. For simplicity, the procedure for calculating stage
+coordinate is shown for x-coordinate only, as the calculations for y-coordinate
+is fully equivalent. Pixel resolution was calculated by
 
-After regions was localized, pixel-size in meters was calculated by
+$$ x_{resolution} = \frac{\Delta x}{\Delta X}. $$ {#eq:pixel-resolution}
 
-$$ x_{resolution} = \frac{\Delta x}{\Delta X}. $$ {#eq:pixel_resolution}
+Here $\Delta x$ is displacement in pixels from the stitch in step 1, and
+$\Delta X$ is stage displacement in meters read from XPath
+`./ScanningTemplate/Properties/ScanFieldStageDistanceX` in the overview
+scanning template in the experiment folder
+(AdditionalData/{ScanningTemplate}overview.xml).
 
-Here $\Delta x$ is displacement in pixels and $\Delta X$ is stage displacement
-in meters read from the overview scanning template in the experiment
-`AdditionalData/{ScanningTemplate}overview.xml` at XPath
-`./ScanningTemplate/Properties/ScanFieldStageDistanceX`. Left most left pixel
-was calculated by
+Keeping stage position constant when zooming, either by changing objective or
+decreasing amplitude of scanning mirror oscillation, will yield the same
+physical position in center of view field. This means that image stage position 
+reported by the microscope is the center pixel. One can use the center of the
+first image as the reference point, but using pixel (0,0) is simpler as one
+can find out where the center pixel is one time, then later forget about it.
 
-$$ X_{start} = X_{center} - \frac{m}{2} \cdot x_{resolution}. $$ {#eq:firstx}
+In other words, the reference point for x-position is at $f(0,y)$, the left
+most pixel. This reference point was calculated by
 
-In [@eq:firstx] $X_{center}$ is the stage position and $m$ is number of pixels
-in the image from the overview scan. $X_{center}$ was read from the overview
-scanning template at XPath
+$$ X_{ref} = X_{center} - \frac{m}{2} \cdot x_{resolution}. $$ {#eq:x-reference}
+
+In [@eq:x-reference] $X_{center}$ is the stage position for the top left image,
+$m$ is the number of pixels in the image and $x_{resolution}$ is from
+[@eq:pixel-resolution]. $X_{center}$ was read from XPath
 `./ScanFieldArray/ScanFieldData[@WellX="1"][@WellY="1"][@FieldX="1"][@FieldY="1"]`
-`/FieldXCoordinate`.
-The stage x-coordinate for any pixel was then calculated by
+`/FieldXCoordinate` in the overview scanning template.
 
-$$ X = X_{start} + x \cdot x_{resolution}. $$ {#eq:stage_position}
+The stage x-coordinate for any pixel is then given by
 
-To be able to scan regions of different shape and size, a bounding box for the
-region was used to calculate the scanning area. Moving the stage to the
-boundary position will center the boundary in the image, and therefor start
-position of first image is calculated by
+$$ X = X_{ref} + x \cdot x_{resolution}. $$ {#eq:stage-position}
+
+Here $X$ is the stage x-coordinate, $X_{ref}$ is the reference point and
+$x_{resolution}$ is from [@eq:pixel-resolution].
+
+As moving to the position calculated from [@eq:stage-position] will center the
+location in the field of view, one need to reverse [@eq:x-reference] if one
+only want this position to be included in the image and not centered in the
+image. How much one need to add depends field of view in the scan job, given by
+the objective and the zoom defined. The start coordinate of the scan is
+therefor calculated by
 
 $$ X_{start} = X + \frac{\Delta X_{job}}{2}. $$ {#eq:xstart}
 
-TODO: make clearer, rename X_start
+Here $X_{start}$ is the x-coordinate for the first image, $X$ is calculated
+from the bounding box coordinate to the region in question, and $X_{job}$ is
+stage displacement between fields. Similar to [@eq:pixel-resolution], $X_{job}$
+was read from `./ScanningTemplate/Properties/ScanFieldStageDistanceX`, but in
+the job scanning template.
 
-Here, $\Delta X_{job}$ is stage displacement between images in the job scanning
-template. $X_{start}$ will have an error of
+Using the stage displacement gives an error in the calculation of $X_{start}$
+by
 
 $$ \epsilon = \frac{1}{2} (\Delta X_{job} - \Delta X_{img}), $$ {#eq:xerror}
 
-where $\Delta X_{img}$ is the total size of the scanned image. This was
-considered neglectible as $\Delta X_{job} \approx \Delta X_{img}$ and number of
-columns scanned was calculated by
+as stage displacement $X_{job}$ is not strictly equal to the field of view
+$X_{img}$ when images are scanned with overlap. This was considered neglectible
+as $\Delta X_{job} \approx \Delta X_{img}$ and number of scanned fields was
+calculated by
 
-$$ f_x = \lceil \frac{\Delta X}{\Delta X_{field}} \rceil. $$ {#eq:enabledfields}
+$$ F_x = \lceil \frac{\Delta X}{\Delta X_{job}} \rceil, $$ {#eq:enabledfields}
+
+which is a slight overestimate. In [@eq:enabledfields] $F_x$ is number of
+fields in x-direction, $\Delta X$ is size of region and $X_{job}$ is
+displacement between fields.
 
 
 #### Scanning each region
+
+
 To avoid unnecessary long stage movements between rows or columns, regions was
 looped through in a zick-zack pattern, given by their row and column position.
 For each region the scanning template was edited, the template was loaded and
@@ -1213,8 +1292,8 @@ interface and the format is not a wide adopted standard. Based on the pros of
 openness and automatization TIFF was chosen. None of the formats are readily
 putted together.
 
-With 10x objective and 0.75 zoom, maximum field of view is equal to 1550
-\si{\micro\metre}. Average specimen spot diameter was $\approx$ 1200
+With 10x objective and 0.75 zoom, maximum field of view is reported as $1550
+\times 1500$ \si{\micro\metre}. Average specimen spot diameter was $\approx$ 1200
 \si{\micro\metre}. These two facts would allow for imaging specimen spots
 into separate images if they were neatly arranged. This was not found out to be
 true for our dataset, and it would also burden the user of the microscope to
@@ -1224,7 +1303,7 @@ robust way is therefor to combine all images into one.
 Combining images can be done in interactive manner, where a program loads
 images as one "moves" around. But creating this abstraction would demand for a
 way other programs can "talk" to the abstract image object containing all
-images. Therefor a simpler approach was taken, stitching all images into one
+images. Therefor a simpler approach was used, stitching all images into one
 large image. This allows for any program that can open PNG to work with the
 images.
 
@@ -1259,7 +1338,7 @@ standard deviation of 2.5 pixels, which in the context of overview images gives
 enough precission for defining the SHG scan job.
 
 The stitching algorithm can be used with the python package
-`microscopestitching` [@seljebu_microscopestitching_2015], [@lst:microscopestitching] show an example of how to use it.
+microscopestitching [@seljebu_microscopestitching_2015], [@lst:microscopestitching] show an example of how to use it.
 
 Listing: Stitching images with the Python package *microscopestitching*.
 
@@ -1284,7 +1363,7 @@ The TIFF images are stored in a folder tree with folder for *every* field.
 For a complete tissue microarray that is a couple of thousand folders, which 
 easily becomes unmanageable if browsing directly. To improve the situation,
 files were stitched together such
-manage, one can use the python package `leicaexperiment` to work with files.
+manage, one can use the python package leicaexperiment to work with files.
 This means that they have to be combined in some manner, 
 
 
@@ -1335,8 +1414,8 @@ available, stepping into the nitty-gritty details can give insight in
 algorithms and be very educational.
 
 Any Python package mentioned in the code blocks is install-able through pip. In
-example `leicacam` can be installed by opening a terminal and type `pip install
-leicacam`. The computer must have `pip`[@python_packaging_authority_user_2015]
+example leicacam can be installed by opening a terminal and type `pip install
+leicacam`. The computer must have pip[@python_packaging_authority_user_2015]
 and the required compilers if the package depends on compiling code. This is
 true for most of the software, it depends on fast algorithms implemented in
 compiled languages like C and Fortran.
@@ -1344,7 +1423,7 @@ compiled languages like C and Fortran.
 Compiling the huge scientific libraries like numpy and scipy can take a while,
 so it's recommended to use a Python distribution like Anaconda
 [@continuum_analytics_anaconda_????]. Anaconda pre-ships with the most common
-scientific libraries and it also contains the package manager `conda` which have
+scientific libraries and it also contains the package manager conda which have
 pre-compiled packages available for most operating systems.
 
 
