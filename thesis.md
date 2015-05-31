@@ -110,8 +110,8 @@ cancer tissue, the work of this master is relevant for other studies too.
 
 
 The tissue micro array shown in [@fig:tma] is $\approx$ 24x15 mm in size. Using
-a moderate objective of 25x with 400 \si{\micro\metre} field of view, a single
-scan of the total dataset will be
+a moderate objective of 25x with $400 \times 400$ \si{\micro\metre} field of
+view, a single scan of the total dataset will be
 
 $$ \frac{24 \si{\milli\metre}}{400 \si{\micro\metre}} \cdot \frac{15
 \si{\milli\metre}}{400 \si{\micro\metre}} = 2250 \text{ images.} $$
@@ -251,7 +251,7 @@ where the laser is pointed to.
 
 
 ## Image processing
-The term image in this contex is a two dimentional array of values, where each
+The term image in this contex is a two dimensional array of values, where each
 position in the array is called a pixel. Resolution is the number of pixels an
 image holds. E.g., a resolution of 1024x1024 is an image with 1024 pixels in
 both x- and y-direction, totalling \num{1e6} pixels. Each pixel represent a
@@ -281,8 +281,8 @@ pixels in the image.
 Otsu tresholding optimizes the between-class variance in terms of intensity
 values [@gonzalez_digital_2007]. The computation is done on the image
 histogram, giving the optimal threshold for separating intensity classes. The
-output is a boolean image where all pixels above the threshold is truthy and
-the rest of the pixels falsy, giving a segmented image.
+output is a segmented binary image where all pixels above the threshold is
+truthy and the rest of the pixels falsy.
 
 
 ### Spatial image filters
@@ -331,8 +331,8 @@ a *template* and the process of cross-correlation is called *template
 matching*. The maximum peak(s) in $h(x,y)$ will be where the template has
 the best match, which may be in several positions if several matches are made.
 The cross-correlation will be dependent on intensity variations and requires
-the images to have high entropy to get clear matches. E.g., an even background
-have low entropy and gives equal match for the whole image
+the images to have high entropy to get clear matches. E.g., a strictly even
+background have low entropy and gives equal match for the whole image
 [@gonzalez_digital_2007].
 
 If $f(x,y)$ and $g(x,y)$ are large images, calculation of
@@ -401,7 +401,7 @@ similar to how one can write bytes to a file, but in addition the socket
 interface can respond and send bytes back. The network interface runs on TCP
 port 8895 and one may communicate locally or over TCP/IP network. A set of 44
 commands are available, but only three of them are intresting for the purpose
-of controlling scans; `load`, `autofocusscan` and `startscan`. More details on
+of controlling scans; load, autofocusscan and startscan. More details on
 the interface can be read in the manual [@frank_sieckmann_cam_2013] or by
 studying the source code of the Python package leicacam
 [@seljebu_leicacam_2015]. Code block \ref{lst:leicacam} show how one can
@@ -547,9 +547,9 @@ system (read more in [Stitching](#stitching)). Frequency of scanning mirror was
 set to 600 lines/second (maximum speed with 0.75 zoom).
 
 Images were saved as TIFF with 8 bit intensity depth and then converted to PNG
-to reduce storage space. The images were also rotated \ang{270}, as LAS store
-TIFF-images with axes swapped in regards to the stage axes. The procedure is
-listed in [@lst:rotate-images].
+to reduce storage space. The images were also rotated \ang{270}, as LAS stores
+the TIFF-images with axes swapped with regards to the stage axes. The procedure
+is listed in [@lst:rotate-images].
 
 Listing: Compress and rotate images.
 
@@ -570,22 +570,22 @@ for filename in experiment.images:
 ### Overview images
 Overview images were collected with a technique similar to bright-field
 microscopy except that the light source is a scanning laser. 10x air objective
-along with argon laser in [@tbl:lasers] with 514 nm emission line was used.
+along with argon laser in [@tbl:lasers], 514 nm emission line was used.
 Output power was set to 2.48% and intensity to 0.10. Forward light was imaged
-using 0.55 NA air condensor with the non-descanned PMT detector having 525/50 nm
+using 0.55 NA air condensor with non-descanned PMT detector and 525/50 nm
 bandpass filter.
 
-Aperture and detector gain was adjusted so that the histogram of intensities
-was in the center of the total range without getting peaks at minimum and
-maximum values. Zoom was set to 0.75 and image size 512x512, which gives images
-of $\approx$ \SI{1500}{\micro\metre} and resolution of $\approx$
-\SI{3}{\micro\metre}.
+The aperture of transmitted light and the detector gain was adjusted so
+that the histogram of intensities was in the center of the total range without
+getting peaks at minimum and maximum values. Zoom was set to 0.75 and image
+size 512x512, which gives images of $\approx 1500 \times
+\SI{1500}{\micro\metre}$ and resolution of $\approx \SI{3}{\micro\metre}$.
 
 ### SHG images
-SHG images was taken with a 25x/0.95 NA water objective. The pulsed infrared
+SHG images was collected with a 25x/0.95 NA water objective. The pulsed infrared
 laser was set to 890 nm, intensity 20%, gain 40%, offset 80% and electro-optic
 modulator on. 0.9 NA air condensor was used and forward light was measured with
-non-descanned PMT detector having a 445/20 nm bandpass filter. Gain of PMT
+non-descanned PMT detector using a 445/20 nm bandpass filter. Gain of PMT
 detector was adjusted so that signal spanned the whole intensity range.
 Aperture was set to 24 (maximum). Images of 1024x1024 pixels were saved.
 
@@ -642,8 +642,8 @@ solutions was found to be unreliable.
 
 #### Uneven illumination
 The uneven illumination in the experimental setup is illustrated in
-[@fig:illumination] (a). By assuming the intensity variation in all pixels is
-following the slope of the background, equalization can be done by dividing the
+[@fig:illumination] (a). By assuming the intensity variation in all the pixels
+follow the slope of the background, equalization can be done by dividing the
 image by the normalized intensity profile of the background. The procedure is
 listed in [@lst:equalize].
 
@@ -665,7 +665,7 @@ differences to normalization between images.
 
 `intensity_profile` is a curve fit for one of the background rows in a selected
 image. The row was found by calculating variance of all rows in the image and
-chosing the one with least variance. The user should verify that the row indeed
+choosing the one with least variance. The user should verify that the row indeed
 is a background row by plotting it or viewing the image.
 
 [@Fig:illumination](b) show the selected image and the row with least variance
@@ -691,7 +691,7 @@ and (c), where each dot represents a pixel value with increasing image
 x-position on the x-axis.
 
 ![**(a)** Intensities for the line with least variance of [@fig:illumination](b).
-  The curve is fitted to a second degree polynom to supress noise. **(b)**
+  The curve is fitted to a second degree polynomial to supress noise. **(b)**
   Intensities for image in [@fig:illumination](b). Each dot represents a pixel.
   **(c)** Intensities for the equalized image in [@fig:illumination](c). Each dot
   represents a pixel. Note that the intensities is both spread across the whole
@@ -699,9 +699,9 @@ x-position on the x-axis.
   out.](figures/uneven_illumination_intensities.png)
   {#fig:illumination_intensities}
 
-The intensity variation was here in one dimension only which allowed for the
-simpler divide by a row intensity profile. For more complex intensity
-variations, similiar approaches can be done by fitting the two dimentional
+Here the intensity variation was in one dimension only, which allowed for the
+simpler dividing by a row intensity profile. For more complex intensity
+variations, similiar approaches can be done by fitting the two dimensional
 background to a surface, then divide images by the surface intensity profile.
 
 
@@ -732,7 +732,7 @@ result of a jagged stitch seen in [@fig:rotation].
 \end{figure}
  
 Relative rotation between scanner raster pattern and stage coordinate system
-was measured by calculating displacement of two neighbor images with phase
+was measured by calculating displacement of two neighbor images using phase
 correlation. The rotation is then given by
 
 $$ \theta = \arctan \left( \frac{ \Delta y }{ \Delta x } \right). $$ {#eq:rotation}
@@ -766,9 +766,10 @@ performance in regards to precision for the Leica SP8 stage.
 The procedure of stitching consists of phase correlating all neighbor images,
 calculating the median translation and using this median translation for all
 images. The median is used as correlation between two images with little
-entropy in the seam are prone to fail. More details on this matter are in the
-[discussion](#images-and-stitching). Code block \ref{lst:stitch-algorithm} show
-the basics of the procedure on a row of images for sake of simplicity.
+entropy in the seam are prone to fail. More details on this matter are
+described in the [discussion](#images-and-stitching). Code block
+\ref{lst:stitch-algorithm} show the basics of the procedure on a row of images
+for sake of simplicity.
 
 Listing: Stitch row of images by using median translation from phase
          correlation.
@@ -806,11 +807,11 @@ After step 1 we have a large stitched overview image of specimen spots. We
 would now like to classify which parts of the image that are background and
 which parts hold the specimen spots. Looking at [@fig:stitching](b) the
 contrast in the center of the TMA is weaker than on the edges. To improve this,
-the crucial observation is that background signal tend to vary little, but
-specimen signal varies more. This fact makes it easier to discriminate specimen
-spots to background with filtering the image before segmenting it with Otsu.
+the crucial observation is that background signal tend to vary less than
+specimen signal. This fact makes it easier to discriminate specimen spots to
+background by filtering the image before segmenting it with Otsu.
 
-In addition, relying only on signal variation will give us a lot of small
+In addition, relying only on Otsu thresholding will give us a lot of small
 segments which are not specimen spots. To exclude these false positives, area
 of segments were used as a classification.
 
@@ -819,51 +820,82 @@ the image can be correlated to clinical data.
 
 
 #### Filter and segment the overview image
-![Otsu thresholding of [@fig:stitching](b).
+![Otsu thresholding of [@fig:stitching](b) zoomed into four specimen spots for
+  clarity.
   **(a)** Otsu thresholding applied without any filters. Picks out dark areas,
-  but disjointed, especially for brighter sample spots in bottom left.
+  but disjointed, especially for brighter areas in specimen spots.
   **(b)** Thresholding after a local bilateral population filter. Quite noisy
   in the background.
   **(c)** Thresholding after local bilateral population and local mean filter.
-  Background noise is gone and sample spots are coherent.
+  Background noise is gone and sample spots are continuous segmented.
   ](figures/segmentation.png) {#fig:segmentation}
 
-As seen in [@fig:stitching](b), the samples at the edge are darker than the
-samples in the center. To improve this intensity variation, the overview image
-is filtered with a local (reverse) bilateral population filter. Reverse in this sense means that the filter counts number
-of neighbouring pixels that are outside a specified range. The effect of the
-filter is a less computational demanding and somewhat similar to an entropy
-filter. Areas with low signal variation (the background) give low values and
-areas with high signal variation (the samples) give high values.
+As briefly mentioned, the goal of filtering the overview image is to improve
+discrimination between areas with background and specimen so they can be
+distinguished. A filter that have appropriate properties is a population
+bilateral filter, which counts number of pixels in the neighborhood of the
+center pixel that are within a specified range relative to the center
+pixel intensity.
+
+The stitched overview image was $5122 \times 8810 = 45$ Megapixels, giving
+total filter time of 20 seconds with `skimage.filters.rank.pop_bilateral` on a
+single core of a Intel i3 2.3 GHz CPU. As the process of segmentation was
+implemented as an interactive graphical user interface, filter time of 20
+seconds was considered unresponsive. To approve responsiveness, the filter was
+therefor implemented as a sliding window filter in Python and compiled with
+numba [@continuum_analytics_numba_2015]. The numba compiled filter took 4.5
+seconds on a single core of a Intel i3 2.3 GHz CPU. As the microscope computer
+was equipped with 16 CPU cores, the filtering was parallized with dask
+[@continuum_analytics_dask_2015], giving filtering in real time.
+
+Assuming one has an algorithm that updates the local histogram based on a
+structuring element, the inner computation of a population bilateral filter is
+given in [@lst:pop-bilateral-kernel]. A full implementation of the filter can
+be seen in the filters submodule of leicaautomator [@seljebu_leicaautomator_2015].
 
 
-``` {#lst:bilateral .python}
+``` {#lst:pop-bilateral-kernel .python}
+def pop_bilateral_inner_computation(histogram, val, s0, s1):
+    "Returns number of pixels that are within [val-s0, val+s0]."
+    count = 0
+    histogram_max = histogram.size
 
+    for bin in range(val-s0, val+s1+1):
+        if bin < 0 or bin >= histogram_max:  # do not try to count outside range
+            continue
+        count += hist[bin]                   # add counts in bin v
+    return count
 ```
 
 To reduce noise after the bilateral population filter, a mean filter was
-applied. The size of structure elements was 9x9 pixels for both filters.
+applied. The size of structure element was $9 \times 9$ pixels for both filters.
 [@Fig:segmentation](a), (b) and (c) show how the segmentation is affected by
-the filters. Code for reproducing the steps are in [@lst:segmentation].
+the filters. Code for reproducing the steps is in [@lst:segmentation].
 
 Listing: Filter and segment an image with local bilateral population and Otsu
 thresholding.
 
 ``` {#lst:segmentation .python}
-from skimage.morphology import square
+import numpy as np
 from skimage.filters import threshold_otsu
-from leicaautomator.filters import mean, pop_bilateral
+from skimage.util import apply_parallel  # available from v0.12
+from scipy.ndimage import uniform_filter
+from leicaautomator.filters import pop_bilateral
 
-selem = square(9)
-filtered = pop_bilateral(image, selem)
-filtered = mean(filtered, selem)
-
-threshold = threshold_otsu(filtered)
-segmented = filtered >= threshold # high values indicate signal
+selem = np.ones((9,9))                  # 9x9 structuring element
+filtered = apply_parallel(pop_bilateral, image, depth=4,
+                          extra_keywords={'selem': selem})  # apply filter on
+                                                            # all cpu cores
+filtered = apply_parallel(uniform_filter, image, depth=4,
+                          extra_keywords={'size': 9})       # mean filter
+threshold = threshold_otsu(filtered)    # get optimal threshold
+segmented = filtered >= threshold       # low values indicate specimen
 ```
 
 #### Excluding false positives in segmentation
-After segmentation, regions was sorted by their area size and only the largest
+After segmentation, we have a binary image 
+
+regions was sorted by their area size and only the largest
 regions are kept. [@Fig:regions](a) illustrate area sizes.
 
 The code can be seen in [@lst:exclude-small-regions]
@@ -1211,8 +1243,8 @@ interface and the format is not a wide adopted standard. Based on the pros of
 openness and automatization TIFF was chosen. None of the formats are readily
 putted together.
 
-With 10x objective and 0.75 zoom, maximum field of view is equal to 1550
-\si{\micro\metre}. Average specimen spot diameter was $\approx$ 1200
+With 10x objective and 0.75 zoom, maximum field of view is reported as $1550
+\times 1500$ \si{\micro\metre}. Average specimen spot diameter was $\approx$ 1200
 \si{\micro\metre}. These two facts would allow for imaging specimen spots
 into separate images if they were neatly arranged. This was not found out to be
 true for our dataset, and it would also burden the user of the microscope to
@@ -1222,7 +1254,7 @@ robust way is therefor to combine all images into one.
 Combining images can be done in interactive manner, where a program loads
 images as one "moves" around. But creating this abstraction would demand for a
 way other programs can "talk" to the abstract image object containing all
-images. Therefor a simpler approach was taken, stitching all images into one
+images. Therefor a simpler approach was used, stitching all images into one
 large image. This allows for any program that can open PNG to work with the
 images.
 
@@ -1257,7 +1289,7 @@ standard deviation of 2.5 pixels, which in the context of overview images gives
 enough precission for defining the SHG scan job.
 
 The stitching algorithm can be used with the python package
-`microscopestitching` [@seljebu_microscopestitching_2015], [@lst:microscopestitching] show an example of how to use it.
+microscopestitching [@seljebu_microscopestitching_2015], [@lst:microscopestitching] show an example of how to use it.
 
 Listing: Stitching images with the Python package *microscopestitching*.
 
@@ -1282,7 +1314,7 @@ The TIFF images are stored in a folder tree with folder for *every* field.
 For a complete tissue microarray that is a couple of thousand folders, which 
 easily becomes unmanageable if browsing directly. To improve the situation,
 files were stitched together such
-manage, one can use the python package `leicaexperiment` to work with files.
+manage, one can use the python package leicaexperiment to work with files.
 This means that they have to be combined in some manner, 
 
 
@@ -1333,8 +1365,8 @@ available, stepping into the nitty-gritty details can give insight in
 algorithms and be very educational.
 
 Any Python package mentioned in the code blocks is install-able through pip. In
-example `leicacam` can be installed by opening a terminal and type `pip install
-leicacam`. The computer must have `pip`[@python_packaging_authority_user_2015]
+example leicacam can be installed by opening a terminal and type `pip install
+leicacam`. The computer must have pip[@python_packaging_authority_user_2015]
 and the required compilers if the package depends on compiling code. This is
 true for most of the software, it depends on fast algorithms implemented in
 compiled languages like C and Fortran.
@@ -1342,7 +1374,7 @@ compiled languages like C and Fortran.
 Compiling the huge scientific libraries like numpy and scipy can take a while,
 so it's recommended to use a Python distribution like Anaconda
 [@continuum_analytics_anaconda_????]. Anaconda pre-ships with the most common
-scientific libraries and it also contains the package manager `conda` which have
+scientific libraries and it also contains the package manager conda which have
 pre-compiled packages available for most operating systems.
 
 
