@@ -126,10 +126,9 @@ define the areas to scan. The method in this thesis tries to simplify the
 scanning process and prepare the images for further analysis.
 
 The thesis are written with focus on two parts, namely automating the
-collection of images and correlating samples to clinical data. How this can be
-used in supervised machine learning will be briefly mentioned in the end. In
-total the method described should enable researchers to run experiments on
-large datasets of tissue microarrays in a structured and determined manner.
+collection of images and correlating samples to clinical data. In total the
+methods described should enable researchers to run experiments on large datasets
+of tissue microarrays in a determined manner.
 
 A reader of this text should be familiar with general physics. Matters that are
 specific to scanning microscopy and image processing will be described in the
@@ -1269,13 +1268,7 @@ outcome = clinical_data[condition]['GRAD']   # get outcome
 
 
 # Discussion
-> What to communicate: discuss results, limitations, possibilities for
-> improvement
-
-> ML: Hvilke valg har blitt tatt, hva er viktig for neste bruker, hva er
-> begrensninger, utviklingsmuligheter, pros/cons, hvor bra fungerer det....)
-
- The glass slides in this discussion holds 14 columns of specimen
+The glass slides in this discussion holds 14 columns of specimen
 spots, which is 60 non-overlapping images with a 25x objective. This means
 that an operator of the microscope must keep track of the current stage
 position in the array with limited field of view.
@@ -1285,8 +1278,6 @@ Automated scanning is a low hanging fruit because we have the conditions:
 - Specimen spots in TMA are relatively easy to discriminate to background.
 - Tissue is somewhat aranged.
 - Tools in microscope software exists for controlling a scan.
-
-
 
 
 ## Scanning
@@ -1309,12 +1300,12 @@ roughly consist of:
 10. Scan.
 
 The procedure was tested out and step 6 was the most labor intensive, browsing
-through 126 samples aligning them. An alignment of one sample took about 40
-seconds, giving 1.5 hours of intensive click-and-adjust. Also, an error in some
-of the steps can potentially disrupt steps further down the line, making the
-procedure even more labor intensive. In example, inaccuracy in average
-displacement between samples will lead to displacement adjustment of many
-wells, accidentally bumping the sample holder could impose restart of the
+through 126 specimen spots and aligning them. An alignment of one specimen spot
+took about 40 seconds, giving 1.5 hours of intensive click-and-adjust. Also, an
+error in some of the steps can potentially disrupt steps further down the line,
+making the procedure even more time consuming. In example, inaccuracy in
+average displacement between samples will lead to displacement adjustment of
+many wells, accidentally bumping the sample holder could impose restart of the
 procedure, and so on.
 
 A simple means to avoid some of the steps in the intricate procedure above is
@@ -1358,30 +1349,24 @@ microscope reduces to:
 This was considered to meet the goals; reduce mental overhead when collecting
 images from TMA glass slides.
 
+## Uneven illumination
+
+
 ## Rotation
 LAS comes with a interactive graphical user interface for calibrating the
-scanning rotation. When using the function a live image is shown, a line is
-drawn in the middle of the image and one can adjust the rotation while moving
-the stage. A reference point should then follow the line if the scanning mirror
-and stage holds the same coordinate system. The user himself have to find the
-rotation in a inductive manner by counting pixels or measuring how far the
-reference point moves away from the line when moving the stage. Accuracy will
-depend on how easily the reference point is distinguished from the rest of the
-image and how thoroughly the user is with his measurements. In comparison, the
-procedure described in [the rotation section of the method](#method-rotation)
-gives the same precission in less time.
+scanning rotation. When using the rotation calibration a live image is shown
+with a line drawn in the middle of the image. One can adjust the rotation in
+real time while moving the stage. A reference point should then follow the line
+if the scanning mirror and stage holds the same coordinate system. The user
+himself have to find the rotation in a inductive manner by counting pixels or
+measuring how far the reference point moves away from the line when moving the
+stage. Accuracy will depend on how easily the reference point is distinguished
+from the rest of the image and how thoroughly the user is with his
+measurements. In comparison, the procedure described in [the rotation section
+of the method](#method-rotation) gives the same precission in less time.
 
 
-## Images and stitching
-The LAS matrix screener has two options for storing images, in TIFF or
-`.lif`-format (Leica image format). TIFF exporting has the advantage that
-it's fully controllable trough the CAM interface, as LAS will report
-filenames of images when scanning. In contrast, with the
-`.lif`-format the user have to save the images manually in the graphical user
-interface and the format is not a wide adopted standard. Based on the pros of
-openness and automatization TIFF was chosen. None of the formats are readily
-putted together.
-
+## Stitching
 With 10x objective and 0.75 zoom, maximum field of view is reported as $1550
 \times 1500$ \si{\micro\metre}. Average specimen spot diameter was $\approx$ 1200
 \si{\micro\metre}. These two facts would allow for imaging specimen spots
@@ -1448,48 +1433,39 @@ stitched_image = stitch(images)
 ```
 
 
-## leicaexperiment
-The TIFF images are stored in a folder tree with folder for *every* field.
-For a complete tissue microarray that is a couple of thousand folders, which 
-easily becomes unmanageable if browsing directly. To improve the situation,
-files were stitched together such
-manage, one can use the python package leicaexperiment to work with files.
-This means that they have to be combined in some manner, 
-
-
-
-
-
-
-
-
 ## Segmentation
 
 
-##
+## Filtering
 
 
-## Stable stage insert
+## Calculating row/col and correlating to clinical data
 
 
+## Interactive user interface
 
 
+## Communicating with microscope
 
-## Leica LAS design
+Leica LAS design:
 
 - user should be mainly in LAS
   - automating on the side as a supplement
   - load before CAM can be used
   - does not load all settings from XML
+- no 'take single image' command
+
+
+## Stage insert
 
 
 
 # Conclusion
-> What to communicate: brief summary of the result and discussion,
-> advice for further work
-
-> ML: Automatic imaging and segmentation of TMA has been
-> demonstrated)...and....
+A procedure for collecting microscope images of tissue micro arrays and
+correlating specimen array elements to clinical data has been demonstrated.
+The software packages are developed with the Leica SP8 microscope in mind, but
+could be adjusted for other microscope that has the ability to scan and export
+images by a communication interface.
 
 
 
