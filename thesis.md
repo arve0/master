@@ -852,6 +852,9 @@ Assuming one has an algorithm that updates the local histogram based on a
 structuring element, the inner computation of a population bilateral filter is
 given in [@lst:pop-bilateral-kernel]. A full implementation of the filter can
 be seen in the filters submodule of leicaautomator [@seljebu_leicaautomator_2015].
+Values of `s0 = s1 =10` gave high discrimination of specimen and background on
+overview images collected with settings specified in the [microscope
+section](#microscope).
 
 
 ``` {#lst:pop-bilateral-kernel .python}
@@ -893,29 +896,17 @@ segmented = filtered >= threshold       # low values indicate specimen
 ```
 
 #### Excluding false positives in segmentation
-After segmentation, we have a binary image 
-
-regions was sorted by their area size and only the largest
-regions are kept. [@Fig:regions](a) illustrate area sizes.
-
-The code can be seen in [@lst:exclude-small-regions]
-(a), position (b) and position derivative (c).
-
-![**(a)** Sorted region areas. Area size drops dramatically around region 125
-  according to number of samples on slide. Plot does not have corresponding
-  x-axis with (b) and (c), as regions are sorted by size.
-  **(b)** Regions sorted by position.  The two plots do no share the same
-  x-axis. There is a gap between the positions when row and columns are
-  increasing.
-  **(c)** X distance to previous region when regions are sorted by x-position.
-  Same x-axis as in (b) for the x-position plot. 14 peaks indicate that the
-  image contain 15 columns.
-  ](figures/regions_area_and_position.png) {#fig:regions}
+After segmentation we have a binary image as shown in [@fig:segmentation](c).
+The image contains several small dots that are not specimen spots. The dots can
+be removed by sorting all segment regions by area size, then excluding the
+smallest ones. [@Fig:regions](a) show segments sorted by falling area size.
+Code block \ref{lst:exclude-small-segments} illustrate how the small segments
+were excluded, keeping only the largest ones.
 
 
-Listing: Exclude small areas which are not specimen spots.
+Listing: Exclude small segments which are false positives.
 
-``` {#lst:exclude-small-regions .python}
+``` {#lst:exclude-small-segments .python}
 from skimage.measure import label, regionprops
 
 labels = label(segmented, background=0) # background=0: exclude background
@@ -927,36 +918,63 @@ if len(regions) > max_regions:
     regions = regions[:max_regions]     # only keep max_regions
 ```
 
-The whole process of segmentation was done interactive as part of the Python
-package *leicaautomator*, where settings can be adjusted to improve
-segmentation and regions can be moved, deleted or added with mouse clicks. The
-interface is shown in [@fig:leicaautomator].
-
-![The process of segmentation in a graphical user interface. Regions 4,2, 11,7
-  and 14,1 might be adjusted by the user, all other regions are detected fairly
-  well.](figures/leicaautomator.png) {#fig:leicaautomator}
-
 
 #### Calculating row and column position
-Row and column was calculated by sorting regions by position,
-measuring the distance between them and increment row or column number when
-there is a peak in the distance to previous region.
+![**(a)** Sorted region areas. Area size drops dramatically around region 125
+  comparable to the number of specimen spots on each slide which was $14 \cdot
+  9 = 126$. Plot does not have corresponding x-axis with (b) and (c), as
+  regions are sorted by size.
+  **(b)** Regions sorted by position.  The two plots do no share the same
+  x-axis. There is a gap between the positions when row and columns are
+  increasing.
+  **(c)** X distance to previous region when regions are sorted by x-position.
+  Same x-axis as in (b) for the x-position plot. 14 peaks indicate that the
+  image contain 15 columns.
+  ](figures/regions_area_and_position.png) {#fig:regions}
+
+As specimen spots are pretty well arranged in rows and columns, calculating
+the specimen row and column position will lift the burden of labeling the
+scanned specimen by the user.
+
+By looking at two fairly vertical columns of specimens, one can observe that
+the x-coordinate of specimens group around a mean x-coordinate and that there
+is a jump in x-coordinate when going to the next column of specimens (seen in
+[@fig:regions](b)). A derivative can be calculated by sorting the segmented
+regions by coordinate and subtract the current region's position to the previous
+region's position (seen in [@fig:regions](c)). The derivative can then be used
+to increment row or column when looping through the segmented regions and
+adding the row and column property to the region in question. The procedure is
+shown in [@lst:calc-row-col].
+
 
 Listing: Calculate row and column position to specimen spots.
 
-``` {#lst:calc-rowcol .python}
+``` {#lst:calc-row-col .python}
 for r in regions:
-    r.y, r.x, r.y_end, r.x_end = r.bbox # for convenience
+    r.y, r.x, r.y_end, r.x_end = r.bbox  # for notational convenience
 
-for direction in 'yx':                  # same algorithm for row and columns
+for direction in 'yx':                   # same algorithm for row and columns
     regions.sort(key=lambda r: getattr(r, direction))
 
     previous = regions[0]
-    for region in regions:              # calc distance to previous region
+    for region in regions:               # calc distance to previous region
         dx = getattr(region, direction) - getattr(previous, direction)
         setattr(region, 'd' + direction, dx)
         previous = region
 ```
+
+
+#### Interactive segmentation
+As experimental factors like detector gain, laser intensity, light
+absorption of specimen, etc. can give considerable variations in images, step 2
+was implemented as a interactive graphical user interface. The interface allows
+the user to adjust filter settings and verify which regions to scan by
+deleting, moving or adding regions. The interface is show in
+[@fig:leicaautomator].
+
+![The process of segmentation in a graphical user interface. Regions 4,2, 11,7
+  and 14,1 might be adjusted by the user, all other regions are detected fairly
+  well.](figures/leicaautomator.png) {#fig:leicaautomator}
 
 
 
