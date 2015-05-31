@@ -1102,65 +1102,112 @@ for n, region in enumerate(regions):
 
 
 ## Alignment of z-plane
-The samples in [@fig:tma] are 5 \si{\micro\metre} thick and keeping the sample
-plane at same distance from . 
- A movement of 1.7 \si{\milli\metre} will shift columns by one, which
-describes the accuracy required.
+The samples in [@fig:tma] are 5 \si{\micro\metre} thick and keeping the
+specimen plane at same distance from the objective when moving 25
+\si{\milli\metre} is challenging. Also, if the z-plane is substantially tilted,
+a single image might become out of focus at edges. To overcome change of
+z-coordinate when moving large distances, the stage insert seen in
+[@fig:tilt](b) was developed, which allows the user to adjust the specimen plane
+before scanning.
+
+To demonstrate the level of accuracy required for the stage insert consider the
+view field of a 63x objective with minimum zoom (0.75) which is $246 \times 246$
+\si{\micro\metre}. To get the stage insert steady for this level of precission,
+mouldable glue was added to corners of stage insert and glass slide holder.
+This makes both the stage insert and glass slide fixed, even when adjusting the
+specimen plane.
+
+The specimen plane was adjusted by the procedure:
+
+1. Find which of the corners in the tissue microarray has the highest
+   z-coordinate.
+2. Set stage z-coordinate some microns above the highest corner.
+3. Adjust all corners into focus (e.g., lifting them).
+4. Repeat until specimen plane is leveled at same z-coordinate.
+
+This makes it possible to image a whole specimen of 1.2 \si{\milli\metre} with
+only one autofocus scan and also avoids the scenario illustrated in
+[@fig:tilt](a).
 
 \begin{figure}[htbp]
-\subfloat[Sample holder with adjustment of z-plane.]{
-    \includegraphics[width=0.45\textwidth]{figures/stage_insert.png}
-}
-\quad
 \subfloat[Tilted z-plane of sample seen from the side. Black lines indicate two
-          images and the objective focus for those.]{
+          images and the objective focus for those. Illustration is not drawn
+          in scale.]{
     \includegraphics[width=0.45\textwidth]{figures/tilted_sample.pdf}
 }
-\caption{}
-\label{}
+\quad
+\subfloat[Sample holder with adjustment of specimen-plane.]{
+    \includegraphics[width=0.45\textwidth]{figures/stage_insert.png}
+}
+\caption{\textbf{(a)} When having a tilted specimen plane, stage z-coordinate must
+         be adjusted to keep specimen in focus when moving x- or y-coordinate.
+         Also, the seam between images will not be from the same physical area,
+         which might cause some trouble for thicker samples when they are
+         stitched.
+         \textbf{(b)} Stage insert which allows the user to adjust the specimen
+         plane. Mouldable glue was used to make the insert fit precisely in the
+         microscope and the glass slide to be fixed in the slide holder.}
+\label{fig:tilt}
 \end{figure}
 
 
 ## Correlating images with patient data
 Each TMA glass slide contains samples from 42 patients, meaning that there is
 three specimen spots for each patient. The slides are numbered and specimen
-spots on all slides are given identifiers. [@Fig:slidemap] illustrates
-some of the identifiers for slide one (TP-1, tumor peripheral one), called a
-slide map. As seen, the identifiers consists of two numbers. The first number is
-the patient identifier and the second number is the sample number. The patient
-identifier is not incrementing systematically, so the slide maps was scanned to
-read out the identifier for each position.
+spots on all slides are given identifiers. [@Fig:slidemap] illustrates some of
+the identifiers for slide one (TP-10, tumor peripheral number ten), called a
+slide map. As seen, the identifiers consists of two numbers. The first number
+is the patient identifier and the second number is the sample number.  The
+patient identifier is not incrementing systematically, so the slide maps was
+scanned to read out the identifier for each position.
 
-![Top of slide map TP-1. Identifiers are not incrementing systematically and
-  are inside circles, making them hard to read directly with OCR.
-  ](figures/slidemap.png) {#fig:slidemap}
+\begin{figure}[htbp]
+\subfloat[Original slide map.]{
+    \includegraphics[width=0.45\textwidth]{figures/slidemap.png}
+}
+\quad
+\subfloat[Filtered slide map.]{
+    \includegraphics[width=0.45\textwidth]{figures/slidemap-filtered.png}
+}
+\caption{\textbf{(a)} Top of slide map TP-10. Identifiers are not incrementing
+        systematically and are inside circles, making them hard to read
+        directly with OCR.
+        \textbf{(b)} Only text inside circles are kept after the slide map has been
+        filtered.
+        }
+\label{fig:slidemap}
+\end{figure}
 
 Before the slide maps were read with OCR, they were filtered to include only
 text inside circles. The filter removes the rest by:
 
 - Segment the image with Otsu threshold.
-- Widens segments by dilation (make sure segmentation connects lines).
-- Selects circles in the segment by using a circle score.
-- Masks the slide map image showing only parts inside selected circles.
+- Widen segments by dilation (make sure segmentation connects lines).
+- Selects circles in the segmented image by circle score.
+- Remove everything outside selected circles.
 
 The circle score was calculated as shown in [@lst:circle-score].
 
+Listing: Calculate score of region being a circle.
+
 ``` {#lst:circle-score .python}
-def circle_score(r):                    # r is a skimage.regionprops object
+def circle_score(r):                    # r is a skimage.measure.regionprops object
     y0,x0,y1,x1 = r.bbox                # for notational convenience
     height = y1-y0                      # calc height
     width = x1-x0                       # calc width
     radius = (r.convex_area/3.14)**0.5  # calc expected radius from convex area
-    score = 10-abs(height-width)        # score high if height == width
-    score += 10-abs(radius - height/2)  # score high if height/2 == expected radius
-    if r.area < 5000 or r.area > 8000:  # penalty for large sizes
+    score = 10-abs(height-width)        # high score if height == width
+    score += 10-abs(radius - height/2)  # high score if height/2 == expected radius
+    if r.area < 5000 or r.area > 8000:  # penalty for wrong sizes
         score -= 20
     return score
 ```
 
 All slide maps was filtered with [@lst:filter-slide-map].
 
-``` {#lst:filter-slide-map}
+Listing: Filter slide map and keep only text inside circles. 
+
+``` {#lst:filter-slide-map .python}
 import numpy as np
 from skimage.morphology import binary_dilation
 from skimage.measure import label, regionprops
