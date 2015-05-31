@@ -761,13 +761,13 @@ performance in regards to precision for the Leica SP8 stage.
 
 ![**(a)** Unreliable stitching with Fiji. The image translation calculated by
   phase correlation is chosen without adhering to displacement constraints.
-  **(b)** Using same overlap for all images gives negliable errors.
+  **(b)** Using same overlap for all images gives reliable stitch.
   ](figures/stitching_comparison_web.jpg) {#fig:stitching}
 
 The procedure of stitching consists of phase correlating all neighbor images,
 calculating the median translation and using this median translation for all
 images. The median is used as correlation between two images with little
-entropy in the seam are prone to fail. More details on this matter are
+entropy in the seam is prone to fail. More details on this matter are
 described in the [discussion](#images-and-stitching). Code block
 \ref{lst:stitch-algorithm} show the basics of the procedure on a row of images
 for sake of simplicity.
@@ -814,7 +814,7 @@ background by filtering the image before segmenting it with Otsu.
 
 In addition, relying only on Otsu thresholding will give us a lot of small
 segments which are not specimen spots. To exclude these false positives, area
-of segments were used as a classification.
+size of segments were used as a classification.
 
 Lastly, we'll want to calculate row and column of the specimen spots so that
 the image can be correlated to clinical data.
@@ -828,15 +828,15 @@ the image can be correlated to clinical data.
   **(b)** Thresholding after a local bilateral population filter. Quite noisy
   in the background.
   **(c)** Thresholding after local bilateral population and local mean filter.
-  Background noise is gone and sample spots are continuous segmented.
+  Background noise is gone and sample spots are segmented continuously.
   ](figures/segmentation_web.jpg) {#fig:segmentation}
 
 As briefly mentioned, the goal of filtering the overview image is to improve
 discrimination between areas with background and specimen so specimen spots can
-be distinguished. A filter that have appropriate properties is a population
-bilateral filter, which counts number of pixels in the neighborhood of the
-center pixel that is within a specified intensity range relative to the center
-pixel intensity.
+be distinguished. A filter that has the appropriate characteristics is the
+population bilateral filter, which counts number of pixels in the neighborhood
+of the center pixel that is within a specified intensity range relative to the
+center pixel intensity.
 
 The stitched overview image was $5122 \times 8810 = 45$ Megapixels, giving
 total filter time of 20 seconds with `skimage.filters.rank.pop_bilateral` on a
@@ -1057,54 +1057,47 @@ displacement between fields.
 
 
 #### Scanning each region
-
+After the step above one have start position $X_{start}$ and number of fields
+to scan $F_x$. What remains is communicating with the microscope and record
+output filenames of the scans.
 
 To avoid unnecessary long stage movements between rows or columns, regions was
 looped through in a zick-zack pattern, given by their row and column position.
 For each region the scanning template was edited, the template was loaded and
-the scan was started through CAM. Single templates was used due to a Leica LAS
-software limitation; scanning templates with irregular spaced wells can not be
-loaded. [@Lst:automatedscan] illustrates the process.
+the scan was started through CAM. Single scanning templates was used due to a
+Leica LAS software limitation; scanning templates with irregular displaced
+wells is not supported. Code block \ref{lst:automated-scan} illustrates the
+scanning procedure.
+
 
 Listing: Automated scanning of regions with CAM.
 
-``` {#lst:automatedscan .python}
-from leicascanningtemplate import ScanningTemplate
+``` {#lst:automated-scan .python}
+from leicascanningtemplate import ScanningTemplate as ST
 from leicaautomator import zick_zack_sort
 from leicacam import CAM
 
-cam = CAM() # instantiate connection to microscope
+cam = CAM()  # instantiate connection to microscope
 
 # regions sorted as [r(1,1), r(1,2), r(2,2), r(2,1), r(3,1), r(3,2), ...]
 # here r(2,1) is region(col=2, row=1)
 regions = zick_zack_sort(regions, ('well_x', 'well_y'))
 
-tmpl_path = r"C:\Users\TCS-User\AppData\Roaming\Leica Microsystems\LAS" + \
-            r"\MatrixScreener\ScanningTemplates" + "\\"
+tmpl_path = r"C:\Users\TCS-User\AppData\Roaming\Leica Microsystems\LAS" \
+          + r"\MatrixScreener\ScanningTemplates" + "\\"
 tmpl_name = tmpl_path + '{ScanningTemplate}leicaautomator'
 for n, region in enumerate(regions):
-    # alternate between tmpl_name0/1.xml, due to a
-    # bug LAS cannot load the same name twice
-    tmpl = ScanningTemplate(tmpl_name + str(n%2) + '.xml')
-
-    tmpl.move_well(1, 1, region.real_x, region.real_y)
-    tmpl.write()
-
-    cam.load_template(tmpl.filename)
-
-    # do an autofocus
-    cam.autofocus_scan()
-    cam.wait_for('inf', 'scanfinished')
-
-    # run the scan job
-    cam.start_scan()
-    # record output filename
-    region.experiment_name = cam.wait_for('relpath')['relpath']
-
-    # continue with next region when scan is done
-    cam.wait_for('inf', 'scanfinished')
+    tmpl = ST(tmpl_name + str(n%2) + '.xml')  # alternate between tmpl_name0/1.xml
+                                              # LAS cannot load same filename twice
+    tmpl.move_well(1, 1, region.real_x, region.real_y)  # start position for first field
+    tmpl.write()                         # save scanning template
+    cam.load_template(tmpl.filename)     # load scanning template into LAS
+    cam.autofocus_scan()                 # do autofocus
+    cam.wait_for('inf', 'scanfinished')  # wait for autofocus to finish
+    cam.start_scan()                     # run scan job
+    region.experiment_name = cam.wait_for('relpath')['relpath']  # record output filename
+    cam.wait_for('inf', 'scanfinished')  # wait for scan to finish
 ```
-
 
 
 
@@ -1114,8 +1107,7 @@ plane at same distance from .
  A movement of 1.7 \si{\milli\metre} will shift columns by one, which
 describes the accuracy required.
 
-
-\begin{figure}
+\begin{figure}[htbp]
 \subfloat[Sample holder with adjustment of z-plane.]{
     \includegraphics[width=0.45\textwidth]{figures/stage_insert_web.jpg}
 }
@@ -1130,50 +1122,101 @@ describes the accuracy required.
 
 
 ## Correlating images with patient data
+Each TMA glass slide contains samples from 42 patients, meaning that there is
+three specimen spots for each patient. The slides are numbered and specimen
+spots on all slides are given identifiers. [@Fig:slidemap] illustrates
+some of the identifiers for slide one (TP-1, tumor peripheral one), called a
+slide map. As seen, the identifiers consists of two numbers. The first number is
+the patient identifier and the second number is the sample number. The patient
+identifier is not incrementing systematically, so the slide maps was scanned to
+read out the identifier for each position.
 
-![Top of slide map TP-1. Ids are not incrementing systematically and need to be
-  registered to correlate samples to respective patients. Ids are inside circles
-  and hard to read with OCR. First part of id is same as `ID_deltaker` in patient
-  database, second number is sample number. There should be three samples for
-  each patient.](figures/slidemap_web.jpg) {#fig:slidemap}
+![Top of slide map TP-1. Identifiers are not incrementing systematically and
+  are inside circles, making them hard to read directly with OCR.
+  ](figures/slidemap_web.jpg) {#fig:slidemap}
 
-Slide maps, seen in [@fig:slidemap], and patient database was given by St.
-Olavs. As the slide maps contained circles, slide maps were filtered to remove
-all but text before it was read with OCR. The OCR text output was checked for
-errors programatically (id should be of correct format, id should increment,
-patients should be registered with correct slide in database column `TP_nr`,
-each patient should have three samples). OCR errors was fixed manually and
-other errors was recorded (see section [Slide map errors] in the appendix).
+Before the slide maps were read with OCR, they were filtered to include only
+text inside circles. The filter removes the rest by:
 
-Every patient id from the slide map was then saved to a stata database along
-with its slide number, row and column. [@Lst:correlate] show
-how the clinical data was correlated with samples.
+- Segment the image with Otsu threshold.
+- Widens segments by dilation (make sure segmentation connects lines).
+- Selects circles in the segment by using a circle score.
+- Masks the slide map image showing only parts inside selected circles.
+
+The circle score was calculated as shown in [@lst:circle-score].
+
+``` {#lst:circle-score .python}
+def circle_score(r):                    # r is a skimage.regionprops object
+    y0,x0,y1,x1 = r.bbox                # for notational convenience
+    height = y1-y0                      # calc height
+    width = x1-x0                       # calc width
+    radius = (r.convex_area/3.14)**0.5  # calc expected radius from convex area
+    score = 10-abs(height-width)        # score high if height == width
+    score += 10-abs(radius - height/2)  # score high if height/2 == expected radius
+    if r.area < 5000 or r.area > 8000:  # penalty for large sizes
+        score -= 20
+    return score
+```
+
+All slide maps was filtered with [@lst:filter-slide-map].
+
+``` {#lst:filter-slide-map}
+import numpy as np
+from skimage.morphology import binary_dilation
+from skimage.measure import label, regionprops
+
+thresh = filters.threshold_otsu(img)     # segment image with Otsu thresholding
+binary = img <= thresh
+selem = np.ones((3,3))
+binary = binary_dilation(binary, selem)  # enhance lines
+labeled = label(binary)                  # find connected segments
+
+mask = np.zeros_like(img, dtype=np.bool) # create mask of circles in image
+for r in regionprops(labeled):           # for every segment
+    if circle_score(r) > 0:              # circle found
+        y,x,y1,x1 = r.bbox               # for notational convenience
+        m = np.index_exp[y:y1, x:x1]     # where circle is found
+        mask[m] = r.convex_image         # use the convex image as mask
+
+img[-mask] = 255                         # set all pixels except contents of
+                                         # circles to 255 (white)
+```
+
+After the filtering, Prizmo [@creaceed_s.p.r.l._prizmo_2015] was used to read
+the slide maps. The OCR text output was error checked programatically for the
+following:
+
+- Identifier should be of correct format.
+- Identifier should increment.
+- Patients should be registered with correct slide in database column `TP_nr`.
+- Each patient should have three samples.
+
+OCR errors was fixed manually and other errors was recorded (see section [Slide map errors] in the appendix).
+
+Every patient identifier from the slide map was saved to a Stata database along
+with its slide number, row and column. A database with outcomes of was
+supplied, and [@lst:correlate] show how the clinical data can be correlated with
+specimen spots.
+
 
 Listing: Get patient outcome of sample on TP-1 row 3 column 5.
 
 ``` {#lst:correlate .python}
 import pandas as pd
 
-# read databases
-locations = pd.read_stata('data/ids/locations.dta')
+locations = pd.read_stata('data/ids/locations.dta')    # read databases
 clinical_data = pd.read_stata('data/clinic_data.dta')
 
-# position query
-condition = (locations.TP_nr == 1) & \
+condition = (locations.TP_nr == 1) & \   # position query
             (locations.TP_rad == 3) & \
             (locations.TP_kolonne == 5)
 
-# get patient id
-patient_id = locations[condition]['ID_deltaker']
 
-# check exactly 1 patient registered at given row/col
-assert len(patient_id) == 1
+patient_id = locations[condition]['ID_deltaker']  # get patient id
+assert len(patient_id) == 1                       # 1 patient registered at row/col
 
-# clinical data query
-condition = clinical_data.ID_deltaker == patient_id.iloc[0]
-
-# get outcome
-outcome = clinical_data[condition]['GRAD']
+condition = clinical_data.ID_deltaker == patient_id.iloc[0]  # clinical data query
+outcome = clinical_data[condition]['GRAD']   # get outcome
 ```
 
 
