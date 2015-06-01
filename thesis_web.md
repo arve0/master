@@ -242,7 +242,8 @@ photons is transformed to a single emitted photon of half the wavelength. The
 process is dependent on orientation of electric dipoles in the specimen and
 aligned assemblies of asymetric molecules usually provides the proper
 conditions. Collagen does hold the proper conditions for SHG-imaging
-[@murphy_fundamentals_2013].
+and as the probability for SHG is extremely low, a high intensity laser is
+necessary to generate it [@murphy_fundamentals_2013].
 
 
 ## Image processing
@@ -366,9 +367,9 @@ The sums of @eq:dft and @eq:idft are independent and can be separated in rows
 and columns, yielding the fast Fourier transform which reduces the calculation
 complexity from $O(mn)$ to $O(m \log{m} + n \log{n})$.
 
-As briefly mentioned, DFT has the property that a element wise multiplication
-in the frequency domain with one of the images complex conjugated is equivalent
-as a cross-correlation in the real domain. The cross-correlation theorem states
+The DFT has the property that a element wise multiplication in the frequency
+domain with one of the images complex conjugated is equivalent to a 
+cross-correlation in the real domain. The cross-correlation theorem states
 
 $$ f(x,y) \openbigstar g(x,y) =
     \mathfrak{F}^{-1} \left\{ F^\ast(u,v) G(u,v) \right\}.
@@ -384,13 +385,13 @@ also called phase correlation.
 
 ### Leica LAS
 \kw{Leica Application Suite} (LAS) is the software that contols the SP8
-microscope. LAS comes with an function called \kw{Matrix Screener}, which
+microscope. LAS comes with a function called \kw{Matrix Screener}, which
 allows the user to define structured areas to scan. The software uses the
-conce])s \kw{fields} and \kw{wells}. A field is essentially an image, and a
+concepts \kw{fields} and \kw{wells}. A field is essentially an image, and a
 well is a collection of regular spaced images. The wells may be regular spaced,
 or an offset between wells can be defined in the graphical user interface. When
-the scan job is started LAS stores images in a tree of folders in TIFF (see
-*[Image formats](#image-formats)).
+the scan job is started LAS stores images in a folder tree in the TIFF format (see
+*[Image formats](#image-formats)*).
 
 
 ### CAM
@@ -399,10 +400,10 @@ function called \kw{Computer Assisted Microscopy} (CAM) can be enabled. CAM is a
 socket interface, meaning one send bytes over a network interface. This is very
 similar to how one can write bytes to a file, but in addition the socket
 interface can respond and send bytes back. The network interface runs on TCP
-port 8895 and one may communicate locally or over TCP/IP network. A set of 44
+port 8895 and one may communicate locally or over a TCP/IP network. A set of 44
 commands are available, but only three of them are intresting for the purpose
 of controlling scans; load, autofocusscan and startscan. More details on
-the interface can be read in the manual [@sieckmann_cam_2013] or by
+the interface can be found in the manual [@sieckmann_cam_2013] or by
 studying the source code of the Python package leicacam
 [@seljebu_leicacam_2015]. Code block \ref{lst:cam} show how one can
 communicate with the microscope in Python.
@@ -424,7 +425,7 @@ response = CAM.recv(1024)             # read response
 ### XML
 \kw{Extensible Markup Language} is a declarative language which most high level
 programming languages speak, which makes it suitable for computer program
-communication. A XML-file contain a single root and tree structure with parent
+communication. An XML-file contain a single root and tree structure with parent
 and children nodes. Any position in the tree can be specified with an \kw{XPath}.
 [@Lst:xml] show a typical structure of a XML-file.
 
@@ -453,7 +454,7 @@ as this is the only child with `attr="val1"`. In converse, `./parent/child`
 finds all children. Code block \ref{lst:pythonxml} show how one would read
 properties from the XML-file in [@lst:xml].
 
-Listing: Accessing XML properties with the Python build-in module xml.etree.
+Listing: Accessing XML properties with the Python built-in module xml.etree.
 
 ``` {#lst:pythonxml .python}
 import xml.etree.ElementTree as ET
@@ -466,7 +467,7 @@ print(len(all_children))                      # number of elements found
 ```
 
 ### Scanning Template
-A \kw{scanning template} is a XML-file read by LAS which defines which fields
+A \kw{scanning template} is an XML-file read by LAS which defines which fields
 and wells to scan. The structure of the file is the following:
 
 - `./ScanningTemplate/Properties` holds experiment settings like start
@@ -480,17 +481,17 @@ and wells to scan. The structure of the file is the following:
 
 ### OCR
 \kw{Optical character recognition} (OCR) is recognition of characters in an image.
-OCR internals are not discussed, but it basically works by looking at patterns
+OCR internals are not discussed here, but it basically works by looking at patterns
 in the image to convert it to text.
 
 
 ### Image formats
 Image formats referred to in this text are:
 
-- \kw{Tagged Image File Format} (TIFF) is ISO standarized[@iso_tag_2004] and can
+- \kw{Tagged Image File Format} (TIFF) is ISO standardized[@iso_tag_2004] and can
   contain both raw and compressed images. TIFF images can be opened in most
   image programs.
-- \kw{Portable Network Graphics} (PNG) is both ISO and W3 standarized
+- \kw{Portable Network Graphics} (PNG) is both ISO and W3 standardized
   [@iso_portable_2004;@duce_portable_2003]. Image data is stored with lossless
   compression. PNG images can be opened in most image programs.
 - \kw{Leica Image Format} (LIF) is not a standarized format. LIF can be opened by
@@ -499,17 +500,18 @@ Image formats referred to in this text are:
 
 
 # Methods
-TMA samples can contain up to 1000 samples for each glass slide
+TMA samples can contain up to 1000 samples on each glass slide
 [@kononen_tissue_1998]. Though the complexity can be handled by a human, the
-process of manually scanning TMA consist of a lot error prone work. Good tools
+process of manually scanning TMA consist of a lot of error prone work. Good tools
 to organize the work of scanning TMAs is therefor vital in helping the
 researcher.
 
-The methods described here seek to provide those tools, reducing mental
-overhead for the microscope operator being the main aim. Using the methods
-described, the user avoids a lot of repetitive, trivial, labor and can turn his
-attention on the research. This chapter contain description of microscope settings,
-steps of automated scanning and procedure for correlation to clinical data.
+The methods described here seek to provide those tools. The main aim is to
+reduce mental overhead and physical time at the microscope for the user. Using
+the methods described, the user avoids a lot of repetitive, trivial, labor and
+can turn his attention on the research. This chapter contains description of
+microscope settings, steps for automated scanning and procedure for correlation
+to clinical data.
 
 
 ## Microscope
@@ -1271,15 +1273,18 @@ outcome = clinical_data[condition]['GRAD']   # get outcome
 
 # Discussion
 To evaluate the methods described in the previous chapter, this chapter will
-take up aspects that that lead to the developed methods. Where applicable, pros
-and cons will be listed and possible alternatives discussed.
+take up aspects that that lead to the developed methods. Where applicable,
+possible alternatives are also discussed.
 
-The topics discussed are similar to the steps in the method: 
+Not all topics from the methods chapter are discussed, as some aspects are
+beyond the scope of this project. The topics discussed are:
 
 - Scanning
 - Rotation
 - Stitching
 - Communicating with microscope
+- Adjusting the specimen plane
+- SHG images
 
 
 ## Scanning
@@ -1399,7 +1404,7 @@ of the phase correlation is mainly due to little entropy in the seam between
 images. It can be seen in [@fig:stitching (a)], where the failed row have to
 much overlap. The failed row is a clean cut in the sense that the overlap
 between the images contain background only and no specimen. A background
-surface is quite even and gives a flat correlation in contrast to the
+surface is fairly uniform and gives a flat correlation in contrast to the
 wanted peak which express a match is found. In other words, the overlap between
 the images contain too little information for correlation and the match fails.
 
@@ -1517,8 +1522,56 @@ align the glass slide. Still, adjusting the specimen plane with a stage insert
 was considered beneficial enough to develop it.
 
 
-## Calculating row/col and correlating to clinical data
+## SHG images, fibers and machine learning
+The main reason for using SHG when scanning the samples it to image tissue
+structure. As mentioned, collagen fiber holds the proper conditions to generate
+SHG signal. Also no prepation other than slicing the tissue with microtome is
+necessary, which makes SHG an undemanding technique. In the breast tissue there
+is few other molecules that generate SHG signal, giving tissue only images as
+seen in [@fig:shg]. Having tissue only images means that tissue can be
+analysed directly without any pre-processing of the image.
 
+![SHG image of a specimen spot with strong fibers going in circle, typically
+  seen around mammary glands channels.](figures/shg_web.jpg) {#fig:shg}
+
+Using image processing one can then extract the features. By example, amount of
+collagen tissue can be analysed by the intensity in the image, tissue
+orientation can be extraxted by analysing the frequency domain
+[@qiu_monitoring_2015]. Other measures might be matches for known structures
+like milk channels, \kw{Indian files} [@martinez_invasive_1979], thickness of
+fiber and so on. 
+
+With the features extracted, predictive machine learning may help find
+releationships in the dataset. Code block \ref{lst:machinelearning} shows the
+concept.
+
+Listing: Training a model to be able to predict outcome base on a feature-array.
+
+``` {#lst:machinelearning .python}
+# model is a DecisionTree, with maximum 4 decisions
+# model is improved if a choice made will decrease the remaining data's entropy
+clf = tree.DecisionTreeClassifier(criterion='entropy', max_depth=4)
+# training the model on 60 patients
+clf.fit(fibers.data[0:60], fibers.target[0:60])
+# test if the model does work on the rest of the dataset
+for i in range(60, len(fibers.files)):
+    predicted = clf.predict(fibers.data[i])  # predicting
+    real = fibers.target[i]                  # real outcome
+    identifier = fibers.files[i]             # identifier for current test
+    if predicted != real:                    # prediction failed
+        print('WRONG! File: %s, Predicted: %s' % (identifier, predicted))
+        wrong += 1
+    else:                                    # prediction was right
+        right += 1
+# print total results
+print('Right: {}, Wrong: {}'.format(right, wrong))
+```
+
+A benefit of using this approach, is that adding features or trying new
+models is cheap in terms of human work. If feature extraction is refined, one
+can re-run the model quickly and see if it improves the results. This allows
+for a new way of thinking about diagnosis, and can enable the researcher to
+release the creativeness and play with the data.
 
 
 # Conclusion
