@@ -222,7 +222,12 @@ $$ d = \frac{
 
 Here $d$ is the minimum separable spatial distance defined by the Rayleigh
 criterion, $\lambda$ is the wavelength of the light and $\NA$ is the numerical
-aperture.
+aperture. The numerical aperture is defined by
+
+$$ \NA = n \sin \theta, $$ {#eq:na}
+
+where $n$ is the refractive index of the medium (air, water, oil) and $\theta$
+is the half angle of the light cone the objective can accept.
 
 A \kw{dichroic mirror}, also called a dichromatic beamsplitter, is a filter which
 split light of different wavelengths. The filter has a sharp transition between
@@ -238,9 +243,6 @@ process is dependent on orientation of electric dipoles in the specimen and
 aligned assemblies of asymetric molecules usually provides the proper
 conditions. Collagen does hold the proper conditions for SHG-imaging
 [@murphy_fundamentals_2013].
-
-As the probability for SHG is extremely low, a high intensity laser is
-necessary to generate it.
 
 
 ## Image processing
@@ -1275,10 +1277,8 @@ and cons will be listed and possible alternatives discussed.
 The topics discussed are similar to the steps in the method: 
 
 - Scanning
-- Uneven illumination
 - Rotation
 - Stitching
-- Segmentation
 - Communicating with microscope
 
 
@@ -1361,8 +1361,6 @@ to:
 This was considered to meet the goals; reduce mental overhead when collecting
 images from TMA glass slides.
 
-## Uneven illumination
-
 
 ## Rotation
 LAS comes with a interactive graphical user interface for calibrating the
@@ -1423,8 +1421,9 @@ Taking away outliers in the registered translation of [@fig:stitching (b)] gave
 standard deviation of 2.5 pixels, which in the context of overview images gives
 enough precission for defining the SHG scan job.
 
-The stitching algorithm can be used with the python package
-microscopestitching [@seljebu_microscopestitching_2015], [@lst:microscopestitching] show an example of how to use it.
+The stitching algorithm can be used with the python package microscopestitching
+[@seljebu_microscopestitching_2015], [@lst:microscopestitching] show an example
+of how to use it.
 
 Listing: Stitching images with the Python package microscopestitching.
 
@@ -1444,30 +1443,81 @@ stitched_image = stitch(images)
 ```
 
 
-## Segmentation
+## Communicating with microscope
+The CAM specification holds 44 commands, which is quite a lot, but to put the
+amount of commands in perspective one have to categorize the commands. When
+categorizing the commands one find that:
+
+- 13 of the commands requires the user to define a distinct pattern in the
+  experiment using the graphical user interface, making them semi-automatic.
+  In example, a \kw{CAM-list} can be specified, which is a list of fields or
+  wells to scan. But CAM-list commands are only available if the experiment
+  contain a halt called "Wait for CAM-command".
+- 13 of the commands are duplicates of settings that can be defined or read in
+  the experiment XML-files. Though this can certainly be useful for some
+  experiments, e.g., you can change flow of water pump without loading a new
+  experiment, they are not useful for automating a TMA scan.
+- 5 of the commands are duplicate ways for moving the stage. E.g., there is one
+  command that saves the current stage position and an accompanying command to
+  return to that position. The same can easily be done by reading the stage
+  position, saving the position to a variable and using regular go-to command.
+
+In addition to the notes above, LAS does not read all settings from XML-files.
+One example that is a major drawback for automated TMA scanning is the lack of
+support for loading irregular spaced wells. The graphical user interface is
+able to save such experiments, but loading an experiment which has wells with
+offset is not possible. The load will not fail, but rather silently reset the
+offset defined in the scanning template.
+
+The fact that irregular spaced wells cannot be loaded directly lead to the
+workaround of loading each specimen spot as a single template. The load time
+for an experiment is about 30 seconds, so total time spent on loading is 126
+specimen spots $\cdot$ 30 seconds $\approx$ 1 hour.
+
+Another function that is missing is the possibility to tell the microscope
+take a single image. To achieve this, one has do to one of the workarounds:
+
+- Create a template with a single field enabled at the correct position, load
+  the template and start the scan.
+- Create an empty experiment which holds a dummy scan along with the "Wait for
+  CAM-command", load this experiment, start the scan, then send \kw{CAM-list}
+  commands.
+
+Another drawback is the setup required before one can start communicating with
+LAS. The steps are:
+
+1. Open LAS.
+2. Chose configuration.
+3. Select \kw{Matrix Screener}.
+4. Load experiment that has CAM enabled or create experiment, load it and
+   enable CAM in the experiment.
+
+The aspects above makes automated scanning with Leica SP8 limited, but still a
+lot of labor hours are saved.
 
 
-## Filtering
+## Adjusting the specimen plane
+Two factors was involved when deciding to develop the stage insert; autofocusing
+and glass slides that have considerably tilted specimen plane.
+
+The time of an autofocus depends on how many steps it consists of and what
+acquisition parameters are used. With a range of 80 \si{\micro\metre} and step
+size of 2 \si{\micro\metre}, it usually takes several seconds. Doing this on
+all images is not an option, as autofocusing then uses several hours, even
+more time than the scanning time alone takes.
+
+Even if autofocus could solve some z-alignment issues, some glass slides may
+have too much tilt in specimen plane to allow autofocus alone tackle it. E.g.,
+some slides had coverslip of 170 \si{\micro\metre} mounted to the end, making
+the glass slide lean on the coverslip for one side but not the other. The
+effect is that a single image will be out of focus, seen as little signal in
+edges. This factor forces the adjustment of specimen plane. Though using a
+stage insert is not strictly a necessity, one could for example use tape to
+align the glass slide. Still, adjusting the specimen plane with a stage insert
+was considered beneficial enough to develop it.
 
 
 ## Calculating row/col and correlating to clinical data
-
-
-## Interactive user interface
-
-
-## Communicating with microscope
-
-Leica LAS design:
-
-- user should be mainly in LAS
-  - automating on the side as a supplement
-  - load before CAM can be used
-  - does not load all settings from XML
-- no 'take single image' command
-
-
-## Stage insert
 
 
 
