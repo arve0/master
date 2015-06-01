@@ -147,7 +147,7 @@ proficient in Python programming, but acquaintance with the syntax is assumed.
 Code blocks will be used to clarify how problems have been solved or algorithms
 implemented. Details not essential to the problem at hand have been omitted to
 keep focus on the essential parts. As the total amount of source code is above
-thousand lines it's not included in the appendix but rather available at Github
+thousand lines it is not included in the appendix but rather available at Github
 with full history [@seljebu_arve_2015]. A brief description on installation of
 the software is included in the *[appendix](#python-software)*.
 
@@ -165,7 +165,7 @@ larger tissue sample and choose appropriate locations.
 The thickness of slices are in the magnitude of 4-5 \si{\micro\metre}, which
 gives efficient use of tissue samples in the sense that several hundred TMAs
 can be made from a block containing cylinders which can be several mm
-[@kononen_tissue_1998]. \kw{Specimen spot} will refer to a single sample in the
+[@kononen_tissue_1998]. A \kw{specimen spot} will refer to a single sample in the
 array.
 
 
@@ -176,22 +176,22 @@ which have an epi-illumination setup.  Epi-illumination is when the detectors
 But as seen, the epi-setup also allows for transmitted detectors (19), which were
 the ones in use. By scanning one means that the light source is focused to a
 specific point of the specimen, and scanned line by line in a raster pattern.
-While the laser is scanned over the surface, a photomultiplier tube (PMT)
+While the laser is scanned over the surface, a \kw{photomultiplier tube} (PMT)
 measures the incoming light in regular time intervals (samples) and each
 measured sample is saved to an image pixel.
 
-A \kw{photonmultiplier tube} is a sensor which converts photon intensity into
-an electrical signal. The tube works by accelerating electrons that have been
-liberated from an electrode by incomming photons. The flux of electrons is
-multiplied several times by aranged electrodes inside the tube, resulting in an
-amplification which makes it possible to measure small amounts of light
+The PMT is a sensor which converts photon intensity into an electrical signal.
+The tube works by accelerating electrons that have been liberated from an
+electrode by incomming photons. The flux of electrons is multiplied several
+times by aranged electrodes inside the tube, resulting in an amplification
+which makes it possible to measure small amounts of light
 [@murphy_fundamentals_2013].
 
 The scanning is done by a galvanometric mirror (14). The term \kw{non-descanned
 detector} indicate that the light does not travel via the scanning mirror before
 reaching the detector. In SP8, (17) and (19) are non-descanned detectors, where
 (17) measure reflected light and (19) measure transmitted light. The condensor
-and aperture is not illustrated in [@fig:epi]. Both is present between the glass
+and aperture are not illustrated in [@fig:epi]. Both are present between the glass
 slide and the external non-descanned detector (19). Condensor collects light
 for the transmission non-descanned detector. The aperture is an adjustable
 opening which can be used to limit the amount of incomming light. Higher
@@ -238,7 +238,7 @@ The mirror is usually angled \ang{45} to disperse the short wavelengths \ang{90}
 
 \kw{Second harmonic generation} (SHG) is a nonlinear scattering process of two
 photons with the same wavelengths. The process is an interaction where the
-photons is transformed to a single emitted photon of half the wavelength. The
+photons are transformed to a single emitted photon of half the wavelength. The
 process is dependent on orientation of electric dipoles in the specimen and
 aligned assemblies of asymetric molecules usually provides the proper
 conditions. Collagen does hold the proper conditions for SHG-imaging
@@ -247,7 +247,7 @@ necessary to generate it [@murphy_fundamentals_2013].
 
 
 ## Image processing
-Contents of this section is worked out from the book Digital Image Processing
+Contents of this section are worked out from the book Digital Image Processing
 by Gonzalez and Woods [@gonzalez_digital_2007].
 
 An \kw{image} is a two dimensional array of values, where each position in the
@@ -285,7 +285,7 @@ output is a segmented binary image where all pixels above the threshold is
 
 
 ### Spatial image filters
-A \kw{spatial image filter} consists of a center pixel, it's neighborhood defined by
+A \kw{spatial image filter} consists of a center pixel, its neighborhood defined by
 a structuring element and an operation. Structuring
 element is typically a rectangle, but can be of any shape. The operation can
 for example be calculating the mean of the neighborhood, assigning the mean
@@ -305,7 +305,7 @@ consist of 3 rows and 3 columns with the value 1/9.
 ### Sliding window filters
 A \kw{sliding window filter} is similar to a spatial filter in the sense that
 there is a center pixel and a neighborhood defined by a structuring element.
-The neighborhood is called a \kw{sliding window} as neighborhood is updated by
+The neighborhood is called a \kw{sliding window} as the neighborhood is updated by
 removing values going out of the neighborhood and adding values coming into the
 neighborhood when moving to the next pixel.
 
@@ -319,7 +319,7 @@ less often.
 Image registration is the process of putting images into the same coordinate
 system. In this context the sources are images from different microscope stage
 coordinates. One way of finding how images are relatively displaced is by using
-cross-correlation. The cross-correlation of two images is the process of
+\kw{cross-correlation}. The cross-correlation of two images is the process of
 zero-padding the one image and using the other image as structuring element.
 Cross-correlating $f(x,y)$ by $g(x,y)$ is defined as
 
@@ -503,7 +503,7 @@ Image formats referred to in this text are:
 TMA samples can contain up to 1000 samples on each glass slide
 [@kononen_tissue_1998]. Though the complexity can be handled by a human, the
 process of manually scanning TMA consist of a lot of error prone work. Good tools
-to organize the work of scanning TMAs is therefor vital in helping the
+to organize the work of scanning TMAs is therefore vital in helping the
 researcher.
 
 The methods described here seek to provide those tools. The main aim is to
@@ -724,7 +724,7 @@ it does not, giving the result of a jagged stitch seen in [@fig:rotation].
 \caption{Illustrations and stitch of two images with scanning pattern rotated
          compared to stage movement. In (a) the first row of the first image
          lines up with second row in second image. The second image should
-         therefor be one pixel above the first image. In (b) relative scanning
+         therefore be one pixel above the first image. In (b) relative scanning
          pattern rotation is counter clockwise, giving the second image below
          the first image. A calculation of stage position by y-equivalent to
          equation \ref{eq:stage_position} gives a systematic error in the
@@ -1295,7 +1295,7 @@ manual labor in the scanning would roughly consist of:
 1. Count number of rows and columns.
 2. Align TMA in microscope.
 3. Measure average inter sample displacement.
-4. Find the maximum sized specimen spot and measure it's size.
+4. Find the maximum sized specimen spot and measure its size.
 5. Define an experiment holding the correct number of rows, columns,
    displacement between samples and sample size.
 6. Update inter sample offsets one by one.
@@ -1316,9 +1316,9 @@ procedure, and so on.
 
 In addition, it's easy to "get lost" in the tissue microarray with the limited
 field of view. The glass slides holds 14 columns of specimen spots, which is 60
-side by side non-overlapping images with a 25x objective. This means one must
-keep track of the position in the array. If one loses track over specimen row
-and column position, one need to go to a reference point, usually the edge of
+side by side non-overlapping images with a 25x objective. This means it's a must
+keep track of the position in the array. If losing track over specimen row
+and column position, one needs to go to a reference point, usually the edge of
 the array, to get back on track.
 
 A simple means to avoid some of the steps in the intricate procedure above is
@@ -1338,15 +1338,15 @@ through \SI{24}{\milli\metre} $\cdot$ \SI{15}{\milli\metre}  /
 $(\SI{400}{\micro\metre})^2$ = 2250 images may be a daunting task without a
 specialized tool.
 
-The main concern with the last procedure was focus and a couple of scans
-confirmed the concern by having out of focus portions. The out of focus can be
-of several reasons, e.g.,  inter specimen z-displacement or temperature changes
+The main concern with the simple scan was focus and a couple of scans
+confirmed this concern by having out of focus portions. The out of focus can be
+due several reasons, e.g.,  inter specimen z-displacement or temperature changes
 moving the specimens in z-direction. As the autofocus in LAS runs before the
 scan, the only way to tackle temperature changes is by chopping up the scan in
 several chunks. As the goal was to reduce manual labor, doing this as a part of
 the procedure was not considered viable.
 
-In addition, automated scanning is a low hanging fruit because we have the
+In addition, automated scanning is a low hanging fruit because we have these
 conditions:
 
 - Specimen spots in TMA are relatively easy to discriminate to background.
@@ -1370,7 +1370,7 @@ images from TMA glass slides.
 ## Rotation
 LAS comes with a interactive graphical user interface for calibrating the
 scanning rotation. When using the rotation calibration a live image is shown
-with a line drawn in the middle of the image. One can adjust the rotation in
+with a line drawn in the middle of the image. The rotation can be adjusted in
 real time while moving the stage. A reference point should then follow the line
 if the scanning mirror and stage holds the same coordinate system. The user
 himself have to find the rotation in a inductive manner by counting pixels or
@@ -1378,21 +1378,21 @@ measuring how far the reference point moves away from the line when moving the
 stage. Accuracy depends on how easily the reference point is distinguished
 from the rest of the image and how thoroughly the user is with his
 measurements. In comparison, the procedure described in [the rotation section
-of the method](#method-rotation) gives the same precission in less time.
+in the method](#method-rotation) gives the same precission in less time.
 
 
 ## Stitching
 With 10x objective and 0.75 zoom, maximum field of view is reported as $1550
 \times 1550$ \si{\micro\metre}. Average specimen spot diameter was $\approx$ 1200
 \si{\micro\metre}. These two facts would allow for imaging specimen spots
-into separate images if they were neatly arranged. This was not found out to be
+into separate images if they were neatly arranged. This was found not to be
 true for our dataset, and it would also burden the user of the microscope to
 measure and define a scan with correct inter specimen displacement. A more
-robust way is therefor to combine all images into one.
+robust way is therefore to combine all images into one.
 
 Combining images can be done in interactive manner, where a program loads
 images as one "moves" around. But creating this abstraction would demand for a
-way other programs can "talk" to the abstract image object. Therefor a simpler
+way other programs can "talk" to the abstract image object. Therefore a simpler
 approach was used, stitching all images into one large image. This allows for
 any program that can open PNG to work with the images.
 
@@ -1410,16 +1410,16 @@ the images contain too little information for correlation and the match fails.
 
 In addition to failures of phase correlation, we would also like to constrain
 stitch between two images to be in one dimension only. This is due to the
-systematic error which may occur if coordinate system of stage and scanning
-pattern is not the same. E.g., consider two side by side images as in
+systematic error which may occur if the coordinate systems of stage and scanning
+pattern are not the same. E.g., consider two side by side images as in
 [@fig:rotation]. We know that the stage translation is only in x-direction, but
 the phase correlation tells us otherwise. As we want to register images into
 the stage coordinate system, rotation of scanning mirror is adjusted, but some
 minor rotation may still be experienced. This might be due stage inaccuracy,
 unlinearities in scanning pattern or wrong match from the phase correlation.
 Whatever the cause, offsetting images in dimension only gives at worst an error
-in $X$ in the end of every stitch, but in case of offsetting in bot dimensions
-gives at worst a growing error. A way to overcome the error is by calculating
+in $X$ in the end of every stitch, but in case of offsetting in both dimensions
+gives at worst a growing error. A way to overcome this error is by calculating
 $X$ from the nearest image metadata, but this was not looked into.
 
 Taking away outliers in the registered translation of [@fig:stitching (b)] gave
@@ -1459,7 +1459,7 @@ categorizing the commands one find that:
   wells to scan. But CAM-list commands are only available if the experiment
   contain a halt called "Wait for CAM-command".
 - 13 of the commands are duplicates of settings that can be defined or read in
-  the experiment XML-files. Though this can certainly be useful for some
+  the experiment's XML-files. Though this can certainly be useful for some
   experiments, e.g., you can change flow of water pump without loading a new
   experiment, they are not useful for automating a TMA scan.
 - 5 of the commands are duplicate ways for moving the stage. E.g., there is one
@@ -1468,7 +1468,7 @@ categorizing the commands one find that:
   position, saving the position to a variable and using regular go-to command.
 
 In addition to the notes above, LAS does not read all settings from XML-files.
-One example that is a major drawback for automated TMA scanning is the lack of
+One example that is a major drawback for automated TMA scanning, is the lack of
 support for loading irregular spaced wells. The graphical user interface is
 able to save such experiments, but loading an experiment which has wells with
 offset is not possible. The load will not fail, but rather silently reset the
@@ -1479,8 +1479,8 @@ workaround of loading each specimen spot as a single template. The load time
 for an experiment is about 30 seconds, so total time spent on loading is 126
 specimen spots $\cdot$ 30 seconds $\approx$ 1 hour.
 
-Another function that is missing is the possibility to tell the microscope
-take a single image. To achieve this, one has do to one of the workarounds:
+Another limitation is the missing command for taking an single image. To achieve
+this, one of the workarounds has to be done:
 
 - Create a template with a single field enabled at the correct position, load
   the template and start the scan.
@@ -1505,14 +1505,14 @@ lot of labor hours are saved.
 Two factors was involved when deciding to develop the stage insert; autofocusing
 and glass slides that have considerably tilted specimen plane.
 
-The time of an autofocus depends on how many steps it consists of and what
+The time of an autofocus depends on how many steps it consists of and which
 acquisition parameters are used. With a range of 80 \si{\micro\metre} and step
 size of 2 \si{\micro\metre}, it usually takes several seconds. Doing this on
 all images is not an option, as autofocusing then uses several hours, even
 more time than the scanning time alone takes.
 
 Even if autofocus could solve some z-alignment issues, some glass slides may
-have too much tilt in specimen plane to allow autofocus alone tackle it. E.g.,
+have too much tilt in specimen plane to allow autofocus alone to tackle it. E.g.,
 some slides had coverslip of 170 \si{\micro\metre} mounted to the end, making
 the glass slide lean on the coverslip for one side but not the other. The
 effect is that a single image will be out of focus, seen as little signal in
