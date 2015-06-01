@@ -728,8 +728,9 @@ it does not, giving the result of a jagged stitch seen in [@fig:rotation].
 \label{fig:rotation}
 \end{figure}
  
-Relative rotation between scanner raster pattern and stage coordinate system
-was measured by calculating displacement of two neighbor images using phase
+To align the coordinate systems, relative rotation between scanner raster
+pattern and stage coordinate system was measured and adjusted. The measurement
+was done by calculating displacement of two neighbor images using phase
 correlation. The rotation is then given by
 
 $$ \theta = \arctan \left( \frac{ \Delta y }{ \Delta x } \right). $$ {#eq:rotation}
@@ -1267,23 +1268,24 @@ outcome = clinical_data[condition]['GRAD']   # get outcome
 
 
 # Discussion
-The glass slides in this discussion holds 14 columns of specimen
-spots, which is 60 non-overlapping images with a 25x objective. This means
-that an operator of the microscope must keep track of the current stage
-position in the array with limited field of view.
+To evaluate the methods described in the previous chapter, this chapter will
+take up aspects that that lead to the developed methods. Where applicable, pros
+and cons will be listed and possible alternatives discussed.
 
-Automated scanning is a low hanging fruit because we have the conditions:
+The topics discussed are similar to the steps in the method: 
 
-- Specimen spots in TMA are relatively easy to discriminate to background.
-- Tissue is somewhat aranged.
-- Tools in microscope software exists for controlling a scan.
+- Scanning
+- Uneven illumination
+- Rotation
+- Stitching
+- Segmentation
+- Communicating with microscope
 
 
 ## Scanning
-To illustrate the pros of using the method described in this thesis, lets
-compare it to the manual approach. By using LAS matrix screener, the
-procedure is fairly structured. The manual labor in the scanning would
-roughly consist of:
+To illustrate the pros of automated scanning, lets compare it to the manual
+approach. By using LAS matrix screener, the procedure is fairly structured. The
+manual labor in the scanning would roughly consist of:
 
 1. Count number of rows and columns.
 2. Align TMA in microscope.
@@ -1300,12 +1302,19 @@ roughly consist of:
 
 The procedure was tested out and step 6 was the most labor intensive, browsing
 through 126 specimen spots and aligning them. An alignment of one specimen spot
-took about 40 seconds, giving 1.5 hours of intensive click-and-adjust. Also, an
-error in some of the steps can potentially disrupt steps further down the line,
+took about 40 seconds, giving 1.5 hours of intensive click-and-adjust. An error
+in some of the steps can potentially disrupt steps further down the line,
 making the procedure even more time consuming. In example, inaccuracy in
-average displacement between samples leads to displacement adjustment of
-many wells, accidentally bumping the sample holder could impose restart of the
+average displacement between samples leads to displacement adjustment of many
+wells, accidentally bumping the sample holder could impose restart of the
 procedure, and so on.
+
+In addition, it's easy to "get lost" in the tissue microarray with the limited
+field of view. The glass slides holds 14 columns of specimen spots, which is 60
+side by side non-overlapping images with a 25x objective. This means one must
+keep track of the position in the array. If one loses track over specimen row
+and column position, one need to go to a reference point, usually the edge of
+the array, to get back on track.
 
 A simple means to avoid some of the steps in the intricate procedure above is
 using a single scan containing the whole matrix area. The procedure then
@@ -1332,17 +1341,21 @@ scan, the only way to tackle temperature changes is by chopping up the scan in
 several chunks. As the goal was to reduce manual labor, doing this as a part of
 the procedure was not considered viable.
 
-In other words, the most likely way to get desired result is by using the first
-procedure listed. So most part of the procedure was automated and the method
-described is therefore a combination of the two procedures above. Several of
-the steps remain the same but automated, so the procedure for the user of the
-microscope reduces to:
+In addition, automated scanning is a low hanging fruit because we have the
+conditions:
+
+- Specimen spots in TMA are relatively easy to discriminate to background.
+- Tissue is somewhat aranged.
+- Tools in microscope software exists for controlling a scan.
+
+In other words, automated scanning was considered the approach with most pros
+and least cons. To avoid the focus trouble, most of the parts in the first
+procedure was automated, so the labor for the user of the microscope reduces
+to:
 
 1. Align TMA in microscope.
 2. Find outer boundaries for overview scan.
-3. Verify that the algorithms have picked out the specimen spots.
-  - If not, the user may adjust filter settings or directly edit the detected
-    regions.
+3. Verify and/or modify specimen spots to scan.
 4. Scan.
 
 This was considered to meet the goals; reduce mental overhead when collecting
@@ -1376,10 +1389,9 @@ robust way is therefor to combine all images into one.
 
 Combining images can be done in interactive manner, where a program loads
 images as one "moves" around. But creating this abstraction would demand for a
-way other programs can "talk" to the abstract image object containing all
-images. Therefor a simpler approach was used, stitching all images into one
-large image. This allows for any program that can open PNG to work with the
-images.
+way other programs can "talk" to the abstract image object. Therefor a simpler
+approach was used, stitching all images into one large image. This allows for
+any program that can open PNG to work with the images.
 
 First approach on stitching was to use existing stitching software, in specific
 the \kw{Grid/Collection stitching}-plugin of Fiji [@_fiji_2015]. The plugins finds
@@ -1475,8 +1487,8 @@ The software in this thesis is written in Python due to Python's cross-platform
 support, simple syntax and vast scientific ecosystem. With Python one gets free
 access to a lot of scientific software libraries of high quality and top-level
 support through channels like Github. As source code for most libraries are
-available, stepping into the nitty-gritty details can give insight in
-algorithms and be very educational.
+available, stepping into the nitty-gritty details give insight in algorithms
+and can be very educational.
 
 Any Python package mentioned in the code blocks is install-able through pip. In
 example leicacam can be installed by opening a terminal and type `pip install
