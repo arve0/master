@@ -34,7 +34,7 @@ discussed in this thesis are:
 - Adjusting z-plane tilt for large area samples with micrometer precision.
 - Interfacing with commercial Leica software.
 
-The focus of this thesis will be on TMA and the experimental setup with a Leica
+The focus of this thesis is on TMA and the experimental setup with a Leica
 SP8 microscope, but some the aspects listed above are not unique to this context
 only.
 
@@ -110,9 +110,9 @@ breast cancer tissue, this project is relevant for other studies too.
   patients when rotating the slide. ](figures/tma.png) {#fig:tma}
 
 
-The tissue micro array shown in [@fig:tma] is $\approx$ $24 \times 15$ mm in size. Using
-a moderate objective of 25x with $400 \times 400$ \si{\micro\metre} field of
-view, a single scan of the total dataset will be
+The tissue micro array shown in [@fig:tma] is $\approx$ $24 \times 15$ mm in
+size. Using a moderate objective of 25x with $400 \times 400$ \si{\micro\metre}
+field of view, a single scan of the total dataset is 
 
 $$ \frac{24 \si{\milli\metre}}{400 \si{\micro\metre}} \cdot \frac{15
 \si{\milli\metre}}{400 \si{\micro\metre}} = 2250 \text{ images.} $$
@@ -135,13 +135,13 @@ A reader of this text should be familiar with general physics. Matters that are
 specific to scanning microscopy and image processing will be described in the
 *theory* section, along with software concepts used. The *methods* section seeks
 to make the reader able to replicate the experiment on any kind of microscope,
-but some software and solutions will be specific to the Leica SP8.
+but some software and solutions is specific to the Leica SP8.
 The *discussion* holds details on alternative approaches and should clarify
 reasons for the choices made. As the project mainly consisted of developing
 automated microscope scanning, the methods is also the result of the thesis,
 hence a result chapter is not included.
 
-All source code in the thesis was implemented in the programming language Python
+All source code in the project was implemented in the programming language Python
 [@python_software_foundation_official_2015]. The reader does not need to be
 proficient in Python programming, but acquaintance with the syntax is assumed.
 Code blocks will be used to clarify how problems have been solved or algorithms
@@ -162,9 +162,9 @@ containing cylinders of tissue in rows and columns. Cylinders for the paraffin
 block are often picked out by a pathologist who evaluate the histology of a
 larger tissue sample and choose appropriate locations.
 
-The thickness of slices are in the magnitude of \SI{1}{\micro\metre}, which
-gives efficient use of tissue samples in the sense that several hundred
-TMAs can be made from a block containing cylinders of height \SI{1}{mm}
+The thickness of slices are in the magnitude of 4-5 \si{\micro\metre}, which
+gives efficient use of tissue samples in the sense that several hundred TMAs
+can be made from a block containing cylinders which can be several mm
 [@kononen_tissue_1998]. \kw{Specimen spot} will refer to a single sample in the
 array.
 
@@ -173,44 +173,46 @@ array.
 [@Fig:epi] illustrate the internal workings of a Leica SP8 scanning microscope
 which have an epi-illumination setup.  Epi-illumination is when the detectors
 (26) and light source (1, 3, 5, 7) are on the same side of the objective (18).
-But as seen, the epi-setup also allows for external detectors (19), which were
+But as seen, the epi-setup also allows for transmitted detectors (19), which were
 the ones in use. By scanning one means that the light source is focused to a
-specific part of the specimen, scanned line by line in a raster pattern.
-While the laser is scanned over the surface, a detector measure light in
-regular time intervals (samples) and each measured sample will be saved to an
-image pixel.
+specific point of the specimen, and scanned line by line in a raster pattern.
+While the laser is scanned over the surface, a photomultiplier tube (PMT)
+measures the incoming light in regular time intervals (samples) and each
+measured sample is saved to an image pixel.
 
-A \kw{photonmultiplier tube} (PMT) is a sensor that measure photons in volts. The
-tube works by accelerating electrons that have been liberated from an electrode
-by incomming photons. The electron shower is multiplied several times by
-aranged electrodes inside the tube, resulting in an amplification which makes
-it possible to measure small amounts of light [@murphy_fundamentals_2013].
+A \kw{photonmultiplier tube} is a sensor which converts photon intensity into
+an electrical signal. The tube works by accelerating electrons that have been
+liberated from an electrode by incomming photons. The flux of electrons is
+multiplied several times by aranged electrodes inside the tube, resulting in an
+amplification which makes it possible to measure small amounts of light
+[@murphy_fundamentals_2013].
 
-The scanning is done by a oscillation mirror (14). The term \kw{non-descanned
-detector} indicate that the light does not travel by the scanning mirror before
-reaching the detector. In SP8 (17) and (19) are non-descanned detectors, where
+The scanning is done by a galvanometric mirror (14). The term \kw{non-descanned
+detector} indicate that the light does not travel via the scanning mirror before
+reaching the detector. In SP8, (17) and (19) are non-descanned detectors, where
 (17) measure reflected light and (19) measure transmitted light. The condensor
-and aperture is not illustrated in [@fig:epi]. Both is placed between the glass
-slide and the external non-descanned detector (19). Condensor gathers light and
-aperture limits the amount of light reaching the non-descanned detector. Higher
+and aperture is not illustrated in [@fig:epi]. Both is present between the glass
+slide and the external non-descanned detector (19). Condensor collects light
+for the transmission non-descanned detector. The aperture is an adjustable
+opening which can be used to limit the amount of incomming light. Higher
 aperture values means more opening.
 
 ![Internals of a Leica SP8 microscope. Picture from Leica SP8 brochure
   [@leica_microsystems_cms_gmbh_leica_2014].](figures/epi.jpg) {#fig:epi}
 
-\kw{Field of view} is the spatial area which fits inside one image. The view field
-depends on the magnification of the objective and the scanner zoom.  Scanner
-zoom is when the scanner is set to oscillate with less amplitude while still
+\kw{Field of view} is the spatial area which fits inside one image. The field
+of view depends on the magnification of the objective and the scanner zoom.  Scanner
+zoom is when the scanner is set to oscillate with a smaller amplitude while still
 sampling at the same rate. As field of view is at the magnitude of
 \SI{1e-4}{\metre}, specimen must be moved around to image a larger area. The
 device that moves the specimen is called a stage. Here stage position, or
-specimen position if you like, is denoted with a upper case $X$ to distinguish
+specimen position, is denoted with a upper case $X$ to distinguish
 it from lower case $x$ which denote image pixel position.
 
 \newcommand\NA{\mathit{NA}}
 
 The resolution of a conventional light microscope is given by the objective
-and/or condensor numerical apterture (NA) [@murphy_fundamentals_2013]:
+and/or condensor \kw{numerical aperture} (NA) [@murphy_fundamentals_2013]:
 
 $$ d = \frac{
         1.22 \lambda
@@ -220,29 +222,25 @@ $$ d = \frac{
 
 Here $d$ is the minimum separable spatial distance defined by the Rayleigh
 criterion, $\lambda$ is the wavelength of the light and $\NA$ is the numerical
-apterture.
+aperture.
 
-A dichroic mirror, or also called a dichromatic beamsplitter, is a filter which
-is putted into the laser beam at \ang{45} angle to split light of different
-wavelengths. The filter has a sharp transition between reflecting and
-transmitting light for a given wavelength, resulting in short wavelengths being
-mirrored \ang{90} and high wavelengths pass through[@murphy_fundamentals_2013].
-This is useful when having several detectors which should detect different
-wavelengths.
+A \kw{dichroic mirror}, also called a dichromatic beamsplitter, is a filter which
+split light of different wavelengths. The filter has a sharp transition between
+reflecting and transmitting light, resulting in short wavelengths being
+reflected and long wavelengths passing through [@murphy_fundamentals_2013]. This is
+useful when having several detectors which should detect different wavelengths.
+The mirror is usually angled \ang{45} to disperse the short wavelengths \ang{90}.
 
 \kw{Second harmonic generation} (SHG) is a nonlinear scattering process of two
 photons with the same wavelengths. The process is an interaction where the
 photons is transformed to a single emitted photon of half the wavelength. The
 process is dependent on orientation of electric dipoles in the specimen and
 aligned assemblies of asymetric molecules usually provides the proper
-conditions. Collagen tissue does hold the proper conditions for SHG-imaging
+conditions. Collagen does hold the proper conditions for SHG-imaging
 [@murphy_fundamentals_2013].
 
-As the probability for SHG is extremely low, enormous amount if light is
-necessary to generate it. This fact is a benefit for scanning microscopes, only
-the focal point is able to produce SHG with the consequences that the sensors
-can be simpler, e.g., non-descanned, as light will always originate from where
-the laser is pointed to.
+As the probability for SHG is extremely low, a high intensity laser is
+necessary to generate it.
 
 
 ## Image processing
@@ -255,11 +253,11 @@ holds. E.g., a resolution of $1024 \times 1024$ is an image with 1024 pixels in 
 and y-direction, totalling \num{1e6} pixels. Each pixel represent a physical
 position of the specimen, where the value is the amount of light measured from
 the detector when scanning the specimen surface with a light source. The
-physical size of the pixel will depend on objective, zoom and resolution. All
+physical size of the pixel depends on objective, zoom and resolution. All
 images in this thesis are 8 bit grayscale images, meaning that each pixel can
 hold $2^8=256$ values. In an ideal experiment a pixel value of zero denote zero
 detected light and 255 is the maximum, but this is an simplification as noise
-will be measured too.
+is measured too.
 
 $f(x, y)$ denotes the intesity of pixel at position $(x, y)$, where $(0, 0)$ is
 the top left of the image, positive x-direction going right and positive
@@ -270,8 +268,8 @@ $f(x,y)$.
 
 The histogram of an image is the count of intensities in the image.
 In example, an image with 8 bit depth spans values from 0 to 255 and the
-histogram will have 256 bins. The 0-bin will contain the sum of pixels equal to
-zero. Summing up all the histogram bins will give total number of pixels in the
+histogram consists of 256 bins. The 0-bin contain the sum of pixels equal to
+zero. Summing up all the histogram bins gives total number of pixels in the
 image.
 
 
@@ -280,12 +278,12 @@ image.
 values. The computation is done on the image
 histogram, giving the optimal threshold for separating intensity classes. The
 output is a segmented binary image where all pixels above the threshold is
-truthy and the rest of the pixels falsy.
+`True` and the rest of the pixels `False`.
 
 
 ### Spatial image filters
 A \kw{spatial image filter} consists of a center pixel, it's neighborhood defined by
-a structuring element and a operation. Structuring
+a structuring element and an operation. Structuring
 element is typically a rectangle, but can be of any shape. The operation can
 for example be calculating the mean of the neighborhood, assigning the mean
 value to the center pixel. Formally the spatial filter is defined as
@@ -308,9 +306,10 @@ The neighborhood is called a \kw{sliding window} as neighborhood is updated by
 removing values going out of the neighborhood and adding values coming into the
 neighborhood when moving to the next pixel.
 
-Typically the window is saved as a histogram instead of doing computation
-directly with the image values. Doing computation on the histogram can be more
-efficient for certain operations, as the image memory is accessed less often.
+Typically the window is kept as a histogram in memory, instead of doing
+computation directly with the image values. Doing computation on the histogram
+can be more efficient for certain operations, as the image memory is accessed
+less often.
 
 
 ### Image registration
@@ -327,9 +326,9 @@ g(s,t) f(x+s, y+t). $$ {#eq:cross-correlation}
 Here $g(x,y)$ is the structuring element of size $s \times t$ and $f(x,y)$ is the
 zero-padded image. The structuring element in cross-correlation is often called
 a \kw{template} and the process of cross-correlation is called \kw{template
-matching}. The maximum peak(s) in $h(x,y)$ will be where the template has
+matching}. The maximum peak(s) in $h(x,y)$ is where the template has
 the best match, which may be in several positions if several matches are made.
-The cross-correlation will be dependent on intensity variations and requires
+The cross-correlation is dependent on intensity variations and requires
 the images to have high entropy to get clear matches. E.g., a strictly even
 background have low entropy and gives equal match for the whole image.
 
@@ -388,7 +387,7 @@ allows the user to define structured areas to scan. The software uses the
 conce])s \kw{fields} and \kw{wells}. A field is essentially an image, and a
 well is a collection of regular spaced images. The wells may be regular spaced,
 or an offset between wells can be defined in the graphical user interface. When
-the scan job is started LAS will store images in a tree of folders in TIFF (see
+the scan job is started LAS stores images in a tree of folders in TIFF (see
 *[Image formats](#image-formats)).
 
 
@@ -421,7 +420,7 @@ response = CAM.recv(1024)             # read response
 
 
 ### XML
-Extensible Markup Language is a declarative language which most high level
+\kw{Extensible Markup Language} is a declarative language which most high level
 programming languages speak, which makes it suitable for computer program
 communication. A XML-file contain a single root and tree structure with parent
 and children nodes. Any position in the tree can be specified with an \kw{XPath}.
@@ -433,25 +432,24 @@ Listing: Illustration of a typical XML-tree structure.
 <?xml version="1.0"?>
 <root>
     <parent>
-        <child attr="val1">text</child>
+        <child attr="val1">text1</child>
         <child attr="val2">text2</child>
     </parent>
     <parent>
-        <child attr="val3">text</child>
-        <child attr="val4">text2</child>
+        <child attr="val3">text3</child>
+        <child attr="val4">text4</child>
     </parent>
 </root>
 ```
 
 The XML-file might be nested with several childen and parents, but [@lst:xml]
-holds for illustration purposes. XPath for the first child in parent will be
+holds for illustration purposes. XPath for the first child in the first parent is
 `./parent/child[@attribute="val1"]`. Here `.` is the root, `/` defines path (or
 nesting if you like) and `[@attribute="val"]` defines that the attribute named
-`attr` should be of value `val1`. This XPath will find only the first child of
-the first parent, but if other childs with same path also had an attribute
-named `attr` with the value `val1`, the XPath would have found them also. E.g.,
-`./parent/child` will find all children. Code block \ref{lst:pythonxml} show
-how one would read properties in the XML-file from [@lst:xml].
+`attr` should be of value `val1`. This XPath finds the child with `text1`,
+as this is the only child with `attr="val1"`. In converse, `./parent/child`
+finds all children. Code block \ref{lst:pythonxml} show how one would read
+properties from the XML-file in [@lst:xml].
 
 Listing: Accessing XML properties with the Python build-in module xml.etree.
 
@@ -460,22 +458,22 @@ import xml.etree.ElementTree as ET
 
 tree = ET.parse('/path/to/file.xml')          # read xml
 first_child = tree.find('./parent/child')     # find one element
-first_child.attrib['attr'] == "val1"          # check attribute value
+print(first_child.attrib['attr'] == "val1")   # check attribute value
 all_children = tree.findall('./parent/child') # find all elements
-len(all_children)                             # number of elements found
+print(len(all_children))                      # number of elements found
 ```
 
 ### Scanning Template
-A \kw{scanning template} is a XML-file which defines which regions a scan job exists
-of. The structure of the file is the following:
+A \kw{scanning template} is a XML-file read by LAS which defines which fields
+and wells to scan. The structure of the file is the following:
 
 - `./ScanningTemplate/Properties` holds experiment settings like start
-  position, displacement between fields and wells, start position, which
-  Z-drive to use, and so on.
+  position, displacement between fields and wells, which Z-drive to use, and so
+  on.
 - `./ScanFieldArray` holds all fields (images) and their settings as
-  attributes in `./ScanFieldArray/ScanFieldData`.
+  attributes of `./ScanFieldArray/ScanFieldData`.
 - `./ScanWellArray` holds all wells (collection of images) and their settings
-  as attributes in `./ScanWellArray/ScanWellData`.
+  as attributes of `./ScanWellArray/ScanWellData`.
 
 
 ### OCR
@@ -515,8 +513,8 @@ steps of automated scanning and procedure for correlation to clinical data.
 ## Microscope
 The images were collected with a Leica SP8 microscope using LAS software
 version X 1.1.0.12420 from Leica Microsystems CMS GmbH. Two lasers were used, a
-pulsing Coherent laser and a continious LASOS argon laser. Full specifications
-of lasers are in [@tbl:lasers].
+Coherent laser and a LASOS argon laser. Full specification of lasers is in
+[@tbl:lasers].
 
 +----------+--------------------+--------------------------------------------+
 | Brand    | Model              | Specifications                             |
@@ -577,7 +575,7 @@ pixels image resolution was used, which gives images of $\approx 1500 \times
 1500$ \si{\micro\metre} and resolution of $\approx 3 \times 3$ \si{\micro\metre}.
 
 ### SHG images
-SHG images was collected with a 25x/0.95 NA water objective. The pulsed infrared
+SHG images were collected with a 25x/0.95 NA water objective. The pulsed infrared
 laser was set to 890 nm, intensity 20%, gain 40%, offset 80% and electro-optic
 modulator on. 0.9 NA air condensor was used and forward light was measured with
 non-descanned PMT detector using a 445/20 nm bandpass filter. Gain of PMT
@@ -634,7 +632,7 @@ beacuse of two reasons:
 
 In addition, rotation of scanner raster pattern should be adjusted to avoid
 jagged stitch. The stitching mechanism will also be described, as existing
-software solutions was found to be unreliable.
+stitching software was found to be unreliable.
 
 
 #### Uneven illumination
@@ -725,7 +723,7 @@ it does not, giving the result of a jagged stitch seen in [@fig:rotation].
          therefor be one pixel above the first image. In (b) relative scanning
          pattern rotation is counter clockwise, giving the second image below
          the first image. A calculation of stage position by y-equivalent to
-         equation \ref{eq:stage_position} will give a systematic error in the
+         equation \ref{eq:stage_position} gives a systematic error in the
          y-position if stitches are jagged.}
 \label{fig:rotation}
 \end{figure}
@@ -810,7 +808,7 @@ the crucial observation is that background signal tend to vary less than
 specimen signal. This fact makes it easier to discriminate specimen spots to
 background by filtering the image before segmenting it with Otsu.
 
-In addition, relying only on Otsu thresholding will give us a lot of small
+In addition, relying only on Otsu thresholding gives a lot of small
 segments which are not specimen spots. To exclude these false positives, area
 size of segments were used as a classification.
 
@@ -932,7 +930,7 @@ if len(regions) > max_regions:
   ](figures/regions_area_and_position.png) {#fig:regions}
 
 As specimen spots are pretty well arranged in rows and columns, calculating
-the specimen row and column position will lift the burden of labeling the
+the specimen row and column position lifts the burden of labeling the
 scanned specimen by the user.
 
 By looking at two fairly vertical columns of specimens, one can observe that
@@ -998,8 +996,8 @@ scanning template in the experiment folder
 (AdditionalData/{ScanningTemplate}overview.xml).
 
 Keeping stage position constant when zooming, either by changing objective or
-decreasing amplitude of scanning mirror oscillation, will yield the same
-physical position in center of view field. This means that image stage position 
+decreasing amplitude of scanning mirror oscillation, yields the same
+physical position in center of field of view. This means that image stage position 
 reported by the microscope is the center pixel. One can use the center of the
 first image as the reference point, but using pixel (0,0) is simpler as one
 can find out where the center pixel is one time, then later forget about it.
@@ -1060,10 +1058,10 @@ After the step above one have start position $X_{start}$ and number of fields
 to scan $F_x$. What remains is communicating with the microscope and record
 output filenames of the scans.
 
-To avoid unnecessary long stage movements between rows or columns, regions was
+To avoid unnecessary long stage movements between rows or columns, regions were
 looped through in a zick-zack pattern, given by their row and column position.
 For each region the scanning template was edited, the template was loaded and
-the scan was started through CAM. Single scanning templates was used due to a
+the scan was started through CAM. Single scanning templates were used due to a
 LAS software limitation; scanning templates with irregular displaced wells is
 not supported. Code block \ref{lst:automated-scan} illustrates the scanning
 procedure, using the high level communication interface leicacam.
@@ -1111,7 +1109,7 @@ z-coordinate when moving large distances, the stage insert seen in
 specimen plane before scanning.
 
 To demonstrate the level of accuracy required for the stage insert consider the
-view field of a 63x objective with minimum zoom (0.75) which is $246 \times 246$
+field of view of a 63x objective with minimum zoom (0.75) which is $246 \times 246$
 \si{\micro\metre}. To get the stage insert steady for this level of precission,
 mouldable glue was added to corners of stage insert and glass slide holder.
 This makes both the stage insert and glass slide fixed, even when adjusting the
@@ -1141,7 +1139,7 @@ one autofocus scan only and also avoids the scenario illustrated in
 }
 \caption{\textbf{(a)} When having a tilted specimen plane, stage z-coordinate must
          be adjusted to keep specimen in focus when moving x- or y-coordinate.
-         Also, the seam between images will not be from the same physical area,
+         Also, the seam between images is not be from the same physical area,
          which might cause some trouble for thicker samples when they are
          stitched.
          \textbf{(b)} Stage insert which allows the user to adjust the specimen
@@ -1158,7 +1156,7 @@ spots on all slides are given identifiers. [@Fig:slidemap] illustrates some of
 the identifiers for slide ten (TP-10, tumor peripheral number ten), called a
 slide map. As seen, the identifiers consists of two numbers. The first number
 is the patient identifier and the second number is the sample number.  The
-patient identifier is not incrementing systematically, so the slide maps was
+patient identifier is not incrementing systematically, so the slide maps were
 scanned to read out the identifier for each position.
 
 \begin{figure}[htbp]
@@ -1203,7 +1201,7 @@ def circle_score(r):                    # r is a skimage.measure.regionprops obj
     return score
 ```
 
-All slide maps was filtered with [@lst:filter-slide-map]. After the filtering,
+All slide maps were filtered with [@lst:filter-slide-map]. After the filtering,
 Prizmo [@creaceed_s.p.r.l._prizmo_2015] was used to read the slide maps. The
 text output was checked for errors programatically. The following was checked:
 
@@ -1238,7 +1236,7 @@ img[-mask] = 255                         # set all pixels except contents of
 ```
 
 
-OCR errors was fixed manually and other errors was recorded (see section [Slide map errors] in the appendix).
+OCR errors were fixed manually and other errors were recorded (see section [Slide map errors] in the appendix).
 
 Every patient identifier from the slide map was saved to a Stata database along
 with its slide number, row and column. A database with outcomes of was
@@ -1284,7 +1282,7 @@ Automated scanning is a low hanging fruit because we have the conditions:
 ## Scanning
 To illustrate the pros of using the method described in this thesis, lets
 compare it to the manual approach. By using LAS matrix screener, the
-procedure will be fairly structured. The manual labor in the scanning would
+procedure is fairly structured. The manual labor in the scanning would
 roughly consist of:
 
 1. Count number of rows and columns.
@@ -1296,7 +1294,7 @@ roughly consist of:
 6. Update inter sample offsets one by one.
 7. Potetially disable fields on specimen spots with smaller size than the largest.
 8. Potentially identify and rule out missing samples.
-9. Make sure autofocus positions will hold signal (e.g., specimen spot should be
+9. Make sure autofocus positions holds signal (e.g., specimen spot should be
    in the autofocus image).
 10. Scan.
 
@@ -1305,7 +1303,7 @@ through 126 specimen spots and aligning them. An alignment of one specimen spot
 took about 40 seconds, giving 1.5 hours of intensive click-and-adjust. Also, an
 error in some of the steps can potentially disrupt steps further down the line,
 making the procedure even more time consuming. In example, inaccuracy in
-average displacement between samples will lead to displacement adjustment of
+average displacement between samples leads to displacement adjustment of
 many wells, accidentally bumping the sample holder could impose restart of the
 procedure, and so on.
 
@@ -1361,7 +1359,7 @@ real time while moving the stage. A reference point should then follow the line
 if the scanning mirror and stage holds the same coordinate system. The user
 himself have to find the rotation in a inductive manner by counting pixels or
 measuring how far the reference point moves away from the line when moving the
-stage. Accuracy will depend on how easily the reference point is distinguished
+stage. Accuracy depends on how easily the reference point is distinguished
 from the rest of the image and how thoroughly the user is with his
 measurements. In comparison, the procedure described in [the rotation section
 of the method](#method-rotation) gives the same precission in less time.
@@ -1391,7 +1389,7 @@ of the phase correlation is mainly due to little entropy in the seam between
 images. It can be seen in [@fig:stitching (a)], where the failed row have to
 much overlap. The failed row is a clean cut in the sense that the overlap
 between the images contain background only and no specimen. A background
-surface is quite even and will give a flat correlation in contrast to the
+surface is quite even and gives a flat correlation in contrast to the
 wanted peak which express a match is found. In other words, the overlap between
 the images contain too little information for correlation and the match fails.
 
