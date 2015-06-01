@@ -103,8 +103,7 @@ The means to achieve the expanded dataset is to automate microscope imaging,
 with main focus on tissue microarrays. Tissue micro arrays are glass slides
 with samples arranged in a matrix pattern seen in [@fig:tma]. As tissue
 microarrays is a standard way of organizing tissue samples, not unique to
-breast cancer tissue, the work of this master is relevant for other studies
-too.
+breast cancer tissue, this project is relevant for other studies too.
 
 ![Tissue micro array of breast tissue at perifery of tumor. Three test samples
   (upper right of the array) are beside the 14x9 samples to avoid mix up of
@@ -137,17 +136,17 @@ specific to scanning microscopy and image processing will be described in the
 *theory* section, along with software concepts used. The *methods* section seeks
 to make the reader able to replicate the experiment on any kind of microscope,
 but some software and solutions will be specific to the Leica SP8.
-The *discussion* holds details alternative approaches and should clarify reason
-for the choices made when developing the methods. As the project mainly
-consisted of developing automated microscope scanning, the methods is also the
-result of the thesis and therefore a result chapter is not included.
+The *discussion* holds details on alternative approaches and should clarify
+reasons for the choices made. As the project mainly consisted of developing
+automated microscope scanning, the methods is also the result of the thesis,
+hence a result chapter is not included.
 
 All source code in the thesis was implemented in the programming language Python
 [@python_software_foundation_official_2015]. The reader does not need to be
 proficient in Python programming, but acquaintance with the syntax is assumed.
 Code blocks will be used to clarify how problems have been solved or algorithms
 implemented. Details not essential to the problem at hand have been omitted to
-keep focus on the essential parts. As the total amount of source code are above
+keep focus on the essential parts. As the total amount of source code is above
 thousand lines it's not included in the appendix but rather available at Github
 with full history [@seljebu_arve_2015]. A brief description on installation of
 the software is included in the *[appendix](#python-software)*.
@@ -157,7 +156,7 @@ the software is included in the *[appendix](#python-software)*.
 # Theory
 
 ## Tissue microarrays
-A tissue microarray is a collection of specimens aranged in a matrix pattern.
+A tissue microarray is a collection of specimen aranged in a matrix pattern.
 The specimens are typically sliced with microtome from a paraffin block
 containing cylinders of tissue in rows and columns. Cylinders for the paraffin
 block are often picked out by a pathologist who evaluate the histology of a
@@ -166,8 +165,8 @@ larger tissue sample and choose appropriate locations.
 The thickness of slices are in the magnitude of \SI{1}{\micro\metre}, which
 gives efficient use of tissue samples in the sense that several hundred
 TMAs can be made from a block containing cylinders of height \SI{1}{mm}
-[@kononen_tissue_1998]. In this text specimen spot will refer to a single
-sample in the array.
+[@kononen_tissue_1998]. \kw{Specimen spot} will refer to a single sample in the
+array.
 
 
 ## Scanning microscope
@@ -181,31 +180,32 @@ While the laser is scanned over the surface, a detector measure light in
 regular time intervals (samples) and each measured sample will be saved to an
 image pixel.
 
-A *photonmultiplier tube* (PMT) is a sensor that measure photons in volts. The
+A \kw{photonmultiplier tube} (PMT) is a sensor that measure photons in volts. The
 tube works by accelerating electrons that have been liberated from an electrode
 by incomming photons. The electron shower is multiplied several times by
 aranged electrodes inside the tube, resulting in an amplification which makes
-it possible to measure small amounts of light.
+it possible to measure small amounts of light [@murphy_fundamentals_2013].
 
-The scanning is done by a oscillation mirror (14). The term non-descanned
-detector indicate that the light does not travel by the scanning mirror before
+The scanning is done by a oscillation mirror (14). The term \kw{non-descanned
+detector} indicate that the light does not travel by the scanning mirror before
 reaching the detector. In SP8 (17) and (19) are non-descanned detectors, where
-(17) measure reflected light and (19) measure transmitted light. In [@fig:epi]
-the condensor, which gathers light for the non-descanned detector, is not
-illustrated, but it should be between the glass slide and the non-descanned
-detector (19).
+(17) measure reflected light and (19) measure transmitted light. The condensor
+and aperture is not illustrated in [@fig:epi]. Both is placed between the glass
+slide and the external non-descanned detector (19). Condensor gathers light and
+aperture limits the amount of light reaching the non-descanned detector. Higher
+aperture values means more opening.
 
 ![Internals of a Leica SP8 microscope. Picture from Leica SP8 brochure
   [@leica_microsystems_cms_gmbh_leica_2014].](figures/epi.jpg) {#fig:epi}
 
-The view field of a microscope is the physical area which fits inside one
-image. The view field depends on the magnification of the objective and the
-scanner zoom.  Scanner zoom is when the scanner is set to oscillate with less
-amplitude while still sampling at the same rate. As field of view is at the
-magnitude of \SI{1e-4}{\metre}, specimen must be moved around to image a larger
-area. The device that moves the specimen is called a stage. Here stage
-position, or specimen position if you like, is denoted with a upper case $X$ to
-distinguish it from lower case $x$ which denote image pixel position.
+\kw{Field of view} is the spatial area which fits inside one image. The view field
+depends on the magnification of the objective and the scanner zoom.  Scanner
+zoom is when the scanner is set to oscillate with less amplitude while still
+sampling at the same rate. As field of view is at the magnitude of
+\SI{1e-4}{\metre}, specimen must be moved around to image a larger area. The
+device that moves the specimen is called a stage. Here stage position, or
+specimen position if you like, is denoted with a upper case $X$ to distinguish
+it from lower case $x$ which denote image pixel position.
 
 \newcommand\NA{\mathit{NA}}
 
@@ -230,7 +230,7 @@ mirrored \ang{90} and high wavelengths pass through[@murphy_fundamentals_2013].
 This is useful when having several detectors which should detect different
 wavelengths.
 
-Second harmonic generation (SHG) is a nonlinear scattering process of two
+\kw{Second harmonic generation} (SHG) is a nonlinear scattering process of two
 photons with the same wavelengths. The process is an interaction where the
 photons is transformed to a single emitted photon of half the wavelength. The
 process is dependent on orientation of electric dipoles in the specimen and
@@ -244,13 +244,10 @@ only the focal point is able to produce SHG, with the consequences that a
 sensors can be simpler, e.g., non-descanned, as light will always originate from
 where the laser is pointed to.
 
-> SHG necessary? Not sure if I should focus on overview images only, as I have
-> limited SHG data.
-
 
 ## Image processing
 The term image in this contex is a two dimensional array of values, where each
-position in the array is called a pixel. Resolution is the number of pixels an
+position in the array is called a \kw{pixel}. Resolution is the number of pixels an
 image holds. E.g., a resolution of 1024x1024 is an image with 1024 pixels in
 both x- and y-direction, totalling \num{1e6} pixels. Each pixel represent a
 physical position of the specimen, where the value is the amount of light
@@ -293,7 +290,7 @@ value to the center pixel. Formally the spatial filter is defined as
 $$ g(x,y) = \sum\limits_{s=-a}^a \sum\limits_{t=-b}^b
                 w(s,t) f(x+s, y+t). $$ {#eq:spatial-filter}
 
-Here $g(,xy)$ is the result, $w(x,y)$ is the structuring element, $f(x,y)$ is
+Here $g(x,y)$ is the result, $w(x,y)$ is the structuring element, $f(x,y)$ is
 the image the filter is performed on and assuming odd size of the structuring
 element, $a = (m_w-1)/2$ and $b = (n_w-1)/2$.
 
@@ -316,17 +313,17 @@ access when computing the result.
 Image registration is the process of putting images into the same coordinate
 system. In this context the sources are images from different microscope stage
 coordinates. One way of finding how images are relatively displaced is by using
-cross-correlation. Cross-correlation two images is done by zero-padding one of
-the images and using the other image as structuring element. The
-cross-correlating $f(x,y)$ by $g(x,y)$ is defined as
+cross-correlation. The cross-correlation of two images is the process of
+zero-padding the one image and using the other image as structuring element.
+Cross-correlating $f(x,y)$ by $g(x,y)$ is defined as
 
 $$ h(x,y) =  f(x,y) \openbigstar g(x,y) = \sum\limits_s \sum\limits_t
 g(s,t) f(x+s, y+t). $$ {#eq:cross-correlation}
 
 Here $g(x,y)$ is the structuring element of size $s \times t$ and $f(x,y)$ is the
 zero-padded image. The structuring element in cross-correlation is often called
-a *template* and the process of cross-correlation is called *template
-matching*. The maximum peak(s) in $h(x,y)$ will be where the template has
+a \kw{template} and the process of cross-correlation is called \kw{template
+matching}. The maximum peak(s) in $h(x,y)$ will be where the template has
 the best match, which may be in several positions if several matches are made.
 The cross-correlation will be dependent on intensity variations and requires
 the images to have high entropy to get clear matches. E.g., a strictly even
@@ -382,8 +379,8 @@ also called phase correlation.
 ## Software
 
 ### Leica LAS
-*Leica Application Suite* (LAS) is the software that contols the SP8
-microscope. LAS comes with an function called *Matrix Screener*, which allows
+\kw{Leica Application Suite} (LAS) is the software that contols the SP8
+microscope. LAS comes with an function called \kw{Matrix Screener}, which allows
 the user to define structured areas to scan. The software uses the concepts
 fields and wells. A field is essentially an image, and a well is a collection
 of regular spaced images. The wells may be regular spaced, or an offset between
@@ -393,7 +390,7 @@ started Leica LAS will store images in a tree of folders in TIFF format.
 
 ### CAM
 In addition to controlling the microscope with the graphical user interface, a
-function called *Computer Assisted Microscopy* (CAM) can be turned on. CAM is a
+function called \kw{Computer Assisted Microscopy} (CAM) can be turned on. CAM is a
 socket interface, meaning one send bytes over a network interface. This is very
 similar to how one can write bytes to a file, but in addition the socket
 interface can respond and send bytes back. The network interface runs on TCP
@@ -424,7 +421,7 @@ cam.wait_for('inf', 'scanfinished') # wait until scan is done
 Extensible Markup Language is a declarative language which most high level
 programming languages speak, which makes it suitable for computer program
 communication. A XML-file contain a single root and tree structure with parent
-and children nodes. Any position in the tree can be specified with an *XPath*.
+and children nodes. Any position in the tree can be specified with an \kw{XPath}.
 [@Lst:xml] show a typical structure of a XML-file.
 
 Listing: Illustration of a typical XML-tree structure.
@@ -467,36 +464,34 @@ len(all_children)                             # number of elements found
 ```
 
 ### Scanning Template
-A scanning template is a XML-file which defines which regions a scan job exists
+A \kw{scanning template} is a XML-file which defines which regions a scan job exists
 of. The structure of the file is the following:
 
-- **./ScanningTemplate/Properties** holds experiment settings like start
+- `./ScanningTemplate/Properties` holds experiment settings like start
   position, displacement between fields and wells, start position, which
   Z-drive to use, and so on.
-- **./ScanFieldArray** holds all fields (images) and their settings as
+- `./ScanFieldArray` holds all fields (images) and their settings as
   attributes in `./ScanFieldArray/ScanFieldData`.
-- **./ScanWellArray** holds all wells (collection of images) and their settings
+- `./ScanWellArray` holds all wells (collection of images) and their settings
   as attributes in `./ScanWellArray/ScanWellData`.
 
 
 ### OCR
-Optical character recognition (OCR) is recognition of characters in an image.
+\kw{Optical character recognition} (OCR) is recognition of characters in an image.
 OCR internals are not discussed, but it basically works by looking at patterns
 in the image to convert it to text.
-
-> OCR: keep, remove or expand?
 
 
 ### Image formats
 Image formats referred to in this text are:
 
-- *Tagged Image File Format* (TIFF) is ISO standarized[@iso_tag_2004] and can
+- \kw{Tagged Image File Format} (TIFF) is ISO standarized[@iso_tag_2004] and can
   contain both raw and compressed images. TIFF images can be opened in most
   image programs.
-- *Portable Network Graphics* (PNG) is both ISO and W3 standarized
+- \kw{Portable Network Graphics} (PNG) is both ISO and W3 standarized
   [@iso_portable_2004, @duce_portable_2003] and store images with lossless
   compression. PNG images can be opened in most image programs.
-- *Leica Image Format* (LIF) is not a standarized format. LIF can be opened by
+- \kw{Leica Image Format} (LIF) is not a standarized format. LIF can be opened by
   several programs for scientific image processing (e.g., LAS, Matlab and Fiji).
 
 
@@ -1382,7 +1377,7 @@ large image. This allows for any program that can open PNG to work with the
 images.
 
 First approach on stitching was to use existing stitching software, in specific
-the *Grid/Collection stitching*-plugin of Fiji [@_fiji_2015]. The plugins finds
+the \kw{Grid/Collection stitching}-plugin of Fiji [@_fiji_2015]. The plugins finds
 displacements between images by using phase correlation, and it works fairly
 well except for the lack of control when phase correlation fails. The failing
 of the phase correlation is mainly due to little entropy in the seam between
@@ -1414,7 +1409,7 @@ enough precission for defining the SHG scan job.
 The stitching algorithm can be used with the python package
 microscopestitching [@seljebu_microscopestitching_2015], [@lst:microscopestitching] show an example of how to use it.
 
-Listing: Stitching images with the Python package *microscopestitching*.
+Listing: Stitching images with the Python package microscopestitching.
 
 ``` {#lst:microscopestitching .python}
 from microscopestitching import stitch
