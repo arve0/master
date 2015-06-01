@@ -12,30 +12,31 @@ csl: american-medical-association.csl
 
 
 # Abstract {.unnumbered}
-St. Olavs hospital has supplied a dataset of 2703 tissue samples at the tumor
-peripheral from $\approx 900$ patients. NTNU want to examine all tissue samples
-with image processing to see if second harmonic generation microscope images of
-tissue can help classify cancer type (I, II, III) or in other words, cancer
-aggresiveness. This thesis documents a method which automates the microscope
-imaging of these tissue microarrays (TMA) and show how images can be
-structured and correlated to clinical data.
+St. Olavs hospital has supplied a dataset of 2703 tissue samples from the tumor
+periphery from approximately 900 patients organized on tissue microarrays
+(TMA). In this project we wish to examine all these tissue samples with image
+processing to determine if second harmonic generation microscope images of
+tissue can improve classification of cancer type (I, II, III) or in other
+words, cancer aggresiveness. This thesis documents methods which automates the
+microscope imaging of TMA and show how images can be correlated to clinical
+data. Datamining methods can then be used on this dataset to look for patterns
+which can be used in classifcation.
 
-Automated microscope scanning is in principle straight forward, but the
-implementation is dependent on many aspects of the experimental setup. In
-general, some of the aspects discussed in this thesis are:
+Automated microscope scanning is easy in consept, but the implementation
+depends on many aspects of the experimental setup. Some of the aspects
+discussed in this thesis are:
 
-- Create image analysis algorithms that are robust to experimental variations.
-- Correction of systematic errors like
-    - intensity variations and
-    - difference in coordinate systems of scanning raster patterns and stage
-      movement.
-- Automatic stitching of regular spaced images with variable degree of signal
-  entropy in seams.
-- Adjusting z-plane for large area samples with micrometer precision.
+- Develop image analysis algorithms that are robust to experimental variations.
+- Handle systematic errors like intensity variation and rotation between 
+  scanning raster pattern and stage coordinate system.
+- Automatic stitching of regular spaced images with little signal entropy in
+  seams.
+- Adjusting z-plane tilt for large area samples with micrometer precision.
+- Interfacing with commercial Leica software.
 
-The aspects listed above are not unique to TMA-specimens and the experimental
-setup, and could be useful for similar projects. But the focus of the thesis
-will be on TMA and the experimental setup with a Leica SP8 microscope.
+The focus of this thesis will be on TMA and the experimental setup with a Leica
+SP8 microscope, but some the aspects listed above are not unique to this context
+only.
 
 The conclusions are:
 
@@ -43,9 +44,9 @@ The conclusions are:
   objective to be time effective and avoid out of focus images.
 - Using heuristics/constraints improves the reliability to automatic stitching
   algorithms, failing gracefully on images with little entropy in overlap.
-- Leica LAS version 1.1.0.12420 have limited support for automatic
+- Leica LAS version X 1.1.0.12420 have limited support for automatic
   microscopy, but it's possible to work around limitations to leverage fully
-  automatic TMA-scanning.
+  automated TMA-scanning.
 
 
 
@@ -61,7 +62,7 @@ marvellous people I have met, the flexibility the student life brings, all the
 fun with the student society Spanskrøret and not to forget all the things I've
 learned.
 
-A special thank you go to all the professors who share their knownledge every
+A special thanks go to all the professors who share their knownledge every
 day, even at times when their students seems unmotivated.
 
 The last year I have been warmly included in Magnus Borstad Lilledahl's
@@ -69,7 +70,7 @@ research group, with Andreas Finnøy, Elisabeth Inge Romijn and Rajesh Kumar.
 It's been educational to work with them and exciting to get an insight in how
 they perform their work. Anna Bofin and Monica J. Engstrøm at St. Olavs has
 also been very welcoming, showing me histological patterns in tissues and
-provided the data set to my gratefulness. Thank you all!
+provided the dataset. Thank you all!
 
 I would also like to thank my family, who always have been supportive for the
 choices I've made.
@@ -84,29 +85,30 @@ been the same without you.
 
 
 # Introduction
-With a population just above 5 million
+With a population in Norway just above 5 million
 [@statistisk_sentralbyra_folkemengde_2015], three thousand women are diagnosed
-with breast cancer each year [@statistisk_sentralbyra_dodsarsaker_2013] in
-Norway. This makes breast cancer the most common kind of cancer, affecting one
-of every eleventh woman. Luckily breast cancer is often treatable, shown by the
-fatalities which was 649 in 2012 [-@statistisk_sentralbyra_dodsarsaker_2013].
-NTNU and St. Olavs hospital have been cooperating on reasearch to find new ways
-to diagnose patients. The cooperation yielded a study on 37 subjects which
-showed positive results on difference of collagen structure from different
-parts of tumor tissue [@brabrand_alterations_2015]. This thesis seeks to make
-it possible to expand the study from 37 subjects to the whole dataset available
-of $\approx$ 900 subjects.
+with breast cancer each year [@statistisk_sentralbyra_dodsarsaker_2013]. This
+makes breast cancer the most common kind of cancer, affecting one of every
+eleventh woman. Luckily breast cancer is often not deadly or treatable, shown
+by the fatalities which was 649 in 2012
+[-@statistisk_sentralbyra_dodsarsaker_2013]. Norwegian University of Science
+and Technology (NTNU) and St. Olavs hospital have been cooperating on reasearch
+to find new ways to improve diagnosis. The cooperation yielded a study of 37
+subjects which showed positive results on difference of collagen structure from
+different parts of tumor tissue [@brabrand_alterations_2015]. The goal of this
+project is to delvelop the necessary tools to expand the study from 37 subjects
+to the whole dataset of approximately 900 subjects.
 
-The means to achieve the expanded dataset is to improve instrumentation by
-automate microscope imaging, with main focus on tissue microarrays. Tissue
-micro arrays are glass slides with samples arranged in a matrix pattern seen in
-[@fig:tma]. As tissue microarrays is standard procedure, not unique to breast
-cancer tissue, the work of this master is relevant for other studies too.
+The means to achieve the expanded dataset is to automate microscope imaging,
+with main focus on tissue microarrays. Tissue micro arrays are glass slides
+with samples arranged in a matrix pattern seen in [@fig:tma]. As tissue
+microarrays is a standard way of organizing tissue samples, not unique to
+breast cancer tissue, the work of this master is relevant for other studies
+too.
 
-
-![Tissue micro array of breast tissue at perifer of tumor. Three test samples
-  are beside the array of 14x9 samples to avoid mix up of patients when rotating
-  the slide.](figures/tma.png) {#fig:tma}
+![Tissue micro array of breast tissue at perifery of tumor. Three test samples
+  (upper right of the array) are beside the 14x9 samples to avoid mix up of
+  patients when rotating the slide. ](figures/tma.png) {#fig:tma}
 
 
 The tissue micro array shown in [@fig:tma] is $\approx$ 24x15 mm in size. Using
@@ -117,42 +119,39 @@ $$ \frac{24 \si{\milli\metre}}{400 \si{\micro\metre}} \cdot \frac{15
 \si{\milli\metre}}{400 \si{\micro\metre}} = 2250 \text{ images.} $$
 
 Depending on the precission of the microscope stage, images are not necessarry
-easily put together. Also, keeping microscope in focus for the whole surface
-can become challenging. Another approach would be not to scan the whole area in
+easily put together. Also, keeping the microscope in focus for the whole surface
+can be challenging. Another approach would be not to scan the whole area in
 one scan, but to scan each of the $14 \cdot 9 = 126$ tissue specimens one by
 one. The challenge with scanning each region one by one is that the samples are
-often not equally spaced, and a lot of manual error prone labor is required to
+often not equally spaced, and a lot of manual, error prone, labor is required to
 define the areas to scan. The method in this thesis tries to simplify the
 scanning process and prepare the images for further analysis.
 
-The thesis are written with focus on two parts, namely automating the
-collection of images and correlating samples to clinical data. In total the
+The thesis is written with focus on two parts, namely automating the
+collection of images and correlating samples to clinical data. Together, the
 methods described should enable researchers to run experiments on large datasets
-of tissue microarrays in a determined manner.
+of tissue microarrays.
 
 A reader of this text should be familiar with general physics. Matters that are
 specific to scanning microscopy and image processing will be described in the
-theory section, along with software concepts in use. The method section seeks
+*theory* section, along with software concepts used. The *methods* section seeks
 to make the reader able to replicate the experiment on any kind of microscope,
-but some software and solutions will be specific to the Leica SP8 microscope.
-The result section will mark out leverages gained with automated scanning, and
-the discussion holds details on choices made when developing the method and
-limitations stumbled upon.
+but some software and solutions will be specific to the Leica SP8.
+The *discussion* holds details alternative approaches and should clarify reason
+for the choices made when developing the methods. As the project mainly
+consisted of developing automated microscope scanning, the methods is also the
+result of the thesis and therefore a result chapter is not included.
 
-All source code in the thesis will be in the programming language Python
+All source code in the thesis was implemented in the programming language Python
 [@python_software_foundation_official_2015]. The reader does not need to be
 proficient in Python programming, but acquaintance with the syntax is assumed.
-Code blocks will be used to clarify how problems have been solved or
-algorithms have been implemented. Details not essential to the problem at hand
-have been omitted to keep focus on the essential parts. As total amount of
-source code are above thousand lines it's not included in the appendix
-but rather available at github [@seljebu_arve0_2015] with full history. A brief
-description on installation of the software is included in the
-[appendix](#python-software).
+Code blocks will be used to clarify how problems have been solved or algorithms
+implemented. Details not essential to the problem at hand have been omitted to
+keep focus on the essential parts. As the total amount of source code are above
+thousand lines it's not included in the appendix but rather available at Github
+with full history [@seljebu_arve_2015]. A brief description on installation of
+the software is included in the *[appendix](#python-software)*.
 
-As this thesis mainly consists of work on developing automated microscope
-scanning, the method is also the result of the thesis and therefore a result
-chapter is not included.
 
 
 # Theory
@@ -1475,7 +1474,7 @@ images by a communication interface.
 The software in this thesis is written in Python due to Python's cross-platform
 support, simple syntax and vast scientific ecosystem. With Python one gets free
 access to a lot of scientific software libraries of high quality and top-level
-support through channels like github. As source code for most libraries are
+support through channels like Github. As source code for most libraries are
 available, stepping into the nitty-gritty details can give insight in
 algorithms and be very educational.
 
