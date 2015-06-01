@@ -106,11 +106,11 @@ microarrays is a standard way of organizing tissue samples, not unique to
 breast cancer tissue, this project is relevant for other studies too.
 
 ![Tissue micro array of breast tissue at perifery of tumor. Three test samples
-  (upper right of the array) are beside the 14x9 samples to avoid mix up of
+  (upper right of the array) are beside the $14 \times 9$ samples to avoid mix up of
   patients when rotating the slide. ](figures/tma.png) {#fig:tma}
 
 
-The tissue micro array shown in [@fig:tma] is $\approx$ 24x15 mm in size. Using
+The tissue micro array shown in [@fig:tma] is $\approx$ $24 \times 15$ mm in size. Using
 a moderate objective of 25x with $400 \times 400$ \si{\micro\metre} field of
 view, a single scan of the total dataset will be
 
@@ -238,51 +238,54 @@ aligned assemblies of asymetric molecules usually provides the proper
 conditions. Collagen tissue does hold the proper conditions for SHG-imaging
 [@murphy_fundamentals_2013].
 
-As the probability for SHG is extremely low, enormouse amount if light is
-necessary to generate it. This fact is a benefit for scanning microscope that
-only the focal point is able to produce SHG, with the consequences that a
-sensors can be simpler, e.g., non-descanned, as light will always originate from
-where the laser is pointed to.
+As the probability for SHG is extremely low, enormous amount if light is
+necessary to generate it. This fact is a benefit for scanning microscopes, only
+the focal point is able to produce SHG with the consequences that the sensors
+can be simpler, e.g., non-descanned, as light will always originate from where
+the laser is pointed to.
 
 
 ## Image processing
-The term image in this contex is a two dimensional array of values, where each
-position in the array is called a \kw{pixel}. Resolution is the number of pixels an
-image holds. E.g., a resolution of 1024x1024 is an image with 1024 pixels in
-both x- and y-direction, totalling \num{1e6} pixels. Each pixel represent a
-physical position of the specimen, where the value is the amount of light
-measured from the detector when scanning the specimen surface with a light
-source. The physical size of the pixel will depend on sampling rate. All images
-in this thesis are 8 bit grayscale images, meaning that each pixel can hold
-$2^8=256$ values. In an ideal experiment a pixel value of zero denote zero
+Contents of this section is worked out from the book Digital Image Processing
+by Gonzalez and Woods [@gonzalez_digital_2007].
+
+An \kw{image} is a two dimensional array of values, where each position in the
+array is called a \kw{pixel}. Resolution is the number of pixels an image
+holds. E.g., a resolution of $1024 \times 1024$ is an image with 1024 pixels in both x-
+and y-direction, totalling \num{1e6} pixels. Each pixel represent a physical
+position of the specimen, where the value is the amount of light measured from
+the detector when scanning the specimen surface with a light source. The
+physical size of the pixel will depend on objective, zoom and resolution. All
+images in this thesis are 8 bit grayscale images, meaning that each pixel can
+hold $2^8=256$ values. In an ideal experiment a pixel value of zero denote zero
 detected light and 255 is the maximum, but this is an simplification as noise
 will be measured too.
 
 $f(x, y)$ denotes the intesity of pixel at position $(x, y)$, where $(0, 0)$ is
-the top left of the image, positive x-direction going left and positive
+the top left of the image, positive x-direction going right and positive
 y-direction going down. $m \times n$ will denote the number of pixels in in
 respectively x- and y-direction. A subscript of the image name is used if
-several images are discussed, e.g., $m_f$ is the number of x-pixels of image
+several images are discussed, e.g., $m_f$ is the number of x-pixels in image
 $f(x,y)$.
 
 The histogram of an image is the count of intensities in the image.
 In example, an image with 8 bit depth spans values from 0 to 255 and the
 histogram will have 256 bins. The 0-bin will contain the sum of pixels equal to
-zero in the image. Summing up all the histogram bins will give total number of
-pixels in the image.
+zero. Summing up all the histogram bins will give total number of pixels in the
+image.
 
 
 ### Otsu thresholding
-Otsu tresholding optimizes the between-class variance in terms of intensity
-values [@gonzalez_digital_2007]. The computation is done on the image
+\kw{Otsu tresholding} optimizes the between-class variance in terms of intensity
+values. The computation is done on the image
 histogram, giving the optimal threshold for separating intensity classes. The
 output is a segmented binary image where all pixels above the threshold is
 truthy and the rest of the pixels falsy.
 
 
 ### Spatial image filters
-A spatial image filter consists of a center pixel, it's neighborhood defined by
-a structuring element and a operation [@gonzalez_digital_2007]. Structuring
+A \kw{spatial image filter} consists of a center pixel, it's neighborhood defined by
+a structuring element and a operation. Structuring
 element is typically a rectangle, but can be of any shape. The operation can
 for example be calculating the mean of the neighborhood, assigning the mean
 value to the center pixel. Formally the spatial filter is defined as
@@ -299,14 +302,15 @@ consist of 3 rows and 3 columns with the value 1/9.
 
 
 ### Sliding window filters
-Sliding window filters are similar to spatial filters in the sense that
-they look at neighboring pixels of a center pixel. The window will be all
-pixels sourrounding the center pixel defined by the size of the structuring
-element. A histogram of the values in the window are updated instead of doing
-computation directly with the values. The histogram is efficient updated by
-removing the values going out of the window and adding the values comming into
-the window when moving to the next pixel. The result is less strain on memory
-access when computing the result.
+A \kw{sliding window filter} is similar to a spatial filter in the sense that
+there is a center pixel and a neighborhood defined by a structuring element.
+The neighborhood is called a \kw{sliding window} as neighborhood is updated by
+removing values going out of the neighborhood and adding values coming into the
+neighborhood when moving to the next pixel.
+
+Typically the window is saved as a histogram instead of doing computation
+directly with the image values. Doing computation on the histogram can be more
+efficient for certain operations, as the image memory is accessed less often.
 
 
 ### Image registration
@@ -327,8 +331,7 @@ matching}. The maximum peak(s) in $h(x,y)$ will be where the template has
 the best match, which may be in several positions if several matches are made.
 The cross-correlation will be dependent on intensity variations and requires
 the images to have high entropy to get clear matches. E.g., a strictly even
-background have low entropy and gives equal match for the whole image
-[@gonzalez_digital_2007].
+background have low entropy and gives equal match for the whole image.
 
 If $f(x,y)$ and $g(x,y)$ are large images, calculation of
 [@eq:cross-correlation] is computational costly. To reduce the calculation one
@@ -358,9 +361,9 @@ $$ f(x,y) =
         e^{ i2 \pi (ux/m + vy/n) }
     . $$ {#eq:idft}
 
-The sums of [@eq:dft and @eq:idft] are independent and can be separated in rows
+The sums of @eq:dft and @eq:idft are independent and can be separated in rows
 and columns, yielding the fast Fourier transform which reduces the calculation
-complexity from $O(mn)$ to $O(m \log{m} + n \log{n})$ [@gonzalez_digital_2007].
+complexity from $O(mn)$ to $O(m \log{m} + n \log{n})$.
 
 As briefly mentioned, DFT has the property that a element wise multiplication
 in the frequency domain with one of the images complex conjugated is equivalent
@@ -380,17 +383,18 @@ also called phase correlation.
 
 ### Leica LAS
 \kw{Leica Application Suite} (LAS) is the software that contols the SP8
-microscope. LAS comes with an function called \kw{Matrix Screener}, which allows
-the user to define structured areas to scan. The software uses the concepts
-fields and wells. A field is essentially an image, and a well is a collection
-of regular spaced images. The wells may be regular spaced, or an offset between
-wells can be defined in the graphical user interface. When the scan job is
-started Leica LAS will store images in a tree of folders in TIFF format.
+microscope. LAS comes with an function called \kw{Matrix Screener}, which
+allows the user to define structured areas to scan. The software uses the
+conce])s \kw{fields} and \kw{wells}. A field is essentially an image, and a
+well is a collection of regular spaced images. The wells may be regular spaced,
+or an offset between wells can be defined in the graphical user interface. When
+the scan job is started LAS will store images in a tree of folders in TIFF (see
+*[Image formats](#image-formats)).
 
 
 ### CAM
 In addition to controlling the microscope with the graphical user interface, a
-function called \kw{Computer Assisted Microscopy} (CAM) can be turned on. CAM is a
+function called \kw{Computer Assisted Microscopy} (CAM) can be enabled. CAM is a
 socket interface, meaning one send bytes over a network interface. This is very
 similar to how one can write bytes to a file, but in addition the socket
 interface can respond and send bytes back. The network interface runs on TCP
@@ -399,21 +403,20 @@ commands are available, but only three of them are intresting for the purpose
 of controlling scans; load, autofocusscan and startscan. More details on
 the interface can be read in the manual [@sieckmann_cam_2013] or by
 studying the source code of the Python package leicacam
-[@seljebu_leicacam_2015]. Code block \ref{lst:leicacam} show how one can
+[@seljebu_leicacam_2015]. Code block \ref{lst:cam} show how one can
 communicate with the microscope in Python.
 
-Listing: Communicating with the Leica SP8 microscope using the Python package
-leicacam.
+Listing: Communicating with the Leica SP8 microscope using Python.
 
-``` {#lst:leicacam .python}
-from leicacam import CAM
+``` {#lst:cam .python}
+from socket import socket
 
-cam = CAM()                       # connect to localhost:8895
-cam.load_template('leicaautomator') # load a template named leicaautomator
-cam.autofocus_scan()              # start autofocusing
-cam.start_scan()                  # start scan job
-relpath = cam.wait_for('relpath') # response from microscope with filename
-cam.wait_for('inf', 'scanfinished') # wait until scan is done
+CAM = socket()                        # initialize object
+CAM.connect(('localhost', 8895))      # connect to LAS
+welcome_msg = self.socket.recv(1024)  # get up to 1024 bytes
+msg = b'/cli:python /app:matrix /cmd:getinfo /dev:stage'  # cmd as bytes string
+CAM.send(msg)                         # send messange
+response = CAM.recv(1024)             # read response
 ```
 
 
@@ -440,16 +443,15 @@ Listing: Illustration of a typical XML-tree structure.
 </root>
 ```
 
-The XML-file might be nested with several childen and parents, but code blocks 
-[@lst:xml] holds for illustration purposes. XPath for the first child in
-parent will be `./parent/child[@attribute="val1"]`. Here `.` is the root,
-`/` defines path (or nesting if you like) and `[@attribute="val"]` defines
-that the attribute named `attr` should be of value `val1`. This XPath will
-find only the first child of the first parent, but if other childs with same
-path also had an attribute named `attr` with the value `val1`, the XPath
-would have found them also. E.g., `./parent/child` will find all children.
-[@Lst:pythonxml] show how one would read properties in the
-XML-file from [@lst:xml].
+The XML-file might be nested with several childen and parents, but [@lst:xml]
+holds for illustration purposes. XPath for the first child in parent will be
+`./parent/child[@attribute="val1"]`. Here `.` is the root, `/` defines path (or
+nesting if you like) and `[@attribute="val"]` defines that the attribute named
+`attr` should be of value `val1`. This XPath will find only the first child of
+the first parent, but if other childs with same path also had an attribute
+named `attr` with the value `val1`, the XPath would have found them also. E.g.,
+`./parent/child` will find all children. Code block \ref{lst:pythonxml} show
+how one would read properties in the XML-file from [@lst:xml].
 
 Listing: Accessing XML properties with the Python build-in module xml.etree.
 
@@ -489,7 +491,7 @@ Image formats referred to in this text are:
   contain both raw and compressed images. TIFF images can be opened in most
   image programs.
 - \kw{Portable Network Graphics} (PNG) is both ISO and W3 standarized
-  [@iso_portable_2004, @duce_portable_2003] and store images with lossless
+  [@iso_portable_2004;@duce_portable_2003]. Image data is stored with lossless
   compression. PNG images can be opened in most image programs.
 - \kw{Leica Image Format} (LIF) is not a standarized format. LIF can be opened by
   several programs for scientific image processing (e.g., LAS, Matlab and Fiji).
@@ -505,9 +507,9 @@ researcher.
 
 The methods described here seek to provide those tools, reducing mental
 overhead for the microscope operator being the main aim. Using the methods
-described, the user avoids a lot of repetitive trivial labor and can turn his
-focus on the research. In particular a detailed description of microscope
-settings, steps of automated scanning and correlation to clinical data follows.
+described, the user avoids a lot of repetitive, trivial, labor and can turn his
+attention on the research. This chapter contain description of microscope settings,
+steps of automated scanning and procedure for correlation to clinical data.
 
 
 ## Microscope
@@ -525,24 +527,24 @@ of lasers are in [@tbl:lasers].
 |          |                    | 80 MHz pulsed repetition rate,             |
 |          |                    | $\approx$ 75 fs pulse width                |
 +----------+--------------------+--------------------------------------------+
-| LASOS    | LGK 7872 ML05      | Argon Continious wave,                     |
+| LASOS    | LGK 7872 ML05      | Argon continious wave,                     |
 |          |                    | wavelengths 458, 476, 488, 496 and 514 nm, |
 |          |                    | 65mW                                       |
 +----------+--------------------+--------------------------------------------+
 
 : Lasers {#tbl:lasers}
 
-All images are from transmitted light measured with non-descanned detectors.
-The non-descanned PMT detectors were used with dichrioc mirror of 495 nm and
+All images are from transmitted light measured with non-descanned PMT detectors.
+Two non-descanned PMT detectors were used with dichrioc mirror of 495 nm and
 band pass filters of 525/50 nm and 445/20 nm. Rotation of scanning pattern was
 set to \ang{1.7} to align scanning coordinate system with stage coordinate
-system (read more in [Stitching](#stitching)). Frequency of scanning mirror was
+system (read more in *[Rotation](#rotation)*). Frequency of scanning mirror was
 set to 600 lines/second (maximum speed with 0.75 zoom).
 
 Images were saved as TIFF with 8 bit intensity depth and then converted to PNG
 to reduce storage space. The images were also rotated \ang{270}, as LAS stores
-the TIFF-images with axes swapped with regards to the stage axes. The procedure
-is listed in [@lst:rotate-images].
+the TIFF-images with axes swapped with regards to the stage coordinate system.
+The procedure is listed in [@lst:rotate-images].
 
 Listing: Compress and rotate images.
 
@@ -570,9 +572,9 @@ bandpass filter.
 
 The aperture of transmitted light and the detector gain was adjusted so
 that the histogram of intensities was in the center of the total range without
-getting peaks at minimum and maximum values. Zoom was set to 0.75 and image
-size 512x512, which gives images of $\approx 1500 \times
-\SI{1500}{\micro\metre}$ and resolution of $\approx \SI{3}{\micro\metre}$.
+getting peaks at minimum and maximum values. Zoom 0.75 and $512 \times 512$
+pixels image resolution was used, which gives images of $\approx 1500 \times
+1500$ \si{\micro\metre} and resolution of $\approx 3 \times 3$ \si{\micro\metre}.
 
 ### SHG images
 SHG images was collected with a 25x/0.95 NA water objective. The pulsed infrared
@@ -580,7 +582,7 @@ laser was set to 890 nm, intensity 20%, gain 40%, offset 80% and electro-optic
 modulator on. 0.9 NA air condensor was used and forward light was measured with
 non-descanned PMT detector using a 445/20 nm bandpass filter. Gain of PMT
 detector was adjusted so that signal spanned the whole intensity range.
-Aperture was set to 24 (maximum). Images of 1024x1024 pixels were saved.
+Aperture was set to 24 (maximum). Resolution of $1024 \times 1024$ pixels was used.
 
 
 ## Automated TMA scanning
@@ -589,10 +591,10 @@ errors in the imaging process. The procedure finds specimen spots in an
 overview image and scans the specimen areas with wanted acquisition parameters.
 The process consists roughly of the steps:
 
-1. Collecting an overview image with low magnification.
+1. Collecting overview images with low magnification.
 2. Segment specimen spots in the overview image.
-3. Scan each specimen spot one or several times with chosen acquisition
-   parameters (e.g., high magnification).
+3. Scan each specimen spot with chosen acquisition parameters (e.g., high
+   magnification).
 
 The steps listed above is fairly straight forward, but several instrumental and
 technical details are important to get a working solution. To better get an
@@ -616,6 +618,8 @@ And in **step 3**, scanning each specimen spot:
 - Calculating stage position from pixel position
 - and communicating with the microscope.
 
+Together, the steps provides an automated scanning which is invariant to
+variations in intensity, specimen sizes and tissue microarray size.
 
 ### Step 1: Collecting overview images
 To find specimen, overview images were collected with the settings described in
@@ -626,11 +630,11 @@ beacuse of two reasons:
 
 - Discriminating specimen intensities from background intensities with
   thresholding can give false positives when intensities are overlapping.
-- Contrast is weakened, giving less clearity for human viewing purposes.
+- Contrast is weakened, giving less clarity for human viewing purposes.
 
 In addition, rotation of scanner raster pattern should be adjusted to avoid
 jagged stitch. The stitching mechanism will also be described, as existing
-solutions was found to be unreliable.
+software solutions was found to be unreliable.
 
 
 #### Uneven illumination
@@ -651,9 +655,9 @@ equalized[equalized > 1] = 1            # clip values
 ```
 
 As seen in [@lst:equalize], the image is first normalized. `images_minimum` and
-`images_maximum` is found by selecting the median of respectively minimum and
+`images_maximum` was found by selecting the median of respectively minimum and
 maximum intensity of all images. Normalizing to the same range for all images
-is prefered to trusting local minimum and maximum which can give considerable
+is prefered to using local minimum and maximum which can give considerable
 differences to normalization between images.
 
 `intensity_profile` is a curve fit for one of the background rows in a selected
@@ -662,26 +666,26 @@ choosing the one with least variance. The user should verify that the row indeed
 is a background row by plotting it or viewing the image.
 
 [@Fig:illumination](b) show the selected image and the row with least variance
-is indicated with a white line. The intensity profile is fitted to a second
-degree polynomial to steer clear from noise and then all images are equalized
-by the code in [@lst:equalize]. The intensity profile with it's curve fit can
-be seen in [@fig:illumination_intensities](a).
+is indicated with a white line. The intensity profile was fitted to a second
+degree polynomial to avoid noise and all images were equalized by the code
+in [@lst:equalize]. The intensity profile with it's curve fit can be seen in
+[@fig:illumination_intensities](a). The effect on pixel values can be seen in
+[@fig:illumination_intensities](b) and (c), where each dot represents a pixel
+value with increasing image x-position on the x-axis.
+
 
 
 ![**(a)** Image of glass slide only for illustrating the uneven illumination.
   Dots are impurities on the glass slide.
   **(b)** Original image. Image is selected for finding the intensity profile.
   The white line is the row with least variance used for equalization. The line
-  is higher than one pixel for viewing purposes.
+  is wider than one pixel for viewing purposes.
   **(c)** Equalized version of (b). Note that (a), (b) and (c) are displaying
   values from 130 to 230 to highlight the intensity variation, colorbar is
   shown to the right.
   ](figures/uneven_illumination_images.png) {#fig:illumination}
 
 
-The effect on pixel values can be seen in [@fig:illumination_intensities](b)
-and (c), where each dot represents a pixel value with increasing image
-x-position on the x-axis.
 
 ![**(a)** Intensities for the line with least variance of [@fig:illumination](b).
   The curve is fitted to a second degree polynomial to supress noise. **(b)**
@@ -692,24 +696,25 @@ x-position on the x-axis.
   out.](figures/uneven_illumination_intensities.png)
   {#fig:illumination_intensities}
 
-Here the intensity variation was in one dimension only, which allowed for the
+The intensity variation was in one dimension only, which allowed for the
 simpler dividing by a row intensity profile. For more complex intensity
-variations, similiar approaches can be done by fitting the two dimensional
-background to a surface, then divide images by the surface intensity profile.
+variations, a similiar approach can be done by curve fitting the background to
+a surface, then divide images by the surface intensity profile.
 
 
 #### Rotation {#method-rotation}
-To get good stitches the microscope scanning mirror and the stage should share
-the same coordinate system. It's not uncommon that it does not, giving the
-result of a jagged stitch seen in [@fig:rotation].
+To get images registered to the stage coordinate system the scanning pattern
+and the stage should share the same coordinate system. It's not uncommon that
+it does not, giving the result of a jagged stitch seen in [@fig:rotation].
 
 \begin{figure}
-\subfloat[Illustration of rotated scanning mirror coordinate system.]{
+\subfloat[Illustration of rotated scanning mirror coordinate system. Stitch
+          highlighted as dots on end of lines.]{
     \includegraphics[width=0.45\textwidth]{figures/rotation_illustration.pdf}
 
 }
 \quad
-\subfloat[Best stitch of two images when stage and scanning mirror does not
+\subfloat[Stitch of two images when stage and scanning pattern does not
           hold the same coordinate system.]{
     \includegraphics[width=0.45\textwidth]{figures/rotation_stitch.png}
 
@@ -738,7 +743,7 @@ LAS.
 
 #### Stitching
 To allow whole specimen spots to be found by segmentation, overview images must
-be stiched together. Stitching by existing software gave unreliable results seen
+be stitched together. Stitching by existing software gave unreliable results seen
 in [@fig:stitching](a) due to lack of control in translation constraints. To
 make sure the stitching does not fail, the method here takes the assumptions:
 
@@ -780,18 +785,18 @@ for img in row_of_imgs[1:]:              # exclude first image
     translations.append(translation)     # add translation to the list
     prev = img                           # reference to previous image
 translations = np.array(translations)    # allow for slice notation
-offset_y = np.median(translations[:,0])
-offset_x = np.median(translations[:,1])
+offset_y = np.median(translations[:,0])  # median x translation
+offset_x = np.median(translations[:,1])  # median y translation
 assert offset_x == 0, "x-offset should be zero, " \\
                     + "adjust the scanning mirror rotation"
 
-# combine into one big image
-y, x = img.shape        # assume all images are of same size
-n = len(row_of_images) 
-total_height = n*y - offset_y*(n-1)
-stitched_img = np.zeros((total_height, x))
+# combine into one image
+y, x = img.shape                        # assume images of same size
+n = len(row_of_images)                  # number of images
+total_height = n*y - offset_y*(n-1)     # stitched image height
+stitched_img = np.zeros((total_height, x))  # empty image
 for i, img in enumerate(row_of_images):
-    y_start = i*y - i*offset_y
+    y_start = i*y - i*offset_y          # limits in stitched image
     stitched_img[y_start:y_start+y, :] = img
 ```
 
@@ -846,7 +851,7 @@ Assuming one has an algorithm that updates the local histogram based on a
 structuring element, the inner computation of a population bilateral filter is
 given in [@lst:pop-bilateral-kernel]. A full implementation of the filter can
 be seen in the filters submodule of leicaautomator [@seljebu_leicaautomator_2015].
-Values of `s0 = s1 =10` gave high discrimination of specimen and background on
+Values of `s0 = s1 = 10` gave high discrimination of specimen and background on
 overview images collected with settings specified in the [microscope
 section](#microscope).
 
@@ -860,7 +865,7 @@ def pop_bilateral_inner_computation(histogram, val, s0, s1):
     for bin in range(val-s0, val+s1+1):
         if bin < 0 or bin >= histogram_max:  # do not try to count outside range
             continue
-        count += hist[bin]                   # add counts in bin v
+        count += hist[bin]                   # add counts from bin
     return count
 ```
 
@@ -973,7 +978,7 @@ deleting, moving or adding regions. The interface is show in
 
 
 ### Step 3: Scanning each specimen spot
-From step 2 we have a list of regions and their pixel position in the stiched
+From step 2 we have a list of regions and their pixel position in the stitched
 overview image. Last step is to calculate the stage position to the regions and
 scan the regions by communicating with the microscope.
 
@@ -1017,36 +1022,37 @@ $$ X = X_{ref} + x \cdot x_{resolution}. $$ {#eq:stage-position}
 Here $X$ is the stage x-coordinate, $X_{ref}$ is the reference point and
 $x_{resolution}$ is from [@eq:pixel-resolution].
 
-As moving to the position calculated from [@eq:stage-position] will center the
-location in the field of view, one need to reverse [@eq:x-reference] if one
-only want this position to be included in the image and not centered in the
-image. How much one need to add depends field of view in the scan job, given by
-the objective and the zoom defined. The start coordinate of the scan is
-therefor calculated by
+Moving the stage to the position calculated from [@eq:stage-position] will
+center the location in the field of view. By reversing [@eq:x-reference] one
+moves the position to the edge of the image. How much to shift the position
+depends on the field of view in the scan job, given by the objective and the
+zoom. The start coordinate of the scan job was calculated by
 
-$$ X_{start} = X + \frac{\Delta X_{job}}{2}. $$ {#eq:xstart}
+$$ X_{start} = X + \frac{\Delta X_{field-distance}}{2}. $$ {#eq:xstart}
 
 Here $X_{start}$ is the x-coordinate for the first image, $X$ is calculated
-from the bounding box coordinate to the region in question, and $X_{job}$ is
-stage displacement between fields. Similar to [@eq:pixel-resolution], $X_{job}$
-was read from `./ScanningTemplate/Properties/ScanFieldStageDistanceX`, but in
-the job scanning template.
+from the bounding box coordinate to the region in question, and
+$X_{field-distance}$ is stage displacement between fields. Similar to
+[@eq:pixel-resolution], $X_{field-distance}$ was read from
+`./ScanningTemplate/Properties /ScanFieldStageDistanceX` in the acquisition
+scanning template found in folder `C:\Users\TCS-User\ AppData\Roaming\Leica
+Microsystems\LAS\MatrixScreener\ScanningTemplates`.
 
-Using the stage displacement gives an error in the calculation of $X_{start}$
-by
+Using the stage displacement and not the true field of view gives an error in
+the calculation of $X_{start}$ by
 
-$$ \epsilon = \frac{1}{2} (\Delta X_{job} - \Delta X_{img}), $$ {#eq:xerror}
+$$ \epsilon = \frac{1}{2} (\Delta X_{field-distance} - \Delta X_{img}), $$ {#eq:xerror}
 
-as stage displacement $X_{job}$ is not strictly equal to the field of view
-$X_{img}$ when images are scanned with overlap. This was considered neglectible
-as $\Delta X_{job} \approx \Delta X_{img}$ and number of scanned fields was
-calculated by
+as stage displacement $X_{field-distance}$ is not strictly equal to the field
+of view $X_{img}$ when images are scanned with overlap. This was considered
+neglectible as $\Delta X_{field-distance} \approx \Delta X_{img}$ and number of
+scanned fields was calculated by
 
-$$ F_x = \lceil \frac{\Delta X}{\Delta X_{job}} \rceil, $$ {#eq:enabledfields}
+$$ F_x = \lceil \frac{\Delta X}{\Delta X_{field-distance}} \rceil, $$ {#eq:enabledfields}
 
 which is a slight overestimate. In [@eq:enabledfields] $F_x$ is number of
-fields in x-direction, $\Delta X$ is size of region and $X_{job}$ is
-displacement between fields.
+fields in x-direction, $\Delta X$ is size of detected specimen spot and
+$X_{field-distance}$ is displacement between fields.
 
 
 #### Scanning each region
@@ -1058,9 +1064,9 @@ To avoid unnecessary long stage movements between rows or columns, regions was
 looped through in a zick-zack pattern, given by their row and column position.
 For each region the scanning template was edited, the template was loaded and
 the scan was started through CAM. Single scanning templates was used due to a
-Leica LAS software limitation; scanning templates with irregular displaced
-wells is not supported. Code block \ref{lst:automated-scan} illustrates the
-scanning procedure.
+LAS software limitation; scanning templates with irregular displaced wells is
+not supported. Code block \ref{lst:automated-scan} illustrates the scanning
+procedure, using the high level communication interface leicacam.
 
 
 Listing: Automated scanning of regions with CAM.
@@ -1083,6 +1089,7 @@ for n, region in enumerate(regions):
     tmpl = ST(tmpl_name + str(n%2) + '.xml')  # alternate between tmpl_name0/1.xml
                                               # LAS cannot load same filename twice
     tmpl.move_well(1, 1, region.real_x, region.real_y)  # start position for first field
+    tmpl.enable_fields((region.fields_y, region_fields_x))  # limit size of scan
     tmpl.write()                         # save scanning template
     cam.load_template(tmpl.filename)     # load scanning template into LAS
     cam.autofocus_scan()                 # do autofocus
@@ -1095,13 +1102,13 @@ for n, region in enumerate(regions):
 
 
 ## Alignment of z-plane
-The samples in [@fig:tma] are 5 \si{\micro\metre} thick and keeping the
-specimen plane at same distance from the objective when moving 25
-\si{\milli\metre} is challenging. Also, if the z-plane is substantially tilted,
-a single image might become out of focus at edges. To overcome change of
+The specimen spots in [@fig:tma] are 5 \si{\micro\metre} thick, making it
+challenging to keep the distance from specimen plane to objective equal
+when moving 25 \si{\milli\metre}. Also, if the specimen plane is substantially
+tilted, a single image might become out of focus at edges. To overcome changing
 z-coordinate when moving large distances, the stage insert seen in
-[@fig:tilt](b) was developed, which allows the user to adjust the specimen plane
-before scanning.
+[@fig:tilt](b) was developed. The stage insert allows the user to adjust the
+specimen plane before scanning.
 
 To demonstrate the level of accuracy required for the stage insert consider the
 view field of a 63x objective with minimum zoom (0.75) which is $246 \times 246$
@@ -1119,7 +1126,7 @@ The specimen plane was adjusted by the procedure:
 4. Repeat until specimen plane is leveled at same z-coordinate.
 
 This makes it possible to image a whole specimen of 1.2 \si{\milli\metre} with
-only one autofocus scan and also avoids the scenario illustrated in
+one autofocus scan only and also avoids the scenario illustrated in
 [@fig:tilt](a).
 
 \begin{figure}[htbp]
@@ -1139,7 +1146,7 @@ only one autofocus scan and also avoids the scenario illustrated in
          stitched.
          \textbf{(b)} Stage insert which allows the user to adjust the specimen
          plane. Mouldable glue was used to make the insert fit precisely in the
-         microscope and the glass slide to be fixed in the slide holder.}
+         microscope and keep the glass slide fixed in it's holder.}
 \label{fig:tilt}
 \end{figure}
 
@@ -1148,7 +1155,7 @@ only one autofocus scan and also avoids the scenario illustrated in
 Each TMA glass slide contains samples from 42 patients, meaning that there is
 three specimen spots for each patient. The slides are numbered and specimen
 spots on all slides are given identifiers. [@Fig:slidemap] illustrates some of
-the identifiers for slide one (TP-10, tumor peripheral number ten), called a
+the identifiers for slide ten (TP-10, tumor peripheral number ten), called a
 slide map. As seen, the identifiers consists of two numbers. The first number
 is the patient identifier and the second number is the sample number.  The
 patient identifier is not incrementing systematically, so the slide maps was
@@ -1176,7 +1183,7 @@ text inside circles. The filter removes the rest by:
 
 - Segment the image with Otsu threshold.
 - Widen segments by dilation (make sure segmentation connects lines).
-- Selects circles in the segmented image by circle score.
+- Selects circles in the segmented image by a circle score.
 - Remove everything outside selected circles.
 
 The circle score was calculated as shown in [@lst:circle-score].
@@ -1196,7 +1203,15 @@ def circle_score(r):                    # r is a skimage.measure.regionprops obj
     return score
 ```
 
-All slide maps was filtered with [@lst:filter-slide-map].
+All slide maps was filtered with [@lst:filter-slide-map]. After the filtering,
+Prizmo [@creaceed_s.p.r.l._prizmo_2015] was used to read the slide maps. The
+text output was checked for errors programatically. The following was checked:
+
+- Identifier should be of correct format.
+- Identifier should increment.
+- Patients should be registered with correct slide in database column `TP_nr`.
+- Each patient should have three samples.
+
 
 Listing: Filter slide map and keep only text inside circles. 
 
@@ -1222,14 +1237,6 @@ img[-mask] = 255                         # set all pixels except contents of
                                          # circles to 255 (white)
 ```
 
-After the filtering, Prizmo [@creaceed_s.p.r.l._prizmo_2015] was used to read
-the slide maps. The OCR text output was error checked programatically for the
-following:
-
-- Identifier should be of correct format.
-- Identifier should increment.
-- Patients should be registered with correct slide in database column `TP_nr`.
-- Each patient should have three samples.
 
 OCR errors was fixed manually and other errors was recorded (see section [Slide map errors] in the appendix).
 
@@ -1362,7 +1369,7 @@ of the method](#method-rotation) gives the same precission in less time.
 
 ## Stitching
 With 10x objective and 0.75 zoom, maximum field of view is reported as $1550
-\times 1500$ \si{\micro\metre}. Average specimen spot diameter was $\approx$ 1200
+\times 1550$ \si{\micro\metre}. Average specimen spot diameter was $\approx$ 1200
 \si{\micro\metre}. These two facts would allow for imaging specimen spots
 into separate images if they were neatly arranged. This was not found out to be
 true for our dataset, and it would also burden the user of the microscope to
