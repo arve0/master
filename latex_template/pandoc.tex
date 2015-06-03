@@ -3,6 +3,13 @@
 % font
 \usepackage{lmodern}
 
+% small `inline code`
+\let\OldTexttt\texttt
+\renewcommand{\texttt}[1]{\OldTexttt{\small{#1}}}
+
+% keywords
+\newcommand{\kw}{\textsl}
+
 % bold "Figure 1:" caption
 \usepackage[labelfont=bf]{caption}
 
@@ -23,19 +30,19 @@
 % sane floats
 % http://www-rohan.sdsu.edu/~aty/bibliog/latex/floats.html
 %   General parameters, for ALL pages:
-\renewcommand{\topfraction}{0.9}	% max fraction of floats at top
-\renewcommand{\bottomfraction}{0.8}	% max fraction of floats at bottom
+\renewcommand{\topfraction}{1}	% max fraction of floats at top
+\renewcommand{\bottomfraction}{1}	% max fraction of floats at bottom
 %   Parameters for TEXT pages (not float pages):
 \setcounter{topnumber}{2}
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{4}     % 2 may work better
 \setcounter{dbltopnumber}{2}    % for 2-column pages
-\renewcommand{\dbltopfraction}{0.9}	% fit big float above 2-col. text
-\renewcommand{\textfraction}{0.07}	% allow minimal text w. figs
+\renewcommand{\dbltopfraction}{1}	% fit big float above 2-col. text
+\renewcommand{\textfraction}{0.01}	% allow minimal text w. figs
 %   Parameters for FLOAT pages (not text pages):
-\renewcommand{\floatpagefraction}{0.7}	% require fuller float pages
+\renewcommand{\floatpagefraction}{0.9}	% require fuller float pages
     % N.B.: floatpagefraction MUST be less than topfraction !!
-\renewcommand{\dblfloatpagefraction}{0.7}	% require fuller float pages
+\renewcommand{\dblfloatpagefraction}{0.9}	% require fuller float pages
 
 % math
 \usepackage{amssymb,amsmath}

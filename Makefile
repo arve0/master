@@ -4,7 +4,6 @@ PANDOC_SETTINGS=-s \
 		--template latex_template/pandoc.tex \
 		-V graphics \
 		-V fontsize=10pt \
-		-V geometry=lmargin=15mm,rmargin=15mm,tmargin=27mm,bmargin=30mm \
 		-V classoption=twoside \
 		-V papersize=b5paper \
 		-V documentclass=book
@@ -12,6 +11,7 @@ HTML_SETTINGS=-s \
 	      --filter pandoc-crossref \
 	      --filter pandoc-citeproc \
 	      --toc
+WEB_SETTINS=-V geometry=lmargin=15mm,rmargin=15mm,tmargin=27mm,bmargin=30mm \
 
 default: thesis_web.pdf
 	open thesis_web.pdf

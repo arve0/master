@@ -79,7 +79,7 @@ Lastly, the greatest thanks go to my life companion Yngvild, it wouldn't have
 been the same without you.
 
 > *The future is already here, it's just not very evenly distributed.*
-> - William Gibson
+> William Gibson
 
 
 
@@ -416,7 +416,7 @@ from socket import socket
 CAM = socket()                        # initialize object
 CAM.connect(('localhost', 8895))      # connect to LAS
 welcome_msg = self.socket.recv(1024)  # get up to 1024 bytes
-msg = b'/cli:python /app:matrix /cmd:getinfo /dev:stage'  # cmd as bytes string
+msg = b'/cli:python /app:matrix /cmd:getinfo /dev:stage'  # bytes string
 CAM.send(msg)                         # send messange
 response = CAM.recv(1024)             # read response
 ```
@@ -494,7 +494,7 @@ Image formats referred to in this text are:
 - \kw{Portable Network Graphics} (PNG) is both ISO and W3 standardized
   [@iso_portable_2004;@duce_portable_2003]. Image data is stored with lossless
   compression. PNG images can be opened in most image programs.
-- \kw{Leica Image Format} (LIF) is not a standarized format. LIF can be opened by
+- \kw{Leica Image Format} (LIF) is not a standardized format. LIF can be opened by
   several programs for scientific image processing (e.g., LAS, Matlab and Fiji).
 
 
@@ -540,8 +540,8 @@ All images are from transmitted light measured with non-descanned PMT detectors.
 Two non-descanned PMT detectors were used with dichrioc mirror of 495 nm and
 band pass filters of 525/50 nm and 445/20 nm. Rotation of scanning pattern was
 set to \ang{1.7} to align scanning coordinate system with stage coordinate
-system (read more in *[Rotation](#rotation)*). Frequency of scanning mirror was
-set to 600 lines/second (maximum speed with 0.75 zoom).
+system (read more in *[Rotation](#method-rotation)*). Frequency of scanning
+mirror was set to 600 lines/second (maximum speed with 0.75 zoom).
 
 Images were saved as TIFF with 8 bit intensity depth and then converted to PNG
 to reduce storage space. The images were also rotated \ang{270}, as LAS stores
@@ -667,15 +667,6 @@ image. The row was found by calculating variance of all rows in the image and
 choosing the one with least variance. The user should verify that the row indeed
 is a background row by plotting it or viewing the image.
 
-[@Fig:illumination](b) show the selected image and the row with least variance
-is indicated with a white line. The intensity profile was fitted to a second
-degree polynomial to avoid noise and all images were equalized by the code
-in [@lst:equalize]. The intensity profile with it's curve fit can be seen in
-[@fig:illumination_intensities](a). The effect on pixel values can be seen in
-[@fig:illumination_intensities](b) and (c), where each dot represents a pixel
-value with increasing image x-position on the x-axis.
-
-
 
 ![**(a)** Image of glass slide only for illustrating the uneven illumination.
   Dots are impurities on the glass slide.
@@ -686,6 +677,15 @@ value with increasing image x-position on the x-axis.
   values from 130 to 230 to highlight the intensity variation, colorbar is
   shown to the right.
   ](figures/uneven_illumination_images.png) {#fig:illumination}
+
+
+[@Fig:illumination](b) show the selected image and the row with least variance
+is indicated as a white line. The intensity profile was fitted to a second
+degree polynomial to avoid noise and all images were equalized by the code
+in [@lst:equalize]. The intensity profile with it's curve fit can be seen in
+[@fig:illumination_intensities](a). The effect on pixel values can be seen in
+[@fig:illumination_intensities](b) and (c), where each dot represents a pixel
+value with increasing image x-position on the x-axis.
 
 
 
@@ -866,7 +866,7 @@ def pop_bilateral_inner_computation(histogram, val, s0, s1):
     histogram_max = histogram.size
 
     for bin in range(val-s0, val+s1+1):
-        if bin < 0 or bin >= histogram_max:  # do not try to count outside range
+        if bin < 0 or bin >= histogram_max:  # don't count outside range
             continue
         count += hist[bin]                   # add counts from bin
     return count
@@ -883,18 +883,18 @@ thresholding.
 ``` {#lst:segmentation .python}
 import numpy as np
 from skimage.filters import threshold_otsu
-from skimage.util import apply_parallel  # available from v0.12
-from scipy.ndimage import uniform_filter
+from skimage.util import apply_parallel   # available from v0.12
+from scipy.ndimage import uniform_filter  # mean filter
 from leicaautomator.filters import pop_bilateral
 
-selem = np.ones((9,9))                  # 9x9 structuring element
+selem = np.ones((9,9))                    # 9x9 structuring element
+# apply filter on all cpu cores, depth=4: overlap halv selem size
 filtered = apply_parallel(pop_bilateral, image, depth=4,
-                          extra_keywords={'selem': selem})  # apply filter on
-                                                            # all cpu cores
+                          extra_keywords={'selem': selem})
 filtered = apply_parallel(uniform_filter, image, depth=4,
-                          extra_keywords={'size': 9})       # mean filter
-threshold = threshold_otsu(filtered)    # get optimal threshold
-segmented = filtered >= threshold       # low values indicate specimen
+                          extra_keywords={'size': 9})
+threshold = threshold_otsu(filtered)      # get optimal threshold
+segmented = filtered >= threshold         # low values indicate specimen
 ```
 
 #### Excluding false positives in segmentation
@@ -955,11 +955,11 @@ Listing: Calculate row and column position to specimen spots.
 for r in regions:
     r.y, r.x, r.y_end, r.x_end = r.bbox  # for notational convenience
 
-for direction in 'yx':                   # same algorithm for row and columns
+for direction in 'yx':          # same algorithm for row and columns
     regions.sort(key=lambda r: getattr(r, direction))
 
     previous = regions[0]
-    for region in regions:               # calc distance to previous region
+    for region in regions:      # calc distance to previous region
         dx = getattr(region, direction) - getattr(previous, direction)
         setattr(region, 'd' + direction, dx)
         previous = region
@@ -996,7 +996,8 @@ $$ x_{resolution} = \frac{\Delta x}{\Delta X}. $$ {#eq:pixel-resolution}
 
 Here $\Delta x$ is displacement in pixels from the stitch in step 1, and
 $\Delta X$ is stage displacement in meters read from XPath
-`./ScanningTemplate/Properties/ScanFieldStageDistanceX` in the overview
+`./ScanningTemplate/Properties`
+`/ScanFieldStageDistanceX` in the overview
 scanning template in the experiment folder
 (AdditionalData/{ScanningTemplate}overview.xml).
 
@@ -1015,8 +1016,8 @@ $$ X_{ref} = X_{center} - \frac{m}{2} \cdot x_{resolution}. $$ {#eq:x-reference}
 In [@eq:x-reference] $X_{center}$ is the stage position for the top left image,
 $m$ is the number of pixels in the image and $x_{resolution}$ is from
 [@eq:pixel-resolution]. $X_{center}$ was read from XPath
-`./ScanFieldArray/ScanFieldData[@WellX="1"][@WellY="1"][@FieldX="1"][@FieldY="1"]`
-`/FieldXCoordinate` in the overview scanning template.
+`./ScanFieldArray/ScanFieldData[@WellX="1"][@WellY="1"][@FieldX="1"]`
+`[@FieldY="1"]/FieldXCoordinate` in the overview scanning template.
 
 The stage x-coordinate for any pixel is then given by
 
@@ -1089,16 +1090,20 @@ tmpl_path = r"C:\Users\TCS-User\AppData\Roaming\Leica Microsystems\LAS" \
           + r"\MatrixScreener\ScanningTemplates" + "\\"
 tmpl_name = tmpl_path + '{ScanningTemplate}leicaautomator'
 for n, region in enumerate(regions):
-    tmpl = ST(tmpl_name + str(n%2) + '.xml')  # alternate between tmpl_name0/1.xml
-                                              # LAS cannot load same filename twice
-    tmpl.move_well(1, 1, region.real_x, region.real_y)  # start position for first field
-    tmpl.enable_fields((region.fields_y, region_fields_x))  # limit size of scan
+    # alternate between tmpl_name0/1.xml
+    # LAS cannot load same filename twice
+    tmpl = ST(tmpl_name + str(n%2) + '.xml')
+    # start position for first field
+    tmpl.move_well(1, 1, region.real_x, region.real_y)  
+    # limit size of scan
+    tmpl.enable_fields((region.fields_y, region_fields_x))
     tmpl.write()                         # save scanning template
-    cam.load_template(tmpl.filename)     # load scanning template into LAS
+    cam.load_template(tmpl.filename)     # load into LAS
     cam.autofocus_scan()                 # do autofocus
     cam.wait_for('inf', 'scanfinished')  # wait for autofocus to finish
     cam.start_scan()                     # run scan job
-    region.experiment_name = cam.wait_for('relpath')['relpath']  # record output filename
+    # record output filename
+    region.experiment_name = cam.wait_for('relpath')['relpath']
     cam.wait_for('inf', 'scanfinished')  # wait for scan to finish
 ```
 
@@ -1194,13 +1199,13 @@ The circle score was calculated as shown in [@lst:circle-score].
 Listing: Calculate score of region being a circle.
 
 ``` {#lst:circle-score .python}
-def circle_score(r):                    # r is a skimage.measure.regionprops object
+def circle_score(r):                    # r is a regionprops object
     y0,x0,y1,x1 = r.bbox                # for notational convenience
     height = y1-y0                      # calc height
     width = x1-x0                       # calc width
-    radius = (r.convex_area/3.14)**0.5  # calc expected radius from convex area
+    radius = (r.convex_area/3.14)**0.5  # expected radius
     score = 10-abs(height-width)        # high score if height == width
-    score += 10-abs(radius - height/2)  # high score if height/2 == expected radius
+    score += 10-abs(radius - height/2)  # high score if expected radius
     if r.area < 5000 or r.area > 8000:  # penalty for wrong sizes
         score -= 20
     return score
@@ -1223,20 +1228,20 @@ import numpy as np
 from skimage.morphology import binary_dilation
 from skimage.measure import label, regionprops
 
-thresh = filters.threshold_otsu(img)     # segment image with Otsu thresholding
-binary = img <= thresh
+thresh = filters.threshold_otsu(img)     # Otsu thresholding
+binary = img <= thresh                   # segment image
 selem = np.ones((3,3))
 binary = binary_dilation(binary, selem)  # enhance lines
 labeled = label(binary)                  # find connected segments
 
-mask = np.zeros_like(img, dtype=np.bool) # create mask of circles in image
+mask = np.zeros_like(img, dtype=np.bool) # mask of circles in image
 for r in regionprops(labeled):           # for every segment
     if circle_score(r) > 0:              # circle found
         y,x,y1,x1 = r.bbox               # for notational convenience
         m = np.index_exp[y:y1, x:x1]     # where circle is found
         mask[m] = r.convex_image         # use the convex image as mask
 
-img[-mask] = 255                         # set all pixels except contents of
+img[-mask] = 255                         # all pixels except contents of
                                          # circles to 255 (white)
 ```
 
@@ -1263,9 +1268,9 @@ condition = (locations.TP_nr == 1) & \   # position query
 
 
 patient_id = locations[condition]['ID_deltaker']  # get patient id
-assert len(patient_id) == 1                       # 1 patient registered at row/col
-
-condition = clinical_data.ID_deltaker == patient_id.iloc[0]  # clinical data query
+assert len(patient_id) == 1      # 1 patient registered at row/col
+# clinical data query
+condition = clinical_data.ID_deltaker == patient_id.iloc[0]
 outcome = clinical_data[condition]['GRAD']   # get outcome
 ```
 
@@ -1525,21 +1530,20 @@ was considered beneficial enough to develop it.
 ## SHG images, fibers and machine learning
 The main reason for using SHG when scanning the samples it to image tissue
 structure. As mentioned, collagen fiber holds the proper conditions to generate
-SHG signal. Also no prepation other than slicing the tissue with microtome is
-necessary, which makes SHG an undemanding technique. In the breast tissue there
-is few other molecules that generate SHG signal, giving tissue only images as
-seen in [@fig:shg]. Having tissue only images means that tissue can be
-analysed directly without any pre-processing of the image.
+SHG signal. In addition, no prepation other than slicing the tissue with
+microtome is necessary, which makes SHG an undemanding technique. In the breast
+tissue there are few other molecules that generate SHG signal, giving tissue
+only images as seen in [@fig:shg]. Having *tissue only* images means that tissue
+can be analysed directly without any pre-processing of the image.
 
 ![SHG image of a specimen spot with strong fibers going in circle, typically
   seen around mammary glands channels.](figures/shg.png) {#fig:shg}
 
-Using image processing one can then extract the features. By example, amount of
-collagen tissue can be analysed by the intensity in the image, tissue
-orientation can be extraxted by analysing the frequency domain
-[@qiu_monitoring_2015]. Other measures might be matches for known structures
-like milk channels, \kw{Indian files} [@martinez_invasive_1979], thickness of
-fiber and so on. 
+Image processing can then extract the features. By example, amount of collagen
+tissue can be analysed by the intensity in the image, tissue orientation can be
+extraxted by analysing the frequency domain [@qiu_monitoring_2015]. Other
+measures might be matches for known structures like mammary glands channels,
+\kw{Indian files} [@martinez_invasive_1979], thickness of fiber and so on. 
 
 With the features extracted, predictive machine learning may help find
 releationships in the dataset. Code block \ref{lst:machinelearning} shows the
@@ -1549,7 +1553,7 @@ Listing: Training a model to be able to predict outcome base on a feature-array.
 
 ``` {#lst:machinelearning .python}
 # model is a DecisionTree, with maximum 4 decisions
-# model is improved if a choice made will decrease the remaining data's entropy
+# model is improved if choice will decrease remaining data's entropy
 clf = tree.DecisionTreeClassifier(criterion='entropy', max_depth=4)
 # training the model on 60 patients
 clf.fit(fibers.data[0:60], fibers.target[0:60])
@@ -1581,6 +1585,9 @@ The software packages are developed with the Leica SP8 microscope in mind, but
 could be adjusted for other microscope that has the ability to scan and export
 images by a communication interface.
 
+How a collected dataset along with its outcome can be used in machine learning
+has been briefly illustrated, an area of research that most certainly brings
+exciting analysis possibilities to the table.
 
 
 # Appendix
@@ -1602,7 +1609,7 @@ compiled languages like C and Fortran.
 
 Compiling the huge scientific libraries like numpy and scipy can take a while,
 so it's recommended to use a Python distribution like Anaconda
-[@continuum_analytics_anaconda_????]. Anaconda pre-ships with the most common
+[@continuum_analytics_anaconda_2015]. Anaconda pre-ships with the most common
 scientific libraries and it also contains the package manager conda which have
 pre-compiled packages available for most operating systems.
 
